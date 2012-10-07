@@ -3,10 +3,8 @@ ProFTPd Admin
 
 Graphical User Interface for ProFTPd with MySQL support
 
-&copy; 2004 The Netherlands, Lex Brugman <lex_brugman@users.sourceforge.net>
-
-&copy; 2012 Christian Beer <djangofett@gmx.net>
-
+&copy; 2004 The Netherlands, Lex Brugman <lex_brugman@users.sourceforge.net>  
+&copy; 2012 Christian Beer <djangofett@gmx.net>  
 Published under the GPLv2 License (see LICENSE for details)
 
 This program is free software; you can redistribute it and/or modify
@@ -74,6 +72,5 @@ Installation
 
 Thanks / Links
 -------
-Lex Brugman for initiating this project
-
+Lex Brugman for initiating this project  
 Justin Vincent for the ezSQL library
