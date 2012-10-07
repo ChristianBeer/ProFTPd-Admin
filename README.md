@@ -4,7 +4,9 @@ ProFTPd Admin
 Graphical User Interface for ProFTPd with MySQL support
 
 &copy; 2004 The Netherlands, Lex Brugman <lex_brugman@users.sourceforge.net>
+
 &copy; 2012 Christian Beer <djangofett@gmx.net>
+
 Published under the GPLv2 License (see LICENSE for details)
 
 This program is free software; you can redistribute it and/or modify
@@ -19,13 +21,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, download from http://www.gnu.org/licenses/gpl-2.0.txt
 
-= Information about ProFTPd Admin =
-
+Information about ProFTPd Admin
+-------
 This GUI for ProFTPd was written to support a basic user management feature when using the MySQL module. Originally written by Lex Brugmann in 2004 it was updated by Christian Beer in 2012 to support the latest PHP version.
 
 There is no build-in security, so you have to protect the directory with something else, like Apache Basic Authentication.
 
-This script will be rewritten over time and will be object-oriented and equipped with unit tests at the end.
+This software will be rewritten over time and will be object-oriented and equipped with unit tests at the end.
 
 To-Do
 -------
@@ -66,10 +68,12 @@ Installation
  SQLUserWhereClause              "disabled!=1"
 5. Extract all files to your webspace (into a subdirectory like "proftpdadmin").
 6. Secure access to this directory (for example: create a .htaccess file if using apache)
-7. Edit the configs/config.php.example file to your needs and rename it to config.php.
+7. Edit the configs/config_example.php file to your needs and rename it to config.php.
 8. Start ProFTPd.
 9. Go to http://yourwebspace/proftpadmin/ and start using it!
 
-= Thanks / Links =
-
+Thanks / Links
+-------
 Lex Brugman for initiating this project
+
+Justin Vincent for the ezSQL library

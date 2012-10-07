@@ -61,7 +61,7 @@ Installation
 
 6. Secure access to this directory (for example: create a .htaccess file if using apache)
 
-7. Edit the configs/config.php.example file to your needs and rename it to config.php.
+7. Edit the configs/config_example.php file to your needs and rename it to config.php.
 
 8. Start ProFTPd.
 
