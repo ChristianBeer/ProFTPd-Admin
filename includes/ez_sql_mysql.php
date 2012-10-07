@@ -1,14 +1,15 @@
 <?php
 
-	/**********************************************************************
-	*  Author: Justin Vincent (jv@jvmultimedia.com)
-	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_mysql
-	*  Desc..: mySQL component (part of ezSQL databse abstraction library)
-	*
-	*/
+	/**
+     * ezSQL_mysql
+     * mySQL component (part of ezSQL databse abstraction library)
+     *
+     * @author Justin Vincent <jv@jvmultimedia.com>
+     * @link http://twitter.com/justinvincent Web
+	 * @package ezSQL
+	 */
 
-	/**********************************************************************
+	/**
 	*  ezSQL error strings - mySQL
 	*/
 
@@ -21,13 +22,15 @@
 		5 => 'Unexpected error while trying to select database'
 	);
 
-	/**********************************************************************
-	*  ezSQL Database specific class - mySQL
-	*/
+	
 
 	if ( ! function_exists ('mysql_connect') ) die('<b>Fatal Error:</b> ezSQL_mysql requires mySQL Lib to be compiled and or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
+    /**
+	*  ezSQL Database specific class - mySQL
+     * @package ezSQL
+	*/
 	class ezSQL_mysql extends ezSQLcore
 	{
 
@@ -36,7 +39,7 @@
 		var $dbname = false;
 		var $dbhost = false;
 
-		/**********************************************************************
+		/**
 		*  Constructor - allow the user to perform a qucik connect at the
 		*  same time as initialising the ezSQL_mysql class
 		*/
@@ -49,7 +52,7 @@
 			$this->dbhost = $dbhost;
 		}
 
-		/**********************************************************************
+		/**
 		*  Short hand way to connect to mySQL database server
 		*  and select a mySQL database at the same time
 		*/
@@ -63,7 +66,7 @@
 			return $return_val;
 		}
 
-		/**********************************************************************
+		/**
 		*  Try to connect to mySQL database server
 		*/
 
@@ -97,7 +100,7 @@
 			return $return_val;
 		}
 
-		/**********************************************************************
+		/**
 		*  Try to select a mySQL database
 		*/
 
@@ -138,7 +141,7 @@
 			return $return_val;
 		}
 
-		/**********************************************************************
+		/**
 		*  Format a mySQL string correctly for safe mySQL insert
 		*  (no mater if magic quotes are on or not)
 		*/
@@ -155,7 +158,7 @@
 			return mysql_real_escape_string(stripslashes($str));
 		}
 
-		/**********************************************************************
+		/**
 		*  Return mySQL specific system date syntax
 		*  i.e. Oracle: SYSDATE Mysql: NOW()
 		*/
@@ -165,8 +168,8 @@
 			return 'NOW()';
 		}
 
-		/**********************************************************************
-		*  Perform mySQL query and try to detirmin result value
+		/**
+		*  Perform mySQL query and try to determin result value
 		*/
 
 		function query($query)
@@ -298,7 +301,7 @@
 
 		}
 		
-		/**********************************************************************
+		/**
 		*  Close the active mySQL connection
 		*/
 

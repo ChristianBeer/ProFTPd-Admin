@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file is part of ProFTPd Admin
+
+@license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+
+@copyright Christian Beer <djangofett@gmx.net>
+@copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+-->
+
+<phpdoc>
+    <title>ProFTPd Admin</title>
+    <parser>
+        <target>doctemp</target>
+        <default-package-name>ProFTPd-Admin</default-package-name>
+    </parser>
+    <transformer>
+        <target>docs</target>
+    </transformer>
+    <transformations>
+        <template name="responsive" />
+    </transformations>
+    <files>
+        <directory>.</directory>
+        <ignore>demo.php</ignore>
+        <ignore>old_demo.php</ignore>
+    </files>
+</phpdoc>

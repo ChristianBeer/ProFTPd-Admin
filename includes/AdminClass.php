@@ -2,6 +2,7 @@
 /**
  * This file is part of ProFTPd Admin
  *
+ * @package ProFTPd-Admin
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
  * @copyright Christian Beer <djangofett@gmx.net>
@@ -17,6 +18,8 @@ include_once "configs/config.php";
  * Provides all functions needed by the individual scripts
  *
  * @author Christian Beer
+ * @package ProFTPd-Admin
+ *
  * @todo streamline usage of $config and create a Class for it
  * @todo make database calls generic to the caller
  * @todo create standard user and group objects
@@ -41,6 +44,7 @@ class AdminClass {
 
     /**
      * initialize the database connection via ezSQL_mysql
+     * @param Array $cfg configuration array retrieved from config.php to store in the object
      */
     function dbAccess($cfg) {
         $this->config = $cfg;
@@ -77,7 +81,6 @@ class AdminClass {
     
     /**
      * retrieves groups for each user and populates an array of $data[userid][gid] = groupname
-     *
      * @return Array like $data[userid][gid] = groupname
      */
     function parse_groups() {
@@ -100,7 +103,6 @@ class AdminClass {
 
     /**
      * retrieves the list of groups and populates an array of $data[gid] = groupname
-     *
      * @return Array like $data[gid] = groupname
      *
      * @todo make database fields generic from config
@@ -224,6 +226,10 @@ class AdminClass {
         return $result;
     }
 
+    /**
+     * returns the last index number of the user table
+     * @return Integer
+     */
     function get_last_user_index() {
         $result = $this->dbConn->get_var("select MAX(".$this->config['field_uid'].") from " . $this->config['table_users']);
         return $result;
@@ -254,24 +260,45 @@ class AdminClass {
         return $result;
     }
 
+    /**
+     * Adds a user entry into the database
+     * @param Array $userdata
+     * @return Boolean true on success, false on failure
+     */
     function add_user($userdata) {
         $query = "INSERT INTO ".$this->config['table_users']." (".$this->config['field_userid'].",".$this->config['field_name'].",".$this->config['field_email'].",".$this->config['field_comment'].",".$this->config['field_gid'].",".$this->config['field_uid'].",".$this->config['field_passwd'].",". $this->config['field_homedir'].",".$this->config['field_shell'].") values ('".$userdata["userid"]."','".$userdata["name"]."','".$userdata["email"]."', '".$userdata["comment"]."','".$userdata["gid"]."','".$userdata["user_uid"]."',".$this->config['passwd_encryption']."('".$userdata["passwd"] . "'),'".$userdata["homedir"]."','".$userdata["shell"] . "')";
         $result = $this->dbConn->query($query);
         return $result;
     }
 
+    /**
+     * Adds a group entry into the database
+     * @param Array $groupdata
+     * @return Boolean true on success, false on failure
+     */
     function add_group($groupdata) {
         $query = "INSERT INTO ".$this->config['table_groups']." (".$this->config['field_groupname'].",".$this->config['field_gid'].",".$this->config['field_members'].") values ('".$groupdata["new_group_name"]."','".$groupdata["new_group_gid"]."','".$groupdata["new_group_members"]."')";
         $result = $this->dbConn->query($query);
         return $result;
     }
 
+    /**
+     * updates the group entry in the database (currently only the gid!)
+     * @param Integer $gid
+     * @param Integer $new_gid
+     * @return Boolean true on success, false on failure
+     */
     function update_group($gid, $new_gid) {
         $query = "UPDATE ".$this->config['table_groups']." SET ".$this->config['field_gid']."='".$new_gid."' WHERE ".$this->config['field_gid']."='".$gid."'";
         $result = $this->dbConn->query($query);
         return $result;
     }
 
+    /**
+     * retrieves user from database with given maingroup and populates an array of $data[id] = userid
+     * @param Integer $gid
+     * @return Array form is $data[id] = userid
+     */
     function get_users_by_groupid($gid) {
         $result = $this->dbConn->get_results("SELECT ".$this->config['field_userid'].", ".$this->config['field_id']." FROM ".$this->config['table_users']." WHERE ".$this->config['field_gid']."='".$gid."'");
         if (!$result) return false;
@@ -285,29 +312,54 @@ class AdminClass {
         return $data;
     }
 
+    /**
+     * retrieve a group by gid
+     * @param Integer $gid
+     * @return Object
+     */
     function get_group_by_gid($gid) {
         $result = $this->dbConn->get_row("SELECT * FROM " . $this->config['table_groups'] . " WHERE " . $this->config['field_gid'] . "='".$gid."'");
         if (!$result) return false;
         return $result;
     }
 
+    /**
+     * delete a group by gid
+     * @param Integer $gid
+     * @return Boolean true on success, false on failure
+     */
     function delete_group_by_gid($gid) {
         $result = $this->dbConn->query("DELETE FROM ".$this->config['table_groups']." WHERE ".$this->config['field_gid']."='".$gid."'");
         return $result;
     }
 
+    /**
+     * retrieve a user by userid
+     * @param String $userid
+     * @return Array
+     */
     function get_user_by_userid($userid) {
         $result = $this->dbConn->get_row("SELECT * FROM " . $this->config['table_users'] . " WHERE " . $this->config['field_userid'] . "='".$userid."'", ARRAY_A);
         if (!$result) return false;
         return $result;
     }
 
+    /**
+     * retrieve a user by id
+     * @param Integer $id
+     * @return Array
+     */
     function get_user_by_id($id) {
         $result = $this->dbConn->get_row("SELECT * FROM " . $this->config['table_users'] . " WHERE " . $this->config['field_id'] . "='".$id."'", ARRAY_A);
         if (!$result) return false;
         return $result;
     }
 
+    /**
+     * updates the user entry in the database
+     * @param Array $userdata
+     * @return Boolean true on success, false on failure
+     */
     function update_user($userdata) {
         $passwd = '';
         if (strlen($userdata['passwd']) > 0) $passwd = $this->config['field_passwd']."=".$this->config['passwd_encryption']."('" . $userdata["passwd"] . "'), ";
@@ -317,6 +369,12 @@ class AdminClass {
         return $result;
     }
 
+    /**
+     * removes the given user from all additional groups
+     * @param String $userid
+     * 
+     * @todo This function should probably not print anything instead return a boolean status
+     */
     function remove_user_from_all_groups($userid) {
         $groups = $this->get_groups();
         while (list($gid, $group) = each($groups)) {
@@ -329,15 +387,14 @@ class AdminClass {
         }
     }
 
+    /**
+     * deletes the user entry from the database
+     * @param String $userid
+     * @return Boolean true on success, false on failure
+     */
     function delete_user_by_userid($userid) {
         $result = $this->dbConn->query("DELETE FROM ".$this->config['table_users']." WHERE ".$this->config['field_userid']."='".$userid."'");
         return $result;
     }
-
-    function demo($param) {
-        //return $this->config;
-        return $this->dbConn->get_results("SELECT * FROM ".$this->config['table_groups']);
-    }
 }
-
 ?>

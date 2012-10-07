@@ -1,14 +1,15 @@
 <?php
 
-	/**********************************************************************
-	*  Author: Justin Vincent (jv@vip.ie)
-	*  Web...: http://justinvincent.com
-	*  Name..: ezSQL
-	*  Desc..: ezSQL Core module - database abstraction library to make
-	*          it very easy to deal with databases. ezSQLcore can not be used by 
-	*          itself (it is designed for use by database specific modules).
-	*
-	*/
+	/**
+     * ezSQL
+     * ezSQL Core module - database abstraction library to make
+     * it very easy to deal with databases. ezSQLcore can not be used by
+     * itself (it is designed for use by database specific modules).
+     *
+	 * @author Justin Vincent <jv@vip.ie>
+	 * @link http://justinvincent.com Web
+	 * @package ezSQL
+	 */
 
 	/**********************************************************************
 	*  ezSQL Constants
@@ -19,9 +20,10 @@
 	define('ARRAY_A','ARRAY_A',true);
 	define('ARRAY_N','ARRAY_N',true);
 
-	/**********************************************************************
+	/**
 	*  Core class containg common functions to manipulate query result
 	*  sets once returned
+     * @package ezSQL
 	*/
 
 	class ezSQLcore
@@ -54,7 +56,7 @@
 		// == TJH == default now needed for echo of debug function
 		var $debug_echo_is_on = true;
 
-		/**********************************************************************
+		/**
 		*  Constructor
 		*/
 
@@ -62,7 +64,7 @@
 		{
 		}
 
-		/**********************************************************************
+		/**
 		*  Print SQL/DB error - over-ridden by specific DB class
 		*/
 
@@ -79,7 +81,7 @@
 			);
 		}
 
-		/**********************************************************************
+		/**
 		*  Turn error handling on or off..
 		*/
 
@@ -93,7 +95,7 @@
 			$this->show_errors = false;
 		}
 
-		/**********************************************************************
+		/**
 		*  Kill cached query results
 		*/
 
@@ -106,7 +108,7 @@
 			$this->from_disk_cache = false;
 		}
 
-		/**********************************************************************
+		/**
 		*  Get one variable from the DB - see docs for more detail
 		*/
 
@@ -132,7 +134,7 @@
 			return (isset($values[$x]) && $values[$x]!=='')?$values[$x]:null;
 		}
 
-		/**********************************************************************
+		/**
 		*  Get one row from the DB - see docs for more detail
 		*/
 
@@ -171,7 +173,7 @@
 
 		}
 
-		/**********************************************************************
+		/**
 		*  Function to get 1 column from the cached result set based in X index
 		*  see docs for usage and info
 		*/
@@ -197,7 +199,7 @@
 		}
 
 
-		/**********************************************************************
+		/**
 		*  Return the the query as a result set - see docs for more details
 		*/
 
@@ -246,7 +248,7 @@
 		}
 
 
-		/**********************************************************************
+		/**
 		*  Function to get column meta data info pertaining to the last query
 		* see docs for more info and usage
 		*/
@@ -275,7 +277,7 @@
 
 		}
 
-		/**********************************************************************
+		/**
 		*  store_cache
 		*/
 
@@ -309,7 +311,7 @@
 
 		}
 
-		/**********************************************************************
+		/**
 		*  get_cache
 		*/
 
@@ -346,7 +348,7 @@
 
 		}
 
-		/**********************************************************************
+		/**
 		*  Dumps the contents of any input variable to screen in a nicely
 		*  formatted and easy to understand way - any type: Object, Var or Array
 		*/
@@ -390,7 +392,7 @@
 
 		}
 
-		/**********************************************************************
+		/**
 		*  Alias for the above function
 		*/
 
@@ -399,7 +401,7 @@
 			$this->vardump($mixed);
 		}
 
-		/**********************************************************************
+		/**
 		*  Displays the last query string that was sent to the database & a
 		* table listing results (if there were any).
 		* (abstracted into a seperate file to save server overhead).
@@ -504,7 +506,7 @@
 
 		}
 
-		/**********************************************************************
+		/**
 		*  Naughty little function to ask for some remuniration!
 		*/
 
@@ -513,7 +515,7 @@
 			return "<font size=1 face=arial color=000000>If ezSQL has helped <a href=\"https://www.paypal.com/xclick/business=justin%40justinvincent.com&item_name=ezSQL&no_note=1&tax=0\" style=\"color: 0000CC;\">make a donation!?</a> &nbsp;&nbsp;<!--[ go on! you know you want to! ]--></font>";
 		}
 
-		/**********************************************************************
+		/**
 		*  Timer related functions
 		*/
 
@@ -547,7 +549,7 @@
 			$this->total_query_time += $this->timer_elapsed($timer_name);
 		}
 
-		/**********************************************************************
+		/**
 		* Creates a SET nvp sql string from an associative array (and escapes all values)
 		*
 		*  Usage:
