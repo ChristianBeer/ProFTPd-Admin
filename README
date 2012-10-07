@@ -1,11 +1,13 @@
-ProFTPd Admin
-=======
-
-Graphical User Interface for ProFTPd with MySQL support
-
-&copy; 2004 The Netherlands, Lex Brugman <lex_brugman@users.sourceforge.net>
-&copy; 2012 Christian Beer <djangofett@gmx.net>
-Published under the GPLv2 License (see LICENSE for details)
+/**
+ * ProFTPd Admin - Readme
+ *
+ * Graphical User Interface for ProFTPd with MySQL support
+ *
+ * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ *
+ * @copyright Christian Beer <djangofett@gmx.net>
+ * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ */
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 2,
@@ -19,23 +21,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, download from http://www.gnu.org/licenses/gpl-2.0.txt
 
-= Information about ProFTPd Admin =
-
-This GUI for ProFTPd was written to support a basic user management feature when using the MySQL module. Originally written by Lex Brugmann in 2004 it was updated by Christian Beer in 2012 to support the latest PHP version.
-
-There is no build-in security, so you have to protect the directory with something else, like Apache Basic Authentication.
-
-This script will be rewritten over time and will be object-oriented and equipped with unit tests at the end.
-
-To-Do
--------
-
-A lot ;) so help is very much appreciated
-
 Upgrade
 -------
-
-As the software has undergone a complete rewrite of the config file you should not overwrite your old config.php and compare and change values manually.
+As the software has undergone a complete rewrite of the config file you
+should not overwrite your old config.php and compare and change values manually.
 
 Installation
 -------
@@ -43,8 +32,11 @@ Installation
 1. Install ProFTPd with MySQL support
      - Debian: apt-get install proftpd-mysql
      - Gentoo: USE="mysql" emerge proftpd
+
 2. Create a MySQL database (use something like phpMyAdmin for this), for example: "proftpd".
+
 3. Use tables.sql to populate the database (you can use phpMyAdmin for this).
+
 4. Add the following to your proftpd.conf (edit to your needs):
  SQLConnectInfo                  database@localhost username password
  SQLAuthenticate                 users   groups
@@ -64,12 +56,15 @@ Installation
  SQLLog STOR                     ulcount
  SQLNamedQuery                   ulcount UPDATE "ul_count=ul_count+1 WHERE userid='%u'" users
  SQLUserWhereClause              "disabled!=1"
+
 5. Extract all files to your webspace (into a subdirectory like "proftpdadmin").
+
 6. Secure access to this directory (for example: create a .htaccess file if using apache)
+
 7. Edit the configs/config.php.example file to your needs and rename it to config.php.
+
 8. Start ProFTPd.
+
 9. Go to http://yourwebspace/proftpadmin/ and start using it!
 
-= Thanks / Links =
-
-Lex Brugman for initiating this project
+Please mail me if you've got any problems/comments or questions <djangofett@gmx.net>

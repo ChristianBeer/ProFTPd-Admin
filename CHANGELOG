@@ -1,0 +1,42 @@
+/**
+ * ProFTPd Admin - Changelog
+ *
+ * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ *
+ * @copyright Christian Beer <djangofett@gmx.net>
+ * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ */
+
+Release: 2.0b1
+Changes:
+* complete rework of old code into object-oriented model
+* use ezSQL as database abstraction layer
+* made header and footer real html that is parsed rather included
+* config changed from object into array (this will change in the future again)
+* maintainer changed from Lex Brugman to Christian Beer (with permission)
+
+Release Name: 1.04
+Changes:
+* Stopped using adodb
+* Sorting allows both ascending and descending now
+* Cleaned up the code a bit
+* Added a link to the project homepage to the footer
+
+Release Name: 1.03
+Changes:
+* Added a sort function in the user section
+* Made some layout changes in add/edit user and add group section
+
+Release Name: 1.02
+Changes:
+* When adding a user a random password is generated
+* The version number is in the title bar now
+
+Release Name: 1.01
+Changes:
+* Added a custom UID field to the add and edit user screen
+* Cleaned the code a bit
+
+Release Name: 1.0
+Changes:
+* Initial release
