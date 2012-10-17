@@ -76,9 +76,9 @@ $zero=0; //this is needed so phpDocumentor recognizes the docBlock above
         <?php
           while (list($gid,$group) = each($groups)){
             if ($group == @$default_group) {
-                print("<option value=\"$gid\">$group</option>\n");
-            } else {
                 print("<option value=\"$gid\" selected=\"selected\">$group</option>\n");
+            } else {
+                print("<option value=\"$gid\">$group</option>\n");
             }
           }
         ?>
