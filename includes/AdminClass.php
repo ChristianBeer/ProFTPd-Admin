@@ -46,7 +46,7 @@ class AdminClass {
      * initialize the database connection via ezSQL_mysql
      * @param Array $cfg configuration array retrieved from config.php to store in the object
      */
-    function dbAccess($cfg) {
+    function AdminClass($cfg) {
         $this->config = $cfg;
         $this->dbConn = new ezSQL_mysql($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
     }

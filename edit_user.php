@@ -9,6 +9,7 @@
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
  *
  * @todo some database column names are not generic
+ * @todo make needed fields configurable
  */
 
 include_once ("configs/config.php");
@@ -71,7 +72,7 @@ if (isset($_REQUEST["id"]) && isset($_REQUEST["gid"]) && isset($_REQUEST["userid
         print("Updating additional groups<p>");
         $array = $_REQUEST["ad_gid"];
         while (list($key, $group) = each($_REQUEST["ad_gid"])) {
-            if(add_user_to_group_by_name($_REQUEST["userid"], $group)) {
+            if($ac->add_user_to_group_by_name($_REQUEST["userid"], $group)) {
                 print("Successfully added " . $group . "<br />");
             } else {
                 print("Failure while adding " . $group . "<br />");
