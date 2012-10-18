@@ -149,7 +149,7 @@ class AdminClass {
         if ($result != "") {
             $query = "UPDATE " . $this->config['table_groups'] . " set " . $this->config['field_members'] . "=CONCAT(" . $this->config['field_members'] . ",\"," . $userid . "\") where " . $this->config['field_groupname'] . "='" . $groupname . "'";
         } else {
-            $query = "UPDATE " . $this->config['table_groups'] . " set " . $this->config['field_members'] . "=\"" . $userid . "\") where " . $this->config['field_groupname'] . "='" . $groupname . "'";
+            $query = "UPDATE " . $this->config['table_groups'] . " set " . $this->config['field_members'] . "=\"" . $userid . "\" WHERE " . $this->config['field_groupname'] . "='" . $groupname . "'";
         }
         $result = $this->dbConn->query($query);
         if (!$result) return false;
@@ -186,16 +186,22 @@ class AdminClass {
     function remove_user_from_group_by_name($userid, $groupname) {
         $result = $this->dbConn->get_row("SELECT " . $this->config['field_members'] . " from " . $this->config['table_groups'] . " where " . $this->config['field_groupname'] . "='" . $groupname . "'");
         $list = explode(",", $result->members);
-        $diff = array_diff($list, array("$userid", ""));
+        //check if $userid is member of this group
+        if(in_array($userid, $list)) {
+            // remove $userid and empty values from $list array
+            $diff = array_diff($list, array("$userid", ""));
 
-        if (is_array($diff)) {
-            $members_new = implode(",", $diff);
+            if (is_array($diff)) {
+                $members_new = implode(",", $diff);
+            } else {
+                $members_new = "";
+            }
+            $result = $this->dbConn->query("UPDATE " . $this->config['table_groups'] . " set " . $this->config['field_members'] . "=\"" . $members_new . "\" where " . $this->config['field_groupname'] . "='" . $groupname . "'");
+            if (!$result) return false;
+            return true;
         } else {
-            $members_new = "";
+            return 2;
         }
-        $result = $this->dbConn->query("UPDATE " . $this->config['table_groups'] . " set " . $this->config['field_members'] . "=\"" . $members_new . "\" where " . $this->config['field_groupname'] . "='" . $groupname . "'");
-        if (!$result) return false;
-        return true;
     }
 
     /**
@@ -378,11 +384,14 @@ class AdminClass {
     function remove_user_from_all_groups($userid) {
         $groups = $this->get_groups();
         while (list($gid, $group) = each($groups)) {
-            print("Removing&nbsp;" . $userid . "&nbsp;from " . $group . "<br />");
-            if ($this->remove_user_from_group_by_name($userid, $group)) {
+            //print("Removing&nbsp;" . $userid . "&nbsp;from " . $group . "<br />");
+            $ret = $this->remove_user_from_group_by_name($userid, $group);
+            if ($ret === true) {
                 print("Successfully removed " . $userid . " from " . $group . "<br />");
-            } else {
+            } elseif($ret === false) {
                 print("Failure while removing " . $userid . " from " . $group . "<br />");
+            } elseif($ret === 2) {
+                //print("Not removing " . $userid . " from " . $group . ". Is not a member.<br />");
             }
         }
     }
