@@ -46,7 +46,7 @@ if (isset($_REQUEST["p_new"])) {
     }
 
     $pw_len = strlen($_REQUEST["passwd"]);
-    if ($pw_len <= $cfg['min_passwd_length']) {
+    if ($pw_len < $cfg['min_passwd_length']) {
         print "Password is too short, must be at least ".$cfg['min_passwd_length']." characters. Please try again.<br />";
         echo $ac->get_footer();
         die;

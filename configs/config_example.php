@@ -27,8 +27,9 @@ $cfg['field_name'] = "name";
 $cfg['field_email'] = "email";
 $cfg['field_comment'] = "comment";
 $cfg['field_shell'] = "shell";
-$cfg['field_login_count'] = "count";
-$cfg['field_last_login'] = "accessed";
+$cfg['field_login_count'] = "login_count";
+$cfg['field_last_login'] = "last_login";
+$cfg['field_last_modified'] = "last_modified";
 
 $cfg['table_groups'] = "groups";
 $cfg['field_groupname'] = "groupname";
