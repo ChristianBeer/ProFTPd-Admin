@@ -41,7 +41,7 @@ $cfg['field_bytes_out_used'] = "bytes_out_used";
 $cfg['field_files_in_used'] = "files_in_used";
 $cfg['field_files_out_used'] = "files_out_used";
 
-$cfg['default_uid'] = ""; //if emty next incremental will be default
+$cfg['default_uid'] = ""; //if empty next incremental will be default
 $cfg['default_homedir'] = "/srv/ftp";
 $cfg['passwd_encryption'] = "MD5"; // either SHA1 or MD5 or any other supported by your MySQL-Server and ProFTPd
 $cfg['min_passwd_length'] = "6";

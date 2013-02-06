@@ -46,29 +46,31 @@ Installation
 2. Create a MySQL database (use something like phpMyAdmin for this), for example: "proftpd".
 3. Use tables.sql to populate the database (you can use phpMyAdmin for this).
 4. Add the following to your proftpd.conf (edit to your needs):
+ SQLBackend                      mysql
  SQLConnectInfo                  database@localhost username password
- SQLAuthenticate                 users   groups
+ SQLAuthenticate                 on
  SQLAuthTypes                    Crypt   Backend
  SQLUserInfo                     users userid passwd uid gid homedir shell
  SQLGroupInfo                    groups groupname gid members
- SQLLog                          PASS logincount
- SQLNamedQuery                   logincount UPDATE "login_count=login_count+1 WHERE userid='%u'" users
- SQLLog                          PASS lastlogin
- SQLNamedQuery                   lastlogin UPDATE "last_login=now() WHERE userid='%u'" users
- SQLLog RETR                     dlbytescount
- SQLNamedQuery                   dlbytescount UPDATE "dl_bytes=dl_bytes+%b WHERE userid='%u'" users
- SQLLog RETR                     dlcount
- SQLNamedQuery                   dlcount UPDATE "dl_count=dl_count+1 WHERE userid='%u'" users
- SQLLog STOR                     ulbytescount
- SQLNamedQuery                   ulbytescount UPDATE "ul_bytes=ul_bytes+%b WHERE userid='%u'" users
- SQLLog STOR                     ulcount
- SQLNamedQuery                   ulcount UPDATE "ul_count=ul_count+1 WHERE userid='%u'" users
- SQLUserWhereClause              "disabled!=1"
+ SQLUserWhereClause              "disabled != 1"
+ SQLLog PASS                     updatecount
+ SQLNamedQuery                   updatecount UPDATE "login_count=login_count+1, last_login=now() WHERE userid='%u'" users
+ # Used to track xfer traffic per user (without invoking a quota)
+ SQLLog RETR                     bytes-out-count
+ SQLNamedQuery                   bytes-out-count UPDATE "bytes_out_used=bytes_out_used+%b WHERE userid='%u'" users
+ SQLLog RETR                     files-out-count
+ SQLNamedQuery                   files-out-count UPDATE "files_out_used=files_out_used+1 WHERE userid='%u'" users
+
+ SQLLog STOR                     bytes-in-count
+ SQLNamedQuery                   bytes-in-count UPDATE "bytes_in_used=bytes_in_used+%b WHERE userid='%u'" users
+ SQLLog STOR                     files-in-count
+ SQLNamedQuery                   files-in-count UPDATE "files_in_used=files_in_used+1 WHERE userid='%u'" users
+
 5. Extract all files to your webspace (into a subdirectory like "proftpdadmin").
 6. Secure access to this directory (for example: create a .htaccess file if using apache)
 7. Edit the configs/config_example.php file to your needs and rename it to config.php.
 8. Start ProFTPd.
-9. Go to http://yourwebspace/proftpadmin/ and start using it!
+9. Go to http://yourwebspace/proftpdadmin/ and start using it!
 
 Thanks / Links
 -------

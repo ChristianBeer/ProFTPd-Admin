@@ -253,7 +253,7 @@ class AdminClass {
     }
 
     /**
-     * retrieves all users from db and populates an associatev array
+     * retrieves all users from db and populates an associativ array
      * @param String $sort column to order by (will be pass directly into SQL statement)
      * @param String $order either asc or desc (will be passed directly into SQL statement
      * @return String an array containing the users or false on failure
