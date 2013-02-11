@@ -28,17 +28,23 @@ if (isset($_REQUEST["order"])) {
 $sort = "userid";
 if (isset($_REQUEST["sort"])) $sort = $_REQUEST["sort"];
 
-$nof_columns = 13;
-print("<table><tr><td colspan=\"" . $nof_columns . "\">");
-print("</td></tr>");
-
 if ($sort=="") $sort = "userid";
 $$sort = "&nbsp;<img src=\"images/" . $req_order . ".gif\" alt=\"Arrow\" border=\"0\" valign=\"middle\" />";
-
-print("<tr bgcolor=\"" . $cfg['tpbgcolor'] . "\">");
-
+$nof_columns = 13; // added one for additional groups column that is not sortable
 $columns = array("userid" => "Userid", "uid" => "UID", "email" => "E-mail", "last_login" => "Last login", "login_count" => "Nr. of logins", "ul_bytes" => "Upload", "dl_bytes" => "Download", "ul_count" => "Nr. of<br />uploaded<br />files", "dl_count" => "Nr. of<br />downloaded<br />files", "homedir" => "Home<br />directory", "disabled" => "Suspended", "gid" => "Main group");
 
+$counter = 0;
+$users = $ac->get_users_as_array($sort, $req_order);
+$groups = $ac->parse_groups();
+if(!is_array($users)) {
+    print("<strong>There are no users in the database. Please add some users. </strong>");
+    echo $ac->get_footer();
+    die;
+}
+print("<table><tr><td colspan=\"" . $nof_columns . "\">");
+print("</td></tr>");
+print("<tr bgcolor=\"" . $cfg['tpbgcolor'] . "\">");
+// output table header
 foreach ($columns as $column => $title) {
     if ($sort == $column) {
         print("<td><b><a href=\"users.php?order=" . $bkw_order . "&sort=$column\">$title</a>" . $$column . "</b></td>");
@@ -47,10 +53,7 @@ foreach ($columns as $column => $title) {
     }
 }
 print("<td><b>Additional<br />groups</b></td>" .
-        "</tr>");
-$counter = 0;
-$users = $ac->get_users_as_array($sort, $req_order);
-$groups = $ac->parse_groups();
+    "</tr>");
 
 foreach ($users as $user) {
     if (empty($groups[$user[$cfg['field_userid']]])) {
@@ -63,10 +66,8 @@ foreach ($users as $user) {
     $bytes_out_mb = sprintf("%2.1f", $user[$cfg['field_bytes_out_used']] / 1048576);
 
     if ($counter % 2 == 0) {
-
         print("<tr bgcolor=\"".$cfg['dwbgcolor1']."\">");
     } else {
-
         print("<tr bgcolor=\"".$cfg['dwbgcolor2']."\">");
     }
 
@@ -85,7 +86,6 @@ foreach ($users as $user) {
             "<td align=\"center\">" . implode(", ", $groups[$user[$cfg['field_userid']]]) . "</td></tr>");
     $counter = $counter + 1;
 }
-
 print("<tr><td colspan=\"" . $nof_columns . ">\"><i>To edit a user: click on the username</i></td></tr></table>");
 
 echo $ac->get_footer();

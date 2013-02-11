@@ -19,6 +19,11 @@ $ac = new AdminClass($cfg);
 echo $ac->get_header();
 
 $groups = $ac->get_groups();
+if(!is_array($groups)) {
+    print("<strong>No groups available, please create at least one group!</strong>");
+    echo $ac->get_footer();
+    die;
+}
 $nof_columns = 2;
 print("<table><tr><td colspan=\"" . $nof_columns . "\">" .
         "</td></tr>" .
