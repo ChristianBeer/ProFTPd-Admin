@@ -48,6 +48,10 @@ $cfg['min_passwd_length'] = "6";
 $cfg['userid_regex']    = "/^([a-z][a-z0-9_\-]{0,20})$/i"; //every username must comply with this regex
 $cfg['groupname_regex'] = "/^([a-z][a-z0-9_\-]{0,20})$/i"; //every username must comply with this regex
 
+// next option activates a userid filter on users.php. Usefull if you want to manage a lot of users
+// that have a prefix like "pre-username", the first occurence of separator is recognized only!
+$cfg['userid_filter_separator'] = ""; // try "-" or "_" as separators
+
 $cfg['db_host'] = "localhost";
 $cfg['db_name'] = "database";
 $cfg['db_user'] = "user";

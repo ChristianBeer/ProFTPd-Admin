@@ -41,6 +41,31 @@ if(!is_array($users)) {
     echo $ac->get_footer();
     die;
 }
+
+$ufilter="";
+// see config_example.php on howto activate
+if($cfg['userid_filter_separator'] != "") {
+    $ufilter = isset($_REQUEST["uf"])?$_REQUEST["uf"]:"";
+    $userfilter = array();
+    foreach ($users as $user) {
+        $pos = strpos($user[$cfg['field_userid']], $cfg['userid_filter_separator']);
+        // userid's should not start with a - !
+        if($pos != FALSE) {
+            $prefix = substr($user[$cfg['field_userid']], 0, $pos);
+            if(@$userfilter[$prefix] == "") {
+                $userfilter[$prefix] = $prefix;
+            }
+        }
+    }
+
+    print("Filter user by prefix: ");
+    print("<a href=\"users.php\">All</a>&nbsp;|&nbsp;");
+    print("<a href=\"users.php?uf=None\">None</a>");
+    foreach ($userfilter as $uf) {
+        print("&nbsp;|&nbsp;<a href=\"users.php?uf=".$uf."\">".$uf."</a>");
+    }
+}
+
 print("<table><tr><td colspan=\"" . $nof_columns . "\">");
 print("</td></tr>");
 print("<tr bgcolor=\"" . $cfg['tpbgcolor'] . "\">");
@@ -56,6 +81,18 @@ print("<td><b>Additional<br />groups</b></td>" .
     "</tr>");
 
 foreach ($users as $user) {
+    if($ufilter != "") {
+        // None means users without a prefix
+        if($ufilter == "None") {
+            if(strpos($user[$cfg['field_userid']], $cfg['userid_filter_separator']) != 0) {
+                continue;
+            }
+        // else check if user has the filtered prefix
+        } elseif (strncmp($user[$cfg['field_userid']], $ufilter, strlen($ufilter)) != 0) {
+            continue;
+        }
+    }
+    
     if (empty($groups[$user[$cfg['field_userid']]])) {
         $groups[$user[$cfg['field_userid']]][0] = "none";
     }
