@@ -61,7 +61,7 @@ if (isset($_REQUEST["id"]) && isset($_REQUEST["gid"]) && isset($_REQUEST["userid
     }
 
     $disabled = isset($_REQUEST["disabled"])?'1':'0';
-    $userdata = array("id" => $_REQUEST["id"], "userid" => $_REQUEST["userid"], "name" => $_REQUEST["name"] , "email" => $_REQUEST["email"] , "comment" => $_REQUEST["comment"] , "gid" => $_REQUEST["gid"] , "user_uid" => $_REQUEST["user_uid"] , "passwd" => $_REQUEST["passwd"] , "homedir" => $_REQUEST["homedir"] , "shell" => $_REQUEST["shell"], "disabled" => $disabled);
+    $userdata = array("id" => $_REQUEST["id"], "userid" => $_REQUEST["userid"], "name" => $_REQUEST["name"] , "email" => $_REQUEST["email"] , "title" => $_REQUEST["title"] , "company" => $_REQUEST["company"] , "comment" => $_REQUEST["comment"] , "gid" => $_REQUEST["gid"] , "user_uid" => $_REQUEST["user_uid"] , "passwd" => $_REQUEST["passwd"] , "homedir" => $_REQUEST["homedir"] , "shell" => $_REQUEST["shell"], "disabled" => $disabled);
     if ($ac->update_user($userdata)) {
         print("Updated user database successfully.<br />");
     }
@@ -116,6 +116,8 @@ if (isset($_REQUEST["id"]) && isset($_REQUEST["gid"]) && isset($_REQUEST["userid
     $homedir = $user[$cfg['field_homedir']];
     $email = $user[$cfg['field_email']];
     $name = $user[$cfg['field_name']];
+    $title = $user[$cfg['field_title']];
+    $company = $user[$cfg['field_company']];
     $groups_array = $ac->parse_groups();
     $groups = $ac->get_groups();
     $default_group = $groups["$gid"];

@@ -88,7 +88,7 @@ if (isset($_REQUEST["p_new"])) {
     }
 */
     $disabled = isset($_REQUEST["disabled"])?'1':'0';
-    $userdata = array("userid" => $_REQUEST["userid"], "name" => $_REQUEST["name"] , "email" => $_REQUEST["email"] , "comment" => $_REQUEST["comment"] , "gid" => $_REQUEST["gid"] , "user_uid" => $_REQUEST["user_uid"] , "passwd" => $_REQUEST["passwd"] , "homedir" => $_REQUEST["homedir"] , "shell" => $_REQUEST["shell"], "disabled" => $disabled);
+    $userdata = array("userid" => $_REQUEST["userid"], "name" => $_REQUEST["name"] , "email" => $_REQUEST["email"] , "title" => $_REQUEST["title"] , "company" => $_REQUEST["company"] , "comment" => $_REQUEST["comment"] , "gid" => $_REQUEST["gid"] , "user_uid" => $_REQUEST["user_uid"] , "passwd" => $_REQUEST["passwd"] , "homedir" => $_REQUEST["homedir"] , "shell" => $_REQUEST["shell"], "disabled" => $disabled);
     if(!$ac->add_user($userdata)) {
         print("An error occured while creating <b>" . $_REQUEST["userid"] . "</b> please check database consistency");
         echo $ac->get_footer();

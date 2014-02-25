@@ -26,6 +26,8 @@ CREATE TABLE `users` (
   `shell` varchar(32) NOT NULL default '/sbin/nologin',
   `email` varchar(255) NOT NULL default '',
   `name` varchar(255) NOT NULL default '',
+  `title` varchar(5) NOT NULL default '',
+  `company` varchar(255) NOT NULL default '',
   `bytes_in_used` bigint(20) unsigned NOT NULL default '0',
   `bytes_out_used` bigint(20) unsigned NOT NULL default '0',
   `files_in_used` bigint(20) unsigned NOT NULL default '0',

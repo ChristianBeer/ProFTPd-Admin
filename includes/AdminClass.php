@@ -7,7 +7,7 @@
  *
  * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
- * 
+ *
  */
 
 include_once "ez_sql_core.php";
@@ -38,7 +38,7 @@ class AdminClass {
     /**
      * version number
      * @access private
-     * @var String 
+     * @var String
      */
     var $version = "2.0";
 
@@ -78,7 +78,7 @@ class AdminClass {
 
         return $footer_file;
     }
-    
+
     /**
      * retrieves groups for each user and populates an array of $data[userid][gid] = groupname
      * @return Array like $data[userid][gid] = groupname
@@ -272,7 +272,7 @@ class AdminClass {
      * @return Boolean true on success, false on failure
      */
     function add_user($userdata) {
-        $query = "INSERT INTO ".$this->config['table_users']." (".$this->config['field_userid'].",".$this->config['field_name'].",".$this->config['field_email'].",".$this->config['field_comment'].",".$this->config['field_gid'].",".$this->config['field_uid'].",".$this->config['field_passwd'].",". $this->config['field_homedir'].",".$this->config['field_shell'].") values ('".$userdata["userid"]."','".$userdata["name"]."','".$userdata["email"]."', '".$userdata["comment"]."','".$userdata["gid"]."','".$userdata["user_uid"]."',".$this->config['passwd_encryption']."('".$userdata["passwd"] . "'),'".$userdata["homedir"]."','".$userdata["shell"] . "')";
+        $query = "INSERT INTO ".$this->config['table_users']." (".$this->config['field_userid'].",".$this->config['field_name'].",".$this->config['field_email'].",".$this->config['field_title'].",".$this->config['field_company'].",".$this->config['field_comment'].",".$this->config['field_gid'].",".$this->config['field_uid'].",".$this->config['field_passwd'].",". $this->config['field_homedir'].",".$this->config['field_shell'].",".$this->config['field_disabled'].") values ('".$userdata["userid"]."','".$userdata["name"]."','".$userdata["email"]."','".$userdata["title"]."','".$userdata["company"]."', '".$userdata["comment"]."','".$userdata["gid"]."','".$userdata["user_uid"]."',".$this->config['passwd_encryption']."('".$userdata["passwd"] . "'),'".$userdata["homedir"]."','".$userdata["shell"]."','".$userdata["disabled"] . "')";
         $result = $this->dbConn->query($query);
         return $result;
     }
@@ -370,7 +370,7 @@ class AdminClass {
         $passwd = '';
         if (strlen($userdata['passwd']) > 0) $passwd = $this->config['field_passwd']."=".$this->config['passwd_encryption']."('" . $userdata["passwd"] . "'), ";
 
-        $query = "UPDATE ".$this->config['table_users']." SET ".$this->config['field_userid']."='".$userdata["userid"]."', ".$this->config['field_name']."='".$userdata["name"]."', ".$this->config['field_email']."='".$userdata["email"]."', ".$this->config['field_comment']."='".$userdata["comment"]."', ".$this->config['field_gid']."='".$userdata["gid"]."', ".$this->config['field_uid']."='".$userdata["user_uid"]."', ".$passwd. $this->config['field_homedir']."='".$userdata["homedir"]."', ".$this->config['field_shell']."='".$userdata["shell"] . "', ".$this->config['field_disabled']."='".$userdata["disabled"] . "' WHERE ".$this->config['field_id']."='".$userdata['id']."'" ;
+        $query = "UPDATE ".$this->config['table_users']." SET ".$this->config['field_userid']."='".$userdata["userid"]."', ".$this->config['field_name']."='".$userdata["name"]."', ".$this->config['field_email']."='".$userdata["email"]."', ".$this->config['field_title']."='".$userdata["title"]."', ".$this->config['field_company']."='".$userdata["company"]."', ".$this->config['field_comment']."='".$userdata["comment"]."', ".$this->config['field_gid']."='".$userdata["gid"]."', ".$this->config['field_uid']."='".$userdata["user_uid"]."', ".$passwd. $this->config['field_homedir']."='".$userdata["homedir"]."', ".$this->config['field_shell']."='".$userdata["shell"] . "', ".$this->config['field_disabled']."='".$userdata["disabled"] . "' WHERE ".$this->config['field_id']."='".$userdata['id']."'" ;
         $result = $this->dbConn->query($query);
         return $result;
     }
@@ -378,7 +378,7 @@ class AdminClass {
     /**
      * removes the given user from all additional groups
      * @param String $userid
-     * 
+     *
      * @todo This function should probably not print anything instead return a boolean status
      */
     function remove_user_from_all_groups($userid) {

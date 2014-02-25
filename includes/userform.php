@@ -40,15 +40,37 @@ $zero=0; //this is needed so phpDocumentor recognizes the docBlock above
        </td>
     </tr>
     <tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
+      <td class="label">Title *:</td>
+      <td>
+        <select name="title">
+        <?php
+          if (@$title == "m") {
+                print("<option value=\"m\" selected=\"selected\">Mr.</option>\n");
+                print("<option value=\"f\">Ms.</option>\n");
+            } else {
+                print("<option value=\"m\">Mr.</option>\n");
+                print("<option value=\"f\" selected=\"selected\">Ms.</option>\n");
+            }
+        ?>
+        </select
+       </td>
+    </tr>
+    <tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
       <td class="label">Real name *:</td>
       <td>
         <input type="text" size="25" maxlength="30" name="name" value="<?php print(@$name) ?>" />
        </td>
     </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
+    <tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
       <td class="label">E-mail address:</td>
       <td>
         <input type="text" size="25" maxlength="30" name="email" value="<?php print(@$email) ?>" />
+      </td>
+    </tr>
+    <tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
+      <td class="label">Company/Department:</td>
+      <td>
+        <input type="text" size="25" maxlength="30" name="company" value="<?php print(@$company) ?>" />
       </td>
     </tr>
     <tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
@@ -82,6 +104,7 @@ $zero=0; //this is needed so phpDocumentor recognizes the docBlock above
             }
           }
         ?>
+        </select>
       </td>
     </tr>
     <tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">

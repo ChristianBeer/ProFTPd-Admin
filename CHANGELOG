@@ -9,11 +9,11 @@
 
 Release: 2.0
 Changes:
- * fixed small bugs and typos
- * fixed Additional Group mechanism
- * updated database schema for newer MySQL servers
- * added checks for empty database
- * added a userid prefix filter for managing a lot of users
+* fixed small bugs and typos
+* fixed Additional Group mechanism
+* updated database schema for newer MySQL servers
+* added checks for empty database
+* added a userid prefix filter for managing a lot of users
 
 Release: 2.0b1
 Changes:

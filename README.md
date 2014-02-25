@@ -46,6 +46,8 @@ Installation
 2. Create a MySQL database (use something like phpMyAdmin for this), for example: "proftpd".
 3. Use tables.sql to populate the database (you can use phpMyAdmin for this).
 4. Add the following to your proftpd.conf (edit to your needs):
+
+```
  SQLBackend                      mysql
  SQLConnectInfo                  database@localhost username password
  SQLAuthenticate                 on
@@ -55,6 +57,7 @@ Installation
  SQLUserWhereClause              "disabled != 1"
  SQLLog PASS                     updatecount
  SQLNamedQuery                   updatecount UPDATE "login_count=login_count+1, last_login=now() WHERE userid='%u'" users
+
  # Used to track xfer traffic per user (without invoking a quota)
  SQLLog RETR                     bytes-out-count
  SQLNamedQuery                   bytes-out-count UPDATE "bytes_out_used=bytes_out_used+%b WHERE userid='%u'" users
@@ -65,6 +68,7 @@ Installation
  SQLNamedQuery                   bytes-in-count UPDATE "bytes_in_used=bytes_in_used+%b WHERE userid='%u'" users
  SQLLog STOR                     files-in-count
  SQLNamedQuery                   files-in-count UPDATE "files_in_used=files_in_used+1 WHERE userid='%u'" users
+```
 
 5. Extract all files to your webspace (into a subdirectory like "proftpdadmin").
 6. Secure access to this directory (for example: create a .htaccess file if using apache)
