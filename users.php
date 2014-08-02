@@ -25,13 +25,16 @@ if (isset($_REQUEST["order"])) {
     $req_order = $_REQUEST["order"] == "asc"?"asc":"desc";
     $bkw_order = $_REQUEST["order"] == "asc"?"desc":"asc";
 }
-$sort = "userid";
-if (isset($_REQUEST["sort"])) $sort = $_REQUEST["sort"];
+$sort = $cfg['field_userid'];
+if (isset($_REQUEST["sort"])) {
+	$sortfield = "field_" . $_REQUEST["sort"];
+	$sort = $cfg[$sortfield];
+}
 
-if ($sort=="") $sort = "userid";
+if ($sort=="") $sort = $cfg['field_userid'];
 $$sort = "&nbsp;<img src=\"images/" . $req_order . ".gif\" alt=\"Arrow\" border=\"0\" valign=\"middle\" />";
 $nof_columns = 13; // added one for additional groups column that is not sortable
-$columns = array("userid" => "Userid", "uid" => "UID", "email" => "E-mail", "last_login" => "Last login", "login_count" => "Nr. of logins", "ul_bytes" => "Upload", "dl_bytes" => "Download", "ul_count" => "Nr. of<br />uploaded<br />files", "dl_count" => "Nr. of<br />downloaded<br />files", "homedir" => "Home<br />directory", "disabled" => "Suspended", "gid" => "Main group");
+$columns = array("userid" => "Userid", "uid" => "UID", "email" => "E-mail", "last_login" => "Last login", "login_count" => "Nr. of logins", "bytes_in_used" => "Upload", "bytes_out_used" => "Download", "files_in_used" => "Nr. of<br />uploaded<br />files", "files_out_used" => "Nr. of<br />downloaded<br />files", "homedir" => "Home<br />directory", "disabled" => "Suspended", "gid" => "Main group");
 
 $counter = 0;
 $users = $ac->get_users_as_array($sort, $req_order);
