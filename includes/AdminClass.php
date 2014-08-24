@@ -12,6 +12,7 @@
 
 include_once "ez_sql_core.php";
 include_once "ez_sql_mysql.php";
+include_once "ez_sql_sqlite3.php";
 include_once "configs/config.php";
 
 /**

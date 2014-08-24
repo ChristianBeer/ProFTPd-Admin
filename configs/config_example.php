@@ -63,6 +63,6 @@ $cfg['db_pass'] = "password";
 
 // use this block for an sqlite3 backend
 $cfg['db_type'] = "sqlite3";
-$cfg['db_path'] = "configs";
+$cfg['db_path'] = "configs/";
 $cfg['db_name'] = "auth.sqlite3";
 ?>
