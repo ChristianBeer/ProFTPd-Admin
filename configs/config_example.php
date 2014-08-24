@@ -54,8 +54,15 @@ $cfg['groupname_regex'] = "/^([a-z][a-z0-9_\-]{0,20})$/i"; //every username must
 // that have a prefix like "pre-username", the first occurence of separator is recognized only!
 $cfg['userid_filter_separator'] = ""; // try "-" or "_" as separators
 
+// use this block for a mysql backend
+$cfg['db_type'] = "mysql"; // if unset, 'db_type' defaults to mysql
 $cfg['db_host'] = "localhost";
 $cfg['db_name'] = "database";
 $cfg['db_user'] = "user";
 $cfg['db_pass'] = "password";
+
+// use this block for an sqlite3 backend
+$cfg['db_type'] = "sqlite3";
+$cfg['db_path'] = "configs";
+$cfg['db_name'] = "auth.sqlite3";
 ?>

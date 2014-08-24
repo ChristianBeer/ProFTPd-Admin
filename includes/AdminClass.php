@@ -27,7 +27,7 @@ include_once "configs/config.php";
 class AdminClass {
     /**
      * database layer
-     * @var ezSQL_mysql
+     * @var ezSQLcore (ezSQL_mysql or ezSQL_sqlite3)
      */
     var $dbConn = false;
     /**
@@ -48,7 +48,14 @@ class AdminClass {
      */
     function AdminClass($cfg) {
         $this->config = $cfg;
-        $this->dbConn = new ezSQL_mysql($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
+        // if db_type is not set, default to mysql
+        if (!in_array('dbtype', $cfg) || $cfg['dbtype'] == "mysql") {
+            $this->dbConn = new ezSQL_mysql($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
+        } elseif ($cfg['dbtype'] == "sqlite3") {
+            $this->dbConn = new ezSQL_sqlite3($this->config['db_path'], $this->config['db_name']);
+        } else {
+            trigger_error('Unsupported database type: '.$cfg['dbtype'], E_USER_WARNING);
+        }
     }
 
     /**
