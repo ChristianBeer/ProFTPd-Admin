@@ -9,133 +9,113 @@
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
  *
  */
-$zero=0; //this is needed so phpDocumentor recognizes the docBlock above
+$zero = 0; // this is needed so phpDocumentor recognizes the docBlock above
 ?>
 
-  <table>
-    <form method="post">
-    <tr>
-      <td colspan="2"></td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['tpbgcolor']) ?>">
-      <td><b>Label</b></td>
-      <td><b>Input</b></td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
-      <td class="label">UID *:</td>
-      <td>
-        <input type="text" size="25" maxlength="20" name="user_uid" value="<?php print($uid) ?>" />
-      </td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
-      <td class="label">Username *:</td>
-      <td>
-        <input type="text" size="25" maxlength="20" name="userid" value="<?php print(@$userid) ?>" />
-      </td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
-      <td class="label">Password * <?php print(@$blank); ?>:</td>
-       <td>
-         <input type="text" size="25" maxlength="20" name="passwd" value="<?php print(@$password) ?>" />
-       </td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
-      <td class="label">Title *:</td>
-      <td>
-        <select name="title">
+<table>
+	<form method="post">
+		<tr>
+			<td colspan="2"></td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['tpbgcolor']) ?>">
+			<td><b>Label</b></td>
+			<td><b>Input</b></td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
+			<td class="label">UID (&gt; 1000)*:</td>
+			<td><input type="text" size="25" maxlength="20" name="user_uid"
+				value="<?php print($uid) ?>" /></td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
+			<td class="label">Username *:</td>
+			<td><input type="text" size="25" maxlength="20" name="userid"
+				value="<?php print(@$userid) ?>" /></td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
+			<td class="label">Password * <?php print(@$blank); ?>:</td>
+			<td><input type="text" size="25" maxlength="20" name="passwd"
+				value="<?php print(@$password) ?>" /></td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
+			<td class="label">Title *:</td>
+			<td><select name="title">
+				<option value="m" <?php if (@$title == "m") { print("selected=\"selected\""); } ?>>Mr.</option>
+				<option value="f" <?php if (@$title == "f") { print("selected=\"selected\""); } ?>>Ms.</option>
+			</select</td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
+			<td class="label">Real name *:</td>
+			<td><input type="text" size="25" maxlength="30" name="name" value="<?php print(@$name) ?>" /></td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
+			<td class="label">E-mail address:</td>
+			<td><input type="text" size="25" maxlength="30" name="email" value="<?php print(@$email) ?>" /></td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
+			<td class="label">Company/Department:</td>
+			<td><input type="text" size="25" maxlength="30" name="company" value="<?php print(@$company) ?>" /></td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
+			<td class="label">Home directory * (no trailing slash):</td>
+			<td><input type="text" size="25" maxlength="60" name="homedir" value="<?php print($homedir) ?>" /></td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
+			<td class="label">Suspend this user account?</td>
+			<td><input type="checkbox" name="disabled" <?php if (@$disabled == 1) { print("checked"); } ?>/></td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
+			<td class="label">Main group *:</td>
+			<td>
+				<select name="gid">
         <?php
-          if (@$title == "m") {
-                print("<option value=\"m\" selected=\"selected\">Mr.</option>\n");
-                print("<option value=\"f\">Ms.</option>\n");
-            } else {
-                print("<option value=\"m\">Mr.</option>\n");
-                print("<option value=\"f\" selected=\"selected\">Ms.</option>\n");
-            }
-        ?>
-        </select
-       </td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
-      <td class="label">Real name *:</td>
-      <td>
-        <input type="text" size="25" maxlength="30" name="name" value="<?php print(@$name) ?>" />
-       </td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
-      <td class="label">E-mail address:</td>
-      <td>
-        <input type="text" size="25" maxlength="30" name="email" value="<?php print(@$email) ?>" />
-      </td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
-      <td class="label">Company/Department:</td>
-      <td>
-        <input type="text" size="25" maxlength="30" name="company" value="<?php print(@$company) ?>" />
-      </td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
-      <td class="label">Home directory * (no trailing slash):</td>
-      <td>
-        <input type="text" size="25" maxlength="60" name="homedir" value="<?php print($homedir) ?>" />
-       </td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
-      <td class="label">Suspend this user account?</td>
-      <td>
+			while ( list ( $gid, $group ) = each ( $groups ) ) {
+				if ($group == @$default_group) {
+					print ("<option value=\"$gid\" selected=\"selected\">$group</option>\n") ;
+				} else {
+					print ("<option value=\"$gid\">$group</option>\n") ;
+				}
+			}
+		?>
+				</select>
+			</td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
+			<td class="label">Additional groups:</td>
+			<td>
         <?php
-        if (@$disabled == 1) {
-            print("<input type=\"checkbox\" name=\"disabled\" checked />");
-        } else {
-            print("<input type=\"checkbox\" name=\"disabled\" />");
-        }
-        ?>
-       </td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
-      <td class="label">Main group *:</td>
-      <td>
-        <select name="gid">
-        <?php
-          while (list($gid,$group) = each($groups)){
-            if ($group == @$default_group) {
-                print("<option value=\"$gid\" selected=\"selected\">$group</option>\n");
-            } else {
-                print("<option value=\"$gid\">$group</option>\n");
-            }
-          }
-        ?>
-        </select>
+			reset ( $groups );
+			$cnt = 0;
+			while ( list ( $gid, $group ) = each ( $groups ) ) {
+				if (@$default_group != $group) {
+					if ($group == @$uid_groups [$gid]) {
+						print ("<input type=checkbox name=\"ad_gid[$cnt]\" value=\"$group\" checked=\"checked\" />$group ") ;
+					} else {
+						print ("<input type=checkbox name=\"ad_gid[$cnt]\" value=\"$group\" />$group ") ;
+					}
+					$cnt = $cnt + 1;
+				}
+			}
+		?>
       </td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor1']) ?>">
-      <td class="label">Additional groups:</td>
-      <td>
-        <?php
-          reset($groups);
-          $cnt = 0;
-          while (list ($gid, $group) = each ($groups)) {
-            if (@$default_group != $group) {
-              if ($group == @$uid_groups[$gid]) {
-                print("<input type=checkbox name=\"ad_gid[$cnt]\" value=\"$group\" checked=\"checked\" />$group ");
-              } else {
-                print("<input type=checkbox name=\"ad_gid[$cnt]\" value=\"$group\" />$group ");
-              }
-              $cnt = $cnt + 1;
-            }
-          }
-        ?>
-      </td>
-    </tr>
-    <tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
-      <td class="label" valign="top">Comment/Info:</td>
-      <td>
-        <textarea name="comment" rows="5" cols="32"><?php print(@$comment) ?></textarea>
-      </td>
-    </tr>
-    <tr>
-      <td align="left" >*<i>required</i></td>
-    </tr>
-    <td>
-      <input type="hidden" size="40" maxlength="60" name="shell" value="/bin/false" />
-      <input type="hidden" name="uid" value="<?php print($uid) ?>" />
-    </td>
+		</tr>
+		<tr bgcolor="<?php print ($cfg['dwbgcolor2']) ?>">
+			<td class="label" valign="top">Comment/Info:</td>
+			<td><textarea name="comment" rows="5" cols="32"><?php print(@$comment) ?></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td align="left">*<i>required</i></td>
+		</tr>
+		<tr>
+			<td>
+				<input type="hidden" size="40" maxlength="60" name="shell" value="/bin/false" />
+				<input type="hidden" name="uid" value="<?php print($uid) ?>" />
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center">
+				<input type="submit" name="p_new" value="Create" />
+			</td>
+		</tr>
+	</form>
+</table>

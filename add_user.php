@@ -129,9 +129,6 @@ if (empty($cfg['default_uid'])) {
 $homedir = $cfg['default_homedir'];
 
 include ("includes/userform.php");
-print("<tr><td colspan=\"2\" align=\"center\">" .
-        "<input type=\"submit\" name=\"p_new\" value=\"Create\">" .
-        "</td></tr></form></table>");
 
 echo $ac->get_footer();
 ?>

@@ -52,18 +52,8 @@ if (isset($_REQUEST["new_group_name"]) & isset($_REQUEST["new_group_gid"])) {
         print("Created new group: <b>" . $_REQUEST["new_group_name"] . "</b><br />");
     }
 }
-print("<table><form method=\"post\">" .
-      "<tr><td colspan=\"2\"></td></tr>" .
-      "<tr bgcolor=\"" . $cfg['tpbgcolor'] . "\"><td><b>Label</b></td><td><b>Input</b></td></tr>" .
-      "<tr bgcolor=\"" . $cfg['dwbgcolor1'] . "\"><td>Group name *:</td><td>" .
-      "<input type=\"hidden\" size=\"10\" name=\"action\" value=\"newgroup\">" .
-      "<input type=\"text\" size=\"20\" name=\"new_group_name\">" .
-      "<tr bgcolor=\"" . $cfg['dwbgcolor2'] . "\"><td>GID *:</td><td>" .
-      "<input type=\"text\" size=\"20\" name=\"new_group_gid\">" .
-      "<br /><tr><td>*<i>required</i></tr></td></td></tr>" .
-      "<tr><td colspan=\"2\" align=\"center\">" .
-      "<input type=\"submit\" value=\"Create\">" .
-      "</td></tr></form></table>");
+
+include ("includes/groupform.php");
 
 echo $ac->get_footer();
 ?>
