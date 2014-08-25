@@ -45,7 +45,8 @@ $cfg['field_files_out_used'] = "files_out_used";
 
 $cfg['default_uid'] = ""; //if empty next incremental will be default
 $cfg['default_homedir'] = "/srv/ftp";
-$cfg['passwd_encryption'] = "MD5"; // either SHA1 or MD5 or any other supported by your MySQL-Server and ProFTPd
+// deprecated for Crypt, which is more portable
+//$cfg['passwd_encryption'] = "MD5"; // either SHA1 or MD5 or any other supported by your MySQL-Server and ProFTPd
 $cfg['min_passwd_length'] = "6";
 $cfg['userid_regex']    = "/^([a-z][a-z0-9_\-]{0,20})$/i"; //every username must comply with this regex
 $cfg['groupname_regex'] = "/^([a-z][a-z0-9_\-]{0,20})$/i"; //every username must comply with this regex
