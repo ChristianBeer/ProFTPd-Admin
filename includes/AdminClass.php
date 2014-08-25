@@ -13,7 +13,6 @@
 include_once "ez_sql_core.php";
 include_once "ez_sql_mysql.php";
 include_once "ez_sql_sqlite3.php";
-include_once "configs/config.php";
 
 /**
  * Provides all functions needed by the individual scripts
@@ -50,12 +49,12 @@ class AdminClass {
     function AdminClass($cfg) {
         $this->config = $cfg;
         // if db_type is not set, default to mysql
-        if (!in_array('dbtype', $cfg) || $cfg['dbtype'] == "mysql") {
+        if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysql") {
             $this->dbConn = new ezSQL_mysql($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
-        } elseif ($cfg['dbtype'] == "sqlite3") {
+        } elseif ($cfg['db_type'] == "sqlite3") {
             $this->dbConn = new ezSQL_sqlite3($this->config['db_path'], $this->config['db_name']);
         } else {
-            trigger_error('Unsupported database type: '.$cfg['dbtype'], E_USER_WARNING);
+            trigger_error('Unsupported database type: "'.$cfg['db_type'].'"', E_USER_WARNING);
         }
     }
 

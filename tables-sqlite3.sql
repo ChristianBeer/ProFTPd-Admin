@@ -1,17 +1,9 @@
-#
-# Table structure for table `groups`
-#
-
 CREATE TABLE `groups` (
   `groupname` VARCHAR(16) UNIQUE NOT NULL default '',
   `gid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   `members` VARCHAR(255) NOT NULL default ''
 );
 CREATE UNIQUE INDEX `groupname` ON groups (`groupname`);
-
-#
-# Table structure for table `users`
-#
 
 CREATE TABLE `users` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
