@@ -107,7 +107,7 @@ if (isset($_REQUEST["p_new"])) {
 }
 
 $groups = $ac->get_groups();
-if (!is_array($groups)) {
+if (count($groups) == 0) {
     print("<strong>No groups available, please create at least one group!</strong>");
     echo $ac->get_footer();
     die;

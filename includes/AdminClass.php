@@ -92,17 +92,17 @@ class AdminClass {
      */
     function parse_groups() {
         $result = $this->dbConn->get_results("select * from " . $this->config['table_groups']);
-        if (!$result) return false;
-
         $data = array();
-        $field_members = $this->config['field_members'];
-        $field_gid = $this->config['field_gid'];
-        $field_groupname = $this->config['field_groupname'];
-        foreach ($result as $group) {
-            $names = explode(",", $group->$field_members);
-            reset($names);
-            while (list($key, $name) = each($names)) {
-                $data[$name][$group->$field_gid] = $group->$field_groupname;
+        if ($result) {
+            $field_members = $this->config['field_members'];
+            $field_gid = $this->config['field_gid'];
+            $field_groupname = $this->config['field_groupname'];
+            foreach ($result as $group) {
+                $names = explode(",", $group->$field_members);
+                reset($names);
+                while (list($key, $name) = each($names)) {
+                    $data[$name][$group->$field_gid] = $group->$field_groupname;
+                }
             }
         }
         return $data;
@@ -116,13 +116,13 @@ class AdminClass {
      */
     function get_groups() {
         $result = $this->dbConn->get_results("select * from " . $this->config['table_groups'] . " ORDER BY " . $this->config['field_gid'] . " ASC");
-        if (!$result) return false;
-
         $data = array();
-        $field_gid = $this->config['field_gid'];
-        $field_groupname = $this->config['field_groupname'];
-        foreach ($result as $group){
-            $data[$group->$field_gid] = $group->$field_groupname;
+        if ($result) {
+            $field_gid = $this->config['field_gid'];
+            $field_groupname = $this->config['field_groupname'];
+        	foreach ($result as $group){
+                $data[$group->$field_gid] = $group->$field_groupname;
+            }
         }
         return $data;
     }
