@@ -10,6 +10,7 @@
  *
  */
 
+require "hash_pbkdf2_compat.php"; // hash_pbkdf2 implementation for 5.3 <= PHP < 5.5 
 include_once "ez_sql_core.php";
 include_once "ez_sql_mysql.php";
 include_once "ez_sql_sqlite3.php";
@@ -279,7 +280,7 @@ class AdminClass {
      * @return Boolean true on success, false on failure
      */
     function add_user($userdata) {
-    	$password = crypt($userdata["passwd"]);
+        $password = hash_pbkdf2("sha1", $userdata["passwd"], $userdata["userid"], 5000, 20);
         $query = "INSERT INTO ".$this->config['table_users']." (".$this->config['field_userid'].",".$this->config['field_name'].",".$this->config['field_email'].",".$this->config['field_title'].",".$this->config['field_company'].",".$this->config['field_comment'].",".$this->config['field_gid'].",".$this->config['field_uid'].",".$this->config['field_passwd'].",". $this->config['field_homedir'].",".$this->config['field_shell'].",".$this->config['field_disabled'].") values ('".$userdata["userid"]."','".$userdata["name"]."','".$userdata["email"]."','".$userdata["title"]."','".$userdata["company"]."', '".$userdata["comment"]."','".$userdata["gid"]."','".$userdata["user_uid"]."','".$password."','".$userdata["homedir"]."','".$userdata["shell"]."','".$userdata["disabled"] . "')";
         $result = $this->dbConn->query($query);
         return $result;
@@ -377,7 +378,8 @@ class AdminClass {
     function update_user($userdata) {
         $passwd = '';
         if (strlen($userdata['passwd']) > 0) {
-            $passwd = $this->config['field_passwd']."='".crypt($userdata["passwd"])."', ";
+            $passhash = hash_pbkdf2("sha1", $userdata["passwd"], $userdata["userid"], 5000, 20);
+            $passwd = $this->config['field_passwd']."='".$passhash."', ";
         }
 
         $query = "UPDATE ".$this->config['table_users']." SET ".$this->config['field_userid']."='".$userdata["userid"]."', ".$this->config['field_name']."='".$userdata["name"]."', ".$this->config['field_email']."='".$userdata["email"]."', ".$this->config['field_title']."='".$userdata["title"]."', ".$this->config['field_company']."='".$userdata["company"]."', ".$this->config['field_comment']."='".$userdata["comment"]."', ".$this->config['field_gid']."='".$userdata["gid"]."', ".$this->config['field_uid']."='".$userdata["user_uid"]."', ".$passwd. $this->config['field_homedir']."='".$userdata["homedir"]."', ".$this->config['field_shell']."='".$userdata["shell"] . "', ".$this->config['field_disabled']."='".$userdata["disabled"] . "' WHERE ".$this->config['field_id']."='".$userdata['id']."'" ;
