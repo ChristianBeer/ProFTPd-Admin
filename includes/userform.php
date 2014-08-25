@@ -112,10 +112,3 @@ $zero = 0; // this is needed so phpDocumentor recognizes the docBlock above
 				<input type="hidden" name="uid" value="<?php print($uid) ?>" />
 			</td>
 		</tr>
-		<tr>
-			<td colspan="2" align="center">
-				<input type="submit" name="p_new" value="Create" />
-			</td>
-		</tr>
-	</form>
-</table>

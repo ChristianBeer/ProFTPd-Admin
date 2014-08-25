@@ -280,7 +280,7 @@ class AdminClass {
      * @return Boolean true on success, false on failure
      */
     function add_user($userdata) {
-        $password = hash_pbkdf2("sha1", $userdata["passwd"], $userdata["userid"], 5000, 20);
+        $password = hash_pbkdf2("sha1", $userdata["passwd"], $userdata["userid"], 5000, 40);
         $query = "INSERT INTO ".$this->config['table_users']." (".$this->config['field_userid'].",".$this->config['field_name'].",".$this->config['field_email'].",".$this->config['field_title'].",".$this->config['field_company'].",".$this->config['field_comment'].",".$this->config['field_gid'].",".$this->config['field_uid'].",".$this->config['field_passwd'].",". $this->config['field_homedir'].",".$this->config['field_shell'].",".$this->config['field_disabled'].") values ('".$userdata["userid"]."','".$userdata["name"]."','".$userdata["email"]."','".$userdata["title"]."','".$userdata["company"]."', '".$userdata["comment"]."','".$userdata["gid"]."','".$userdata["user_uid"]."','".$password."','".$userdata["homedir"]."','".$userdata["shell"]."','".$userdata["disabled"] . "')";
         $result = $this->dbConn->query($query);
         return $result;
@@ -378,7 +378,7 @@ class AdminClass {
     function update_user($userdata) {
         $passwd = '';
         if (strlen($userdata['passwd']) > 0) {
-            $passhash = hash_pbkdf2("sha1", $userdata["passwd"], $userdata["userid"], 5000, 20);
+            $passhash = hash_pbkdf2("sha1", $userdata["passwd"], $userdata["userid"], 5000, 40);
             $passwd = $this->config['field_passwd']."='".$passhash."', ";
         }
 

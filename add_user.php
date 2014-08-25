@@ -129,6 +129,7 @@ if (empty($cfg['default_uid'])) {
 $homedir = $cfg['default_homedir'];
 
 include ("includes/userform.php");
+include("includes/userform_add.php");
 
 echo $ac->get_footer();
 ?>

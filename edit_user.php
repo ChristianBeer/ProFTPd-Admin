@@ -41,18 +41,6 @@ if (isset($_REQUEST["id"]) && isset($_REQUEST["gid"]) && isset($_REQUEST["userid
         echo $ac->get_footer();
         die;
     }
-    /*
-    if (strlen($_REQUEST["name"]) <= 1) {
-        print("Incorrect name, please try again.<br />");
-        echo $ac->get_footer();
-        die;
-    }
-
-    if (strlen($_REQUEST["email"])<=4) {
-      print("Incorrect mail adress, please try again.<br />");
-      echo $ac->get_footer();
-      die;
-      } */
     $pw_len = strlen($_REQUEST["passwd"]);
     if ($pw_len > 0 && $pw_len <= $cfg['min_passwd_length']) {
         print "Password is too short, must be at least ".$cfg['min_passwd_length']." characters. Please try again.<br />";
@@ -124,14 +112,7 @@ if (isset($_REQUEST["id"]) && isset($_REQUEST["gid"]) && isset($_REQUEST["userid
     $uid_groups = @$groups_array["$userid"];
     $blank = "(blank = don't change)";
     include("includes/userform.php");
-    print("<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Update\">" .
-            "</td></tr></form>" .
-            "<tr><td colspan=\"2\" align=\"center\"><form method=\"post\">" .
-            "<input type=\"hidden\" name=\"uid\" value=\"" . $uid . "\">" .
-            "<input type=\"hidden\" name=\"action\" value=\"remove\">" .
-            "<input type=\"hidden\" name=\"userid\" value=\"" . $userid . "\">" .
-            "<input type=\"submit\" value=\"Remove\">" .
-            "</td></tr></form></table>");
+    include("includes/userform_edit.php");
 } else {
     print("User not found.");
 }
