@@ -376,7 +376,9 @@ class AdminClass {
      */
     function update_user($userdata) {
         $passwd = '';
-        if (strlen($userdata['passwd']) > 0) $passwd = $this->config['field_passwd']."=".$this->config['passwd_encryption']."('" . $userdata["passwd"] . "'), ";
+        if (strlen($userdata['passwd']) > 0) {
+            $passwd = $this->config['field_passwd']."='".crypt($userdata["passwd"])."', ";
+        }
 
         $query = "UPDATE ".$this->config['table_users']." SET ".$this->config['field_userid']."='".$userdata["userid"]."', ".$this->config['field_name']."='".$userdata["name"]."', ".$this->config['field_email']."='".$userdata["email"]."', ".$this->config['field_title']."='".$userdata["title"]."', ".$this->config['field_company']."='".$userdata["company"]."', ".$this->config['field_comment']."='".$userdata["comment"]."', ".$this->config['field_gid']."='".$userdata["gid"]."', ".$this->config['field_uid']."='".$userdata["user_uid"]."', ".$passwd. $this->config['field_homedir']."='".$userdata["homedir"]."', ".$this->config['field_shell']."='".$userdata["shell"] . "', ".$this->config['field_disabled']."='".$userdata["disabled"] . "' WHERE ".$this->config['field_id']."='".$userdata['id']."'" ;
         $result = $this->dbConn->query($query);
