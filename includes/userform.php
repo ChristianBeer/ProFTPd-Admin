@@ -136,6 +136,6 @@ $zero=0; //this is needed so phpDocumentor recognizes the docBlock above
       <td align="left" >*<i>required</i></td>
     </tr>
     <td>
-      <input type="hidden" size="40" maxlength="60" name="shell" value="/sbin/false" />
+      <input type="hidden" size="40" maxlength="60" name="shell" value="/bin/false" />
       <input type="hidden" name="uid" value="<?php print($uid) ?>" />
     </td>
