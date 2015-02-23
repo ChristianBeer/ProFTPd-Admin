@@ -5,11 +5,10 @@
  * @package ProFTPd-Admin
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
- * @copyright Ricardo Padilha <ricardo@droboports.com>
- * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ * @copyright Christian Beer <djangofett@gmx.net>
+ * @copyright Ricardo Padilha <ricardo@droboports.com>
  *
- * @todo some database column names are not generic
  */
 
 include_once ("configs/config.php");
@@ -77,95 +76,101 @@ include ("includes/header.php");
 
 <?php if (is_array($group)) { ?>
 <!-- Users panel -->
-<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+<div class="col-xs-12 col-sm-6">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">Group membership</h3>
+      <h3 class="panel-title">
+       	<a data-toggle="collapse" href="#groupmembership" aria-expanded="true" aria-controls="groupmembership">Group membership</a>
+      </h3>
     </div>
-    <div class="panel-body">
-      <!-- Main users table -->
-      <h4>Main users</h4>
-      <?php if (!$users_main) { ?>
-        <p>Currently there are no users with this group as their main group.</p>
-      <?php } else { ?>
-        <table class="table table-striped table-condensed sortable">
-          <thead>
-            <th>UID</th>
-            <th><span class="glyphicon glyphicon-user" aria-hidden="true" title="User"></th>
-            <th><span class="glyphicon glyphicon-lock" aria-hidden="true" title="Suspended"></th>
-            <th data-defaultsort="disabled"></th>
-          </thead>
-          <tbody>
-            <?php reset($users_main); while (list($u_id, $u_userid) = each($users_main)) {
-              $user = $ac->get_user_by_id($u_id); ?>
-              <tr>
-                <td class="pull-middle"><?= $user[$field_uid] ?></td>
-                <td class="pull-middle"><?= $u_userid ?></td>
-                <td class="pull-middle"><?= ($user[$field_disabled] ? 'Yes' : 'No') ?></td>
-                <td class="pull-middle">
-                  <div class="btn-toolbar pull-right" role="toolbar">
-                    <a class="btn-group" role="group" href="edit_user.php?action=show&<?= $field_id ?>=<?= $u_id ?>"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                    <a class="btn-group" role="group" href="remove_user.php?action=remove&<?= $field_id ?>=<?= $u_id ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-                  </div>
-                </td>
-              </tr>
-            <?php } ?>
-          </tbody>
-        </table>
-      <?php } ?>
-      <!-- Additional users table -->
-      <h4>Additional users</h4>
-      <?php if (!$users_add) { ?>
-        <p>Currently there are no users with this group in their additional groups.</p>
-      <?php } else { ?>
-        <table class="table table-striped table-condensed sortable">
-          <thead>
-            <th>UID</th>
-            <th><span class="glyphicon glyphicon-user" aria-hidden="true" title="User"></th>
-            <th><span class="glyphicon glyphicon-lock" aria-hidden="true" title="Suspended"></th>
-            <th data-defaultsort="disabled"></th>
-          </thead>
-          <tbody>
-            <?php reset($users_add); while (list($u_id, $u_userid) = each($users_add)) {
-              $user = $ac->get_user_by_id($u_id); ?>
-              <tr>
-                <td class="pull-middle"><?= $user[$field_uid] ?></td>
-                <td class="pull-middle"><?= $u_userid ?></td>
-                <td class="pull-middle"><?= ($user[$field_disabled] ? 'Yes' : 'No') ?></td>
-                <td class="pull-middle">
-                  <div class="btn-toolbar pull-right" role="toolbar">
-                    <a class="btn-group" role="group" href="edit_user.php?action=show&<?= $field_id ?>=<?= $u_id ?>"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                    <a class="btn-group" role="group" href="remove_user.php?action=remove&<?= $field_id ?>=<?= $u_id ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-                  </div>
-                </td>
-              </tr>
-            <?php } ?>
-          </tbody>
-        </table>
-      <?php } ?>
+    <div class="panel-body collapse in" id="groupmembership" aria-expanded="true">
+      <div class="col-sm-12">
+    		<!-- Main users table -->
+	      <h4>Main users</h4>
+	      <?php if (!$users_main) { ?>
+	        <p>Currently there are no users with this group as their main group.</p>
+	      <?php } else { ?>
+	        <table class="table table-striped table-condensed sortable">
+	          <thead>
+	            <th>UID</th>
+	            <th><span class="glyphicon glyphicon-user" aria-hidden="true" title="User"></th>
+	            <th><span class="glyphicon glyphicon-lock" aria-hidden="true" title="Suspended"></th>
+	            <th data-defaultsort="disabled"></th>
+	          </thead>
+	          <tbody>
+	            <?php reset($users_main); while (list($u_id, $u_userid) = each($users_main)) {
+	              $user = $ac->get_user_by_id($u_id); ?>
+	              <tr>
+	                <td class="pull-middle"><?= $user[$field_uid] ?></td>
+	                <td class="pull-middle"><?= $u_userid ?></td>
+	                <td class="pull-middle"><?= ($user[$field_disabled] ? 'Yes' : 'No') ?></td>
+	                <td class="pull-middle">
+	                  <div class="btn-toolbar pull-right" role="toolbar">
+	                    <a class="btn-group" role="group" href="edit_user.php?action=show&<?= $field_id ?>=<?= $u_id ?>"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+	                    <a class="btn-group" role="group" href="remove_user.php?action=remove&<?= $field_id ?>=<?= $u_id ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+	                  </div>
+	                </td>
+	              </tr>
+	            <?php } ?>
+	          </tbody>
+	        </table>
+	      <?php } ?>
+	      <!-- Additional users table -->
+	      <h4>Additional users</h4>
+	      <?php if (!$users_add) { ?>
+	        <p>Currently there are no users with this group in their additional groups.</p>
+	      <?php } else { ?>
+	        <table class="table table-striped table-condensed sortable">
+	          <thead>
+	            <th>UID</th>
+	            <th><span class="glyphicon glyphicon-user" aria-hidden="true" title="User"></th>
+	            <th><span class="glyphicon glyphicon-lock" aria-hidden="true" title="Suspended"></th>
+	            <th data-defaultsort="disabled"></th>
+	          </thead>
+	          <tbody>
+	            <?php reset($users_add); while (list($u_id, $u_userid) = each($users_add)) {
+	              $user = $ac->get_user_by_id($u_id); ?>
+	              <tr>
+	                <td class="pull-middle"><?= $user[$field_uid] ?></td>
+	                <td class="pull-middle"><?= $u_userid ?></td>
+	                <td class="pull-middle"><?= ($user[$field_disabled] ? 'Yes' : 'No') ?></td>
+	                <td class="pull-middle">
+	                  <div class="btn-toolbar pull-right" role="toolbar">
+	                    <a class="btn-group" role="group" href="edit_user.php?action=show&<?= $field_id ?>=<?= $u_id ?>"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+	                    <a class="btn-group" role="group" href="remove_user.php?action=remove&<?= $field_id ?>=<?= $u_id ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+	                  </div>
+	                </td>
+	              </tr>
+	            <?php } ?>
+	          </tbody>
+	        </table>
+	      <?php } ?>
+	    </div>
     </div>
   </div>
 </div>
 <!-- Edit panel -->
-<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+<div class="col-xs-12 col-sm-6">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">Group properties</h3>
+      <h3 class="panel-title">
+       	<a data-toggle="collapse" href="#groupprops" aria-expanded="true" aria-controls="groupprops">Group properties</a>
+      </h3>
     </div>
-    <div class="panel-body">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="panel-body collapse in" id="groupprops" aria-expanded="true">
+      <div class="col-sm-12">
         <form role="form" class="form-horizontal" method="post" data-toggle="validator">
           <!-- Group name (readonly) -->
           <div class="form-group">
-            <label for="<?= $cfg['field_groupname'] ?>" class="col-sm-3 control-label">Group name</label>
-            <div class="controls col-sm-9">
+            <label for="<?= $cfg['field_groupname'] ?>" class="col-sm-4 control-label">Group name</label>
+            <div class="controls col-sm-8">
               <input type="text" class="form-control" id="<?= $cfg['field_groupname'] ?>" name="<?= $cfg['field_groupname'] ?>" value="<?= $groupname ?>" readonly />
             </div>
           </div>
           <!-- GID -->
           <div class="form-group">
-            <label for="<?= $cfg['field_gid'] ?>" class="col-sm-3 control-label">New GID</label>
-            <div class="col-sm-9">
+            <label for="<?= $cfg['field_gid'] ?>" class="col-sm-4 control-label">New GID</label>
+            <div class="col-sm-8">
               <input type="number" class="form-control" id="new_<?= $cfg['field_gid'] ?>" name="new_<?= $cfg['field_gid'] ?>" value="<?= $gid ?>" placeholder="Enter the new GID" min="1" required />
               <p class="help-block"><small>Positive integer.</small></p>
             </div>

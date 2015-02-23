@@ -1,4 +1,4 @@
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div class="col-xs-12 col-sm-8 col-md-6 center">
 <?php if (isset($errormsg)) { ?>
   <div class="alert alert-danger" role="alert">
     <p><?= $errormsg ?></p>

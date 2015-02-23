@@ -5,9 +5,9 @@
  * @package ProFTPd-Admin
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
- * @copyright Ricardo Padilha <ricardo@droboports.com>
- * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ * @copyright Christian Beer <djangofett@gmx.net>
+ * @copyright Ricardo Padilha <ricardo@droboports.com>
  *
  */
 
@@ -63,12 +63,11 @@ include ("includes/header.php");
 
 <?php if (!empty($_REQUEST["action"]) && $_REQUEST["action"] == "reallyremove") { ?>
 <!-- action: reallyremove -->
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div class="col-xs-12 col-sm-8 col-md-6 center">
   <div class="panel panel-default">
     <div class="panel-body">
       <div class="row">
-        <div class="hidden-xs col-sm-3 col-md-3 col-lg-3"></div>
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <div class="col-sm-12">
           <!-- Actions -->
           <div class="form-group">
             <div class="col-sm-12">
@@ -76,7 +75,6 @@ include ("includes/header.php");
             </div>
           </div>
         </div>
-        <div class="hidden-xs col-sm-3 col-md-3 col-lg-3"></div>
       </div>
     </div>
   </div>
@@ -84,15 +82,14 @@ include ("includes/header.php");
 
 <?php } else { ?>
 <!-- action: remove -->
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div class="col-xs-12 col-sm-8 col-md-6 center">
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">Remove group</h3>
     </div>
     <div class="panel-body">
       <div class="row">
-        <div class="hidden-xs col-sm-3 col-md-3 col-lg-3"></div>
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <div class="col-sm-12">
           <form role="form" class="form-horizontal" method="post">
             <!-- GID -->
             <div class="form-group">
@@ -110,7 +107,6 @@ include ("includes/header.php");
             </div>
           </form>
         </div>
-        <div class="hidden-xs col-sm-3 col-md-3 col-lg-3"></div>
       </div>
     </div>
   </div>

@@ -16,18 +16,10 @@ body {
     margin-left: 10px;
 }
 
-.app {
-  padding: 2px 10px 0px 10px;
-}
-
 .oneline {
   overflow: hidden;
   white-space:nowrap;
   text-overflow: ellipsis;
-}
-
-.github-icon {
-  margin-top: 9px;
 }
 
 .center {

@@ -5,9 +5,9 @@
  * @package ProFTPd-Admin
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
- * @copyright Ricardo Padilha <ricardo@droboports.com>
- * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ * @copyright Christian Beer <djangofett@gmx.net>
+ * @copyright Ricardo Padilha <ricardo@droboports.com>
  *
  */
 
@@ -100,8 +100,6 @@ class AdminClass {
     /**
      * retrieves the list of groups and populates an array of $data[gid] = groupname
      * @return Array like $data[gid] = groupname
-     *
-     * @todo make database fields generic from config
      */
     function get_groups() {
         $format = 'SELECT * FROM %s ORDER BY %s ASC';

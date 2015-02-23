@@ -5,9 +5,9 @@
  * @package ProFTPd-Admin
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
- * @copyright Ricardo Padilha <ricardo@droboports.com>
- * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ * @copyright Christian Beer <djangofett@gmx.net>
+ * @copyright Ricardo Padilha <ricardo@droboports.com>
  *
  */
 
@@ -153,36 +153,35 @@ include ("includes/header.php");
 ?>
 <?php include ("includes/messages.php"); ?>
 
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div class="col-xs-12 col-sm-8 col-md-6 center">
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">Add user</h3>
     </div>
     <div class="panel-body">
       <div class="row">
-        <div class="hidden-xs col-sm-2 col-md-3 col-lg-3"></div>
-        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6">
+        <div class="col-sm-12">
           <form role="form" class="form-horizontal" method="post" data-toggle="validator">
             <!-- User name -->
             <div class="form-group">
-              <label for="<?= $field_userid ?>" class="col-sm-3 control-label">User name</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_userid ?>" class="col-sm-4 control-label">User name</label>
+              <div class="controls col-sm-8">
                 <input type="text" class="form-control" id="<?= $field_userid ?>" name="<?= $field_userid ?>" value="<?= $userid ?>" placeholder="Enter a user name" maxlength="<?= $cfg['max_userid_length'] ?>" pattern="<?= substr($cfg['userid_regex'], 2, -3) ?>" required />
                 <p class="help-block"><small>Only letters, numbers, hyphens, and underscores. Maximum <?= $cfg['max_userid_length'] ?> characters.</small></p>
               </div>
             </div>
             <!-- UID -->
             <div class="form-group">
-              <label for="<?= $field_uid ?>" class="col-sm-3 control-label">UID</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_uid ?>" class="col-sm-4 control-label">UID</label>
+              <div class="controls col-sm-8">
                 <input type="number" class="form-control" id="<?= $field_uid ?>" name="<?= $field_uid ?>" value="<?= $uid ?>" min="1" placeholder="Enter a UID" required />
                 <p class="help-block"><small>Positive integer.</small></p>
               </div>
             </div>
             <!-- Main group -->
             <div class="form-group">
-              <label for="<?= $field_gid ?>" class="col-sm-3 control-label">Main group</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_gid ?>" class="col-sm-4 control-label">Main group</label>
+              <div class="controls col-sm-8">
                 <select class="form-control multiselect" id="<?= $field_gid ?>" name="<?= $field_gid ?>" required>
                   <?php	while (list($g_gid, $g_group) = each($groups)) { ?>
           				  <option value="<?= $g_gid ?>" <?php if ($gid == $g_gid) { echo 'selected="selected"'; } ?>><?= $g_group ?></option>
@@ -192,8 +191,8 @@ include ("includes/header.php");
             </div>
             <!-- Additional groups -->
             <div class="form-group">
-              <label for="ad_gid" class="col-sm-3 control-label">Additional groups</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_ad_gid ?>" class="col-sm-4 control-label">Additional groups</label>
+              <div class="controls col-sm-8">
                 <select class="form-control multiselect" id="<?= $field_ad_gid ?>" name="<?= $field_ad_gid ?>[]" multiple="multiple">
                   <?php reset ($groups); while (list($g_gid, $g_group) = each($groups)) { ?>
           				  <option value="<?= $g_gid ?>" <?php if (array_key_exists($g_gid, $ad_gid)) { echo 'selected="selected"'; } ?>><?= $g_group ?></option>
@@ -203,30 +202,30 @@ include ("includes/header.php");
             </div>
             <!-- Password -->
             <div class="form-group">
-              <label for="<?= $field_passwd ?>" class="col-sm-3 control-label">Password</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_passwd ?>" class="col-sm-4 control-label">Password</label>
+              <div class="controls col-sm-8">
                 <input type="text" class="form-control" id="<?= $field_passwd ?>" name="<?= $field_passwd ?>" value="<?= $passwd ?>" placeholder="Enter a password" minlength="<?= $cfg['min_passwd_length'] ?>" required />
                 <p class="help-block"><small>Minimum length <?= $cfg['min_passwd_length'] ?> characters.</small></p>
               </div>
             </div>
             <!-- Home directory -->
             <div class="form-group">
-              <label for="<?= $field_homedir ?>" class="col-sm-3 control-label">Home directory</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_homedir ?>" class="col-sm-4 control-label">Home directory</label>
+              <div class="controls col-sm-8">
                 <input type="text" class="form-control" id="<?= $field_homedir ?>" name="<?= $field_homedir ?>" value="<?= $homedir ?>" placeholder="Enter a home directory" />
               </div>
             </div>
             <!-- Shell -->
             <div class="form-group">
-              <label for="<?= $field_shell ?>" class="col-sm-3 control-label">Shell</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_shell ?>" class="col-sm-4 control-label">Shell</label>
+              <div class="controls col-sm-8">
                 <input type="text" class="form-control" id="<?= $field_shell ?>" name="<?= $field_shell ?>" value="<?= $shell ?>" placeholder="Enter the user's shell" />
               </div>
             </div>
             <!-- Title -->
             <div class="form-group">
-              <label for="<?= $field_title ?>" class="col-sm-3 control-label">Title</label>
-              <div class="col-sm-9">
+              <label for="<?= $field_title ?>" class="col-sm-4 control-label">Title</label>
+              <div class="col-sm-8">
                 <select class="form-control" id="<?= $field_title ?>" name="<?= $field_title ?>" required>
           				<option value="m" <?php if ($title == 'm') { echo 'selected="selected"'; } ?>>Mr.</option>
           				<option value="f" <?php if ($title == 'f') { echo 'selected="selected"'; } ?>>Ms.</option>
@@ -235,36 +234,36 @@ include ("includes/header.php");
             </div>
             <!-- Real name -->
             <div class="form-group">
-              <label for="<?= $field_name ?>" class="col-sm-3 control-label">Name</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_name ?>" class="col-sm-4 control-label">Name</label>
+              <div class="controls col-sm-8">
                 <input type="text" class="form-control" id="<?= $field_name ?>" name="<?= $field_name ?>" value="<?= $name ?>" placeholder="Enter the user's real name" />
               </div>
             </div>
             <!-- Email -->
             <div class="form-group">
-              <label for="<?= $field_email ?>" class="col-sm-3 control-label">E-mail</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_email ?>" class="col-sm-4 control-label">E-mail</label>
+              <div class="controls col-sm-8">
                 <input type="email" class="form-control" id="<?= $field_email ?>" name="<?= $field_email ?>" value="<?= $email ?>" placeholder="Enter the user's email" />
               </div>
             </div>
             <!-- Company -->
             <div class="form-group">
-              <label for="<?= $field_company ?>" class="col-sm-3 control-label">Company</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_company ?>" class="col-sm-4 control-label">Company</label>
+              <div class="controls col-sm-8">
                 <input type="text" class="form-control" id="<?= $field_company ?>" name="<?= $field_company ?>" value="<?= $company ?>" placeholder="Enter a company or department" />
               </div>
             </div>
             <!-- Comment -->
             <div class="form-group">
-              <label for="<?= $field_comment ?>" class="col-sm-3 control-label">Comment</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_comment ?>" class="col-sm-4 control-label">Comment</label>
+              <div class="controls col-sm-8">
                 <textarea class="form-control" id="<?= $field_comment ?>" name="<?= $field_comment ?>" rows="3" placeholder="Enter a comment or additional information about the user"><?= $comment ?></textarea>
               </div>
             </div>
             <!-- Suspended -->
             <div class="form-group">
-              <label for="<?= $field_disabled ?>" class="col-sm-3 control-label">Status</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $field_disabled ?>" class="col-sm-4 control-label">Status</label>
+              <div class="controls col-sm-8">
                 <div class="checkbox">
                   <label>
                     <input type="checkbox" id="<?= $field_disabled ?>" name="<?= $field_disabled ?>" <?php if ($disabled) { echo 'checked="checked"'; } ?> />Suspended account
@@ -281,7 +280,6 @@ include ("includes/header.php");
             </div>
           </form>
         </div>
-        <div class="hidden-xs col-sm-2 col-md-3 col-lg-3"></div>
       </div>
     </div>
   </div>

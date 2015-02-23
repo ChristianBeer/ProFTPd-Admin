@@ -5,9 +5,9 @@
  * @package ProFTPd-Admin
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
- * @copyright Ricardo Padilha <ricardo@droboports.com>
- * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ * @copyright Christian Beer <djangofett@gmx.net>
+ * @copyright Ricardo Padilha <ricardo@droboports.com>
  *
  */
 
@@ -81,14 +81,14 @@ include ("includes/header.php");
 <?php include ("includes/messages.php"); ?>
 
 <?php if(!is_array($all_users)) { ?>
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div class="col-sm-12">
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">Users</h3>
     </div>
     <div class="panel-body">
       <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-sm-12">
           <div class="form-group">
             <p>Currently there are no registered users.</p>
           </div>
@@ -102,14 +102,14 @@ include ("includes/header.php");
   </div>
 </div>
 <?php } else { ?>
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div class="col-sm-12">
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">Users</h3>
     </div>
     <div class="panel-body">
       <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-sm-12">
           <?php if (count($userfilter) > 0) { ?>
           <!-- Filter toolbar -->
           <div class="form-group">

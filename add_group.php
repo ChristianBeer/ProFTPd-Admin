@@ -5,9 +5,9 @@
  * @package ProFTPd-Admin
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
- * @copyright Ricardo Padilha <ricardo@droboports.com>
- * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ * @copyright Christian Beer <djangofett@gmx.net>
+ * @copyright Ricardo Padilha <ricardo@droboports.com>
  *
  */
 
@@ -57,28 +57,27 @@ include ("includes/header.php");
 ?>
 <?php include ("includes/messages.php"); ?>
 
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div class="col-xs-12 col-sm-8 col-md-6 center">
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">Add group</h3>
     </div>
     <div class="panel-body">
       <div class="row">
-        <div class="hidden-xs col-sm-2 col-md-3 col-lg-3"></div>
-        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6">
+        <div class="col-sm-12">
           <form role="form" class="form-horizontal" method="post" data-toggle="validator">
             <!-- Group name -->
             <div class="form-group">
-              <label for="<?= $cfg['field_groupname'] ?>" class="col-sm-3 control-label">Group name</label>
-              <div class="controls col-sm-9">
+              <label for="<?= $cfg['field_groupname'] ?>" class="col-sm-4 control-label">Group name</label>
+              <div class="controls col-sm-8">
                 <input type="text" class="form-control" id="<?= $cfg['field_groupname'] ?>" name="<?= $cfg['field_groupname'] ?>" placeholder="Enter a group name" maxlength="<?= $cfg['max_groupname_length'] ?>" pattern="<?= substr($cfg['groupname_regex'], 2, -3) ?>" required>
                 <p class="help-block"><small>Only letters, numbers, hyphens, and underscores. Maximum <?= $cfg['max_groupname_length'] ?> characters.</small></p>
               </div>
             </div>
             <!-- GID -->
             <div class="form-group">
-              <label for="<?= $cfg['field_gid'] ?>" class="col-sm-3 control-label">GID</label>
-              <div class="col-sm-9">
+              <label for="<?= $cfg['field_gid'] ?>" class="col-sm-4 control-label">GID</label>
+              <div class="col-sm-8">
                 <input type="number" class="form-control" id="<?= $field_gid ?>" name="<?= $field_gid ?>" placeholder="Enter the GID" min="1" required>
                 <p class="help-block"><small>Positive integer.</small></p>
               </div>
@@ -92,7 +91,6 @@ include ("includes/header.php");
             </div>
           </form>
         </div>
-        <div class="hidden-xs col-sm-2 col-md-3 col-lg-3"></div>
       </div>
     </div>
   </div>
