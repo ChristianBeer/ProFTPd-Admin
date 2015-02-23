@@ -5,6 +5,7 @@
  * @package ProFTPd-Admin
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
+ * @copyright Ricardo Padilha <ricardo@droboports.com>
  * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
  *
@@ -15,17 +16,63 @@ include_once ("includes/AdminClass.php");
 global $cfg;
 
 $ac = new AdminClass($cfg);
-echo $ac->get_header();
 
-$usrcnt_total = $ac->get_user_count();
-$usrcnt_disabled = $ac->get_user_count(true);
-$grpcnt_total = $ac->get_group_count();
-$grpcnt_empty = $ac->get_group_count(true);
-
-print("Number of users in database: <b>" . $usrcnt_total . "</b><br />".
-      "Number of groups in database: <b>" . $grpcnt_total . "</b><br /><br />".
-      "Number of deactivated users: <b>" . $usrcnt_disabled . "</b><br />".
-      "Number of empty groups: <b>" . $grpcnt_empty . "</b><br />");
-
-echo $ac->get_footer();
+include ("includes/header.php");
 ?>
+<?php include ("includes/messages.php"); ?>
+
+<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Groups</h3>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-xs-8 col-sm-7 col-md-6">
+          <p>Groups in database:</p>
+        </div>
+        <div class="col-xs-4 col-sm-5 col-md-6">
+          <p><span class="form-control"><?= $ac->get_group_count() ?></span></p>
+        </div>
+        <div class="col-xs-8 col-sm-7 col-md-6">
+          <p>Empty groups in database:</p>
+        </div>
+        <div class="col-xs-4 col-sm-5 col-md-6">
+          <p><span class="form-control"><?= $ac->get_group_count(true) ?></span></p>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+          <p><a class="btn btn-primary pull-right" href="groups.php" role="button">View groups &raquo;</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Users</h3>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-xs-8 col-sm-7 col-md-6">
+          <p>Users in database:</p>
+        </div>
+        <div class="col-xs-4 col-sm-5 col-md-6">
+          <p><span class="form-control"><?= $ac->get_user_count() ?></span></p>
+        </div>
+        <div class="col-xs-8 col-sm-7 col-md-6">
+          <p>Deactivated users in database:</p>
+        </div>
+        <div class="col-xs-4 col-sm-5 col-md-6">
+          <p><span class="form-control"><?= $ac->get_user_count(true) ?></span></p>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+          <p><a class="btn btn-primary pull-right" href="users.php" role="button">View users &raquo;</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<?php include ("includes/footer.php"); ?>

@@ -5,6 +5,7 @@ Graphical User Interface for ProFTPd with MySQL support
 
 &copy; 2004 The Netherlands, Lex Brugman <lex_brugman@users.sourceforge.net>  
 &copy; 2012 Christian Beer <djangofett@gmx.net>  
+&copy; 2015 Ricardo Padilha <ricardo@droboports.com>
 Published under the GPLv2 License (see LICENSE for details)
 
 This program is free software; you can redistribute it and/or modify
