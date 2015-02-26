@@ -278,8 +278,8 @@ class AdminClass {
         $field_comment  = $this->config['field_comment'];
         $field_disabled = $this->config['field_disabled'];
         $field_last_modified = $this->config['field_last_modified'];
-        $passwd_crypto  = $this->config['passwd_encryption'];
-        if ($passwd_crypto == 'pbkdf2') {
+        $passwd_encryption = $this->config['passwd_encryption'];
+        if ($passwd_encryption == 'pbkdf2') {
           $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
         } else {
           $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';

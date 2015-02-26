@@ -38,7 +38,7 @@ As the software has undergone a complete rewrite of the config file you should n
 
 ## Installation
 
-### Using MySQL and MD5
+### Using MySQL and SHA1
 
 1. Install ProFTPd with MySQL support
      - Debian: apt-get install proftpd-mysql
@@ -49,23 +49,18 @@ As the software has undergone a complete rewrite of the config file you should n
 
 ```
 AuthOrder               mod_sql.c
-SQLDefaultUID           99
-SQLDefaultGID           99
-SQLMinUserUID           999
-SQLMinUserGID           999
-
 SQLBackend              mysql
 SQLEngine               on
+SQLPasswordEngine       on
 SQLAuthenticate         on
+SQLAuthTypes            SHA1
+
 SQLConnectInfo          database@localhost username password
 SQLUserInfo             users userid passwd uid gid homedir shell
 SQLGroupInfo            groups groupname gid members
 SQLUserWhereClause      "disabled != 1"
 SQLLog PASS             updatecount
 SQLNamedQuery           updatecount UPDATE "login_count=login_count+1, last_login=datetime() WHERE userid='%u'" users
-
-SQLPasswordEngine       on
-SQLAuthTypes            MD5 Crypt Backend
 
  # Used to track xfer traffic per user (without invoking a quota)
 SQLLog RETR             bytes-out-count
@@ -94,26 +89,21 @@ SQLNamedQuery           files-in-count UPDATE "files_in_used=files_in_used+1 WHE
 
 ```
 AuthOrder               mod_sql.c
-SQLDefaultUID           99
-SQLDefaultGID           99
-SQLMinUserUID           999
-SQLMinUserGID           999
-
 SQLBackend              sqlite3
 SQLEngine               on
+SQLPasswordEngine       on
 SQLAuthenticate         on
+SQLAuthTypes            pbkdf2
+SQLPasswordPBKDF2       sha1 5000 20
+SQLPasswordUserSalt     name Prepend
+SQLPasswordEncoding     hex
+
 SQLConnectInfo          /path/to/auth.sqlite3
 SQLUserInfo             users userid passwd uid gid homedir shell
 SQLGroupInfo            groups groupname gid members
 SQLUserWhereClause      "disabled != 1"
 SQLLog PASS             updatecount
 SQLNamedQuery           updatecount UPDATE "login_count=login_count+1, last_login=datetime() WHERE userid='%u'" users
-
-SQLPasswordEngine       on
-SQLAuthTypes            pbkdf2
-SQLPasswordPBKDF2       sha1 5000 20
-SQLPasswordUserSalt     name Prepend
-SQLPasswordEncoding     hex
 
  # Used to track xfer traffic per user (without invoking a quota)
 SQLLog RETR             bytes-out-count
