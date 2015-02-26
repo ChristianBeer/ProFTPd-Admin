@@ -38,7 +38,7 @@ As the software has undergone a complete rewrite of the config file you should n
 
 ## Installation
 
-### Using MySQL
+### Using MySQL and MD5
 
 1. Install ProFTPd with MySQL support
      - Debian: apt-get install proftpd-mysql
@@ -48,26 +48,35 @@ As the software has undergone a complete rewrite of the config file you should n
 4. Add the following to your proftpd.conf (edit to your needs):
 
 ```
-SQLBackend                      mysql
-SQLConnectInfo                  database@localhost username password
-SQLAuthenticate                 on
-SQLAuthTypes                    Crypt   Backend
-SQLUserInfo                     users userid passwd uid gid homedir shell
-SQLGroupInfo                    groups groupname gid members
-SQLUserWhereClause              "disabled != 1"
-SQLLog PASS                     updatecount
-SQLNamedQuery                   updatecount UPDATE "login_count=login_count+1, last_login=now() WHERE userid='%u'" users
+AuthOrder               mod_sql.c
+SQLDefaultUID           99
+SQLDefaultGID           99
+SQLMinUserUID           999
+SQLMinUserGID           999
+
+SQLBackend              mysql
+SQLEngine               on
+SQLAuthenticate         on
+SQLConnectInfo          database@localhost username password
+SQLUserInfo             users userid passwd uid gid homedir shell
+SQLGroupInfo            groups groupname gid members
+SQLUserWhereClause      "disabled != 1"
+SQLLog PASS             updatecount
+SQLNamedQuery           updatecount UPDATE "login_count=login_count+1, last_login=datetime() WHERE userid='%u'" users
+
+SQLPasswordEngine       on
+SQLAuthTypes            MD5 Crypt Backend
 
  # Used to track xfer traffic per user (without invoking a quota)
-SQLLog RETR                     bytes-out-count
-SQLNamedQuery                   bytes-out-count UPDATE "bytes_out_used=bytes_out_used+%b WHERE userid='%u'" users
-SQLLog RETR                     files-out-count
-SQLNamedQuery                   files-out-count UPDATE "files_out_used=files_out_used+1 WHERE userid='%u'" users
+SQLLog RETR             bytes-out-count
+SQLNamedQuery           bytes-out-count UPDATE "bytes_out_used=bytes_out_used+%b WHERE userid='%u'" users
+SQLLog RETR             files-out-count
+SQLNamedQuery           files-out-count UPDATE "files_out_used=files_out_used+1 WHERE userid='%u'" users
 
-SQLLog STOR                     bytes-in-count
-SQLNamedQuery                   bytes-in-count UPDATE "bytes_in_used=bytes_in_used+%b WHERE userid='%u'" users
-SQLLog STOR                     files-in-count
-SQLNamedQuery                   files-in-count UPDATE "files_in_used=files_in_used+1 WHERE userid='%u'" users
+SQLLog STOR             bytes-in-count
+SQLNamedQuery           bytes-in-count UPDATE "bytes_in_used=bytes_in_used+%b WHERE userid='%u'" users
+SQLLog STOR             files-in-count
+SQLNamedQuery           files-in-count UPDATE "files_in_used=files_in_used+1 WHERE userid='%u'" users
 ```
 
 5. Extract all files to your webspace (into a subdirectory like "proftpdadmin").
@@ -76,7 +85,7 @@ SQLNamedQuery                   files-in-count UPDATE "files_in_used=files_in_us
 8. Start ProFTPd.
 9. Go to http://yourwebspace/proftpdadmin/ and start using it!
 
-### Using sqlite3
+### Using sqlite3 and pbkdf2
 
 1. Install ProFTPd with sqlite3 support
 2. Use tables-sqlite3.sql to create an sqlite3 database:
@@ -84,7 +93,7 @@ SQLNamedQuery                   files-in-count UPDATE "files_in_used=files_in_us
 3. Add the following to your proftpd.conf (edit to your needs):
 
 ```
-AuthOrder               mod_sql.c mod_auth_unix.c
+AuthOrder               mod_sql.c
 SQLDefaultUID           99
 SQLDefaultGID           99
 SQLMinUserUID           999
@@ -101,9 +110,9 @@ SQLLog PASS             updatecount
 SQLNamedQuery           updatecount UPDATE "login_count=login_count+1, last_login=datetime() WHERE userid='%u'" users
 
 SQLPasswordEngine       on
+SQLAuthTypes            pbkdf2
 SQLPasswordPBKDF2       sha1 5000 20
 SQLPasswordUserSalt     name Prepend
-SQLAuthTypes            pbkdf2
 SQLPasswordEncoding     hex
 
  # Used to track xfer traffic per user (without invoking a quota)

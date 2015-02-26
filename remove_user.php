@@ -82,7 +82,7 @@ include ("includes/header.php");
 <div class="col-xs-12 col-sm-8 col-md-6 center">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">Remove user "<?= $userid ?>"</h3>
+      <h3 class="panel-title">Remove user</h3>
     </div>
     <div class="panel-body">
       <div class="row">
@@ -91,14 +91,14 @@ include ("includes/header.php");
             <!-- GID -->
             <div class="form-group">
               <div class="col-sm-12">
-                <p>Please confirm removal of user "<?= $userid ?>" with ID <?= $id ?>.</p>
+                <p>Please confirm removal of user "<?php echo $userid; ?>" with ID <?php echo $id; ?>.</p>
               </div>
             </div>
             <!-- Actions -->
             <div class="form-group">
               <div class="col-sm-12">
-                <input type="hidden" name="<?= $field_id ?>" value="<?= $id ?>" />
-                <a class="btn btn-default" role="group" href="edit_user.php?action=show&<?= $field_id ?>=<?= $id ?>">Cancel</a>
+                <input type="hidden" name="<?php echo $field_id; ?>" value="<?php echo $id; ?>" />
+                <a class="btn btn-default" role="group" href="edit_user.php?action=show&<?php echo $field_id; ?>=<?php echo $id; ?>">Cancel</a>
                 <button type="submit" class="btn btn-danger pull-right" role="group" name="action" value="reallyremove" <?php if (isset($errormsg)) { echo 'disabled="disabled"'; } ?>>Remove user</button>
               </div>
             </div>

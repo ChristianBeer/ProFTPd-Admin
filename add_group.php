@@ -68,17 +68,17 @@ include ("includes/header.php");
           <form role="form" class="form-horizontal" method="post" data-toggle="validator">
             <!-- Group name -->
             <div class="form-group">
-              <label for="<?= $cfg['field_groupname'] ?>" class="col-sm-4 control-label">Group name</label>
+              <label for="<?php echo $cfg['field_groupname']; ?>" class="col-sm-4 control-label">Group name</label>
               <div class="controls col-sm-8">
-                <input type="text" class="form-control" id="<?= $cfg['field_groupname'] ?>" name="<?= $cfg['field_groupname'] ?>" placeholder="Enter a group name" maxlength="<?= $cfg['max_groupname_length'] ?>" pattern="<?= substr($cfg['groupname_regex'], 2, -3) ?>" required>
-                <p class="help-block"><small>Only letters, numbers, hyphens, and underscores. Maximum <?= $cfg['max_groupname_length'] ?> characters.</small></p>
+                <input type="text" class="form-control" id="<?php echo $cfg['field_groupname']; ?>" name="<?php echo $cfg['field_groupname']; ?>" placeholder="Enter a group name" maxlength="<?php echo $cfg['max_groupname_length']; ?>" pattern="<?php echo substr($cfg['groupname_regex'], 2, -3); ?>" required>
+                <p class="help-block"><small>Only letters, numbers, hyphens, and underscores. Maximum <?php echo $cfg['max_groupname_length']; ?> characters.</small></p>
               </div>
             </div>
             <!-- GID -->
             <div class="form-group">
-              <label for="<?= $cfg['field_gid'] ?>" class="col-sm-4 control-label">GID</label>
+              <label for="<?php echo $cfg['field_gid']; ?>" class="col-sm-4 control-label">GID</label>
               <div class="col-sm-8">
-                <input type="number" class="form-control" id="<?= $field_gid ?>" name="<?= $field_gid ?>" placeholder="Enter the GID" min="1" required>
+                <input type="number" class="form-control" id="<?php echo $field_gid; ?>" name="<?php echo $field_gid; ?>" placeholder="Enter the GID" min="1" required>
                 <p class="help-block"><small>Positive integer.</small></p>
               </div>
             </div>

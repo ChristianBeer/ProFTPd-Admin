@@ -120,7 +120,7 @@ include ("includes/header.php");
               <button type="button" class="btn btn-default dropdown-toggle">Prefix<span class="caret"></span></button>
               <ul class="dropdown-menu" role="menu">
                 <?php foreach ($userfilter as $uf) { ?>
-                  <li><a href="users.php?uf=<?= $uf ?>"><?= $uf ?></a></li>
+                  <li><a href="users.php?uf=<?php echo $uf; ?>"><?php echo $uf; ?></a></li>
                 <?php } ?>
               </ul>
             </div>
@@ -148,36 +148,36 @@ include ("includes/header.php");
               <tbody>
                 <?php foreach ($users as $user) { ?>
                   <tr>
-                    <td class="pull-middle"><?= $user[$field_uid] ?></td>
-                    <td class="pull-middle"><a href="edit_user.php?action=show&<?= $field_id ?>=<?= $user[$field_id] ?>"><?= $user[$field_userid] ?></a></td>
-                    <td class="pull-middle"><?= $all_groups[$user[$field_gid]] ?></td>
+                    <td class="pull-middle"><?php echo $user[$field_uid]; ?></td>
+                    <td class="pull-middle"><a href="edit_user.php?action=show&<?php echo $field_id; ?>=<?php echo $user[$field_id]; ?>"><?php echo $user[$field_userid]; ?></a></td>
+                    <td class="pull-middle"><?php echo $all_groups[$user[$field_gid]]; ?></td>
                     <td class="pull-middle hidden-xs hidden-sm">
                       <?php if (empty($groups[$user[$field_userid]])) { ?>
                         none
                       <?php } else { ?>
                         <div class="dropdown">
-                          <button type="button" class="btn btn-default btn-xs dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown"><?= count($groups[$user[$field_userid]]) ?> groups <span class="caret"></span></button>
+                          <button type="button" class="btn btn-default btn-xs dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown"><?php echo count($groups[$user[$field_userid]]); ?> groups <span class="caret"></span></button>
                           <ul class="dropdown-menu" role="menu">
                             <?php foreach ($groups[$user[$field_userid]] as $g_group) { ?>
-                              <li role="presentation"><a role="menuitem"><?= $g_group ?></a></li>
+                              <li role="presentation"><a role="menuitem"><?php echo $g_group; ?></a></li>
                             <?php } ?>
                           </ul>
                         </div>
                       <?php } ?>
                     </td>
-                    <td class="pull-middle hidden-xs hidden-sm hidden-md"><?= $user[$field_last_login] ?></td>
-                    <td class="pull-middle hidden-xs hidden-sm"><?= $user[$field_login_count] ?></td>
-                    <td class="pull-middle hidden-xs"><?= sprintf("%2.1f", $user[$field_bytes_in_used] / 1048576) ?></td>
-                    <td class="pull-middle hidden-xs"><?= sprintf("%2.1f", $user[$field_bytes_out_used] / 1048576) ?></td>
-                    <td class="pull-middle hidden-xs"><?= $user[$field_files_in_used] ?></td>
-                    <td class="pull-middle hidden-xs"><?= $user[$field_files_out_used] ?></td>
-                    <td class="pull-middle hidden-xs hidden-sm"><?= $user[$field_homedir] ?></td>
-                    <td class="pull-middle hidden-xs hidden-sm"><?= $user[$field_email] ?></td>
-                    <td class="pull-middle"><?= ($user[$field_disabled] ? 'Yes' : 'No') ?></td>
+                    <td class="pull-middle hidden-xs hidden-sm hidden-md"><?php echo $user[$field_last_login]; ?></td>
+                    <td class="pull-middle hidden-xs hidden-sm"><?php echo $user[$field_login_count]; ?></td>
+                    <td class="pull-middle hidden-xs"><?php echo sprintf("%2.1f", $user[$field_bytes_in_used] / 1048576); ?></td>
+                    <td class="pull-middle hidden-xs"><?php echo sprintf("%2.1f", $user[$field_bytes_out_used] / 1048576); ?></td>
+                    <td class="pull-middle hidden-xs"><?php echo $user[$field_files_in_used]; ?></td>
+                    <td class="pull-middle hidden-xs"><?php echo $user[$field_files_out_used]; ?></td>
+                    <td class="pull-middle hidden-xs hidden-sm"><?php echo $user[$field_homedir]; ?></td>
+                    <td class="pull-middle hidden-xs hidden-sm"><?php echo $user[$field_email]; ?></td>
+                    <td class="pull-middle"><?php echo ($user[$field_disabled] ? 'Yes' : 'No'); ?></td>
                     <td class="pull-middle">
                       <div class="btn-toolbar pull-right" role="toolbar">
-                        <a class="btn-group" role="group" href="edit_user.php?action=show&<?= $field_id ?>=<?= $user[$field_id] ?>"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                        <a class="btn-group" role="group" href="remove_user.php?action=remove&<?= $field_id ?>=<?= $user[$field_id] ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                        <a class="btn-group" role="group" href="edit_user.php?action=show&<?php echo $field_id; ?>=<?php echo $user[$field_id]; ?>"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                        <a class="btn-group" role="group" href="remove_user.php?action=remove&<?php echo $field_id; ?>=<?php echo $user[$field_id]; ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
                       </div>
                     </td>
                   </tr>

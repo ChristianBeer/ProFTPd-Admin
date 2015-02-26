@@ -69,15 +69,15 @@ include ("includes/header.php");
                   $n_main = $ac->get_user_count_by_gid($g_gid); 
                   $n_add = $ac->get_user_add_count_by_gid($g_gid); ?>
                   <tr>
-                    <td class="pull-middle"><?= $g_gid ?></td>
-                    <td class="pull-middle"><a href="edit_group.php?action=show&<?= $cfg['field_gid'] ?>=<?= $g_gid ?>"><?= $g_group ?></a></td>
-                    <td class="pull-middle hidden-sm hidden-md hidden-lg"><?= $n_main + $n_add ?></td>
-                    <td class="pull-middle hidden-xs"><?= $n_main ?></td>
-                    <td class="pull-middle hidden-xs"><?= $n_add ?></td>
+                    <td class="pull-middle"><?php echo $g_gid; ?></td>
+                    <td class="pull-middle"><a href="edit_group.php?action=show&<?php echo $cfg['field_gid']; ?>=<?php echo $g_gid; ?>"><?php echo $g_group; ?></a></td>
+                    <td class="pull-middle hidden-sm hidden-md hidden-lg"><?php echo ($n_main + $n_add); ?></td>
+                    <td class="pull-middle hidden-xs"><?php echo $n_main; ?></td>
+                    <td class="pull-middle hidden-xs"><?php echo $n_add; ?></td>
                     <td class="pull-middle">
                       <div class="btn-toolbar pull-right" role="toolbar">
-                        <a class="btn-group" role="group" href="edit_group.php?action=show&<?= $cfg['field_gid'] ?>=<?= $g_gid ?>"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                        <a class="btn-group" role="group" href="remove_group.php?action=remove&<?= $cfg['field_gid'] ?>=<?= $g_gid ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                        <a class="btn-group" role="group" href="edit_group.php?action=show&<?php echo $cfg['field_gid']; ?>=<?php echo $g_gid; ?>"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                        <a class="btn-group" role="group" href="remove_group.php?action=remove&<?php echo $cfg['field_gid']; ?>=<?php echo $g_gid; ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
                       </div>
                     </td>
                   </tr>

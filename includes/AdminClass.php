@@ -278,7 +278,12 @@ class AdminClass {
         $field_comment  = $this->config['field_comment'];
         $field_disabled = $this->config['field_disabled'];
         $field_last_modified = $this->config['field_last_modified'];
-        $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
+        $passwd_crypto  = $this->config['passwd_encryption'];
+        if ($passwd_crypto == 'pbkdf2') {
+          $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
+        } else {
+          $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
+        }
         $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")';
         $query = sprintf($format, $this->config['table_users'],
                                   $field_userid,
@@ -545,7 +550,11 @@ class AdminClass {
         $passwd_query = '';
         if (strlen($userdata[$field_passwd]) > 0) {
           $passwd_format = ' %s="%s", ';
-          $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
+          if ($passwd_crypto == 'pbkdf2') {
+            $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
+          } else {
+            $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
+          }
           $passwd_query = sprintf($passwd_format, $field_passwd, $passwd);
         }
 

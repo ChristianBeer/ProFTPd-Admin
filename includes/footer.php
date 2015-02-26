@@ -2,7 +2,7 @@
 
       <hr/>
       <footer>
-        <center><p style="font-size:x-small">ProFTPd Admin <?= $ac->get_version() ?>  is licensed under GPLv2. See <a href="https://github.com/droboports/ProFTPd-Admin">github.com/droboports/ProFTPd-Admin</a> for more information.</p></center>
+        <center><p style="font-size:x-small">ProFTPd Admin <?php echo $ac->get_version(); ?>  is licensed under GPLv2. See <a href="https://github.com/droboports/ProFTPd-Admin">github.com/droboports/ProFTPd-Admin</a> for more information.</p></center>
       </footer>
     </div> <!-- /container -->
 

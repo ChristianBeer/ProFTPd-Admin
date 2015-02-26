@@ -32,13 +32,13 @@ include ("includes/header.php");
           <p>Groups in database:</p>
         </div>
         <div class="col-xs-4 col-sm-5 col-md-6">
-          <p><span class="form-control"><?= $ac->get_group_count() ?></span></p>
+          <p><span class="form-control"><?php echo $ac->get_group_count(); ?></span></p>
         </div>
         <div class="col-xs-8 col-sm-7 col-md-6">
           <p>Empty groups in database:</p>
         </div>
         <div class="col-xs-4 col-sm-5 col-md-6">
-          <p><span class="form-control"><?= $ac->get_group_count(true) ?></span></p>
+          <p><span class="form-control"><?php echo $ac->get_group_count(true); ?></span></p>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12">
           <p><a class="btn btn-primary pull-right" href="groups.php" role="button">View groups &raquo;</a></p>
@@ -59,13 +59,13 @@ include ("includes/header.php");
           <p>Users in database:</p>
         </div>
         <div class="col-xs-4 col-sm-5 col-md-6">
-          <p><span class="form-control"><?= $ac->get_user_count() ?></span></p>
+          <p><span class="form-control"><?php echo $ac->get_user_count(); ?></span></p>
         </div>
         <div class="col-xs-8 col-sm-7 col-md-6">
           <p>Deactivated users in database:</p>
         </div>
         <div class="col-xs-4 col-sm-5 col-md-6">
-          <p><span class="form-control"><?= $ac->get_user_count(true) ?></span></p>
+          <p><span class="form-control"><?php echo $ac->get_user_count(true); ?></span></p>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12">
           <p><a class="btn btn-primary pull-right" href="users.php" role="button">View users &raquo;</a></p>
