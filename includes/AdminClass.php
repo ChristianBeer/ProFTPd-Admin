@@ -11,10 +11,17 @@
  *
  */
 
-require "hash_pbkdf2_compat.php"; // hash_pbkdf2 implementation for 5.3 <= PHP < 5.5 
+// hash_pbkdf2 implementation for 5.3 <= PHP < 5.5
+if ($cfg['passwd_encryption'] == "pbkdf2") {
+  require "hash_pbkdf2_compat.php";
+}
 include_once "ez_sql_core.php";
-include_once "ez_sql_mysql.php";
-include_once "ez_sql_sqlite3.php";
+if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysql") {
+  include_once "ez_sql_mysql.php";
+}
+if ($cfg['db_type'] == "sqlite3") {
+  include_once "ez_sql_sqlite3.php";
+}
 
 /**
  * Provides all functions needed by the individual scripts
