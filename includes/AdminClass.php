@@ -274,7 +274,7 @@ class AdminClass {
     function add_user($userdata) {
         $field_userid   = $this->config['field_userid'];
         $field_uid      = $this->config['field_uid'];
-        $field_gid      = $this->config['field_gid'];
+        $field_ugid     = $this->config['field_ugid'];
         $field_passwd   = $this->config['field_passwd'];
         $field_homedir  = $this->config['field_homedir'];
         $field_shell    = $this->config['field_shell'];
@@ -295,7 +295,7 @@ class AdminClass {
         $query = sprintf($format, $this->config['table_users'],
                                   $field_userid,
                                   $field_uid,
-                                  $field_gid,
+                                  $field_ugid,
                                   $field_passwd,
                                   $field_homedir,
                                   $field_shell,
@@ -308,7 +308,7 @@ class AdminClass {
                                   $field_last_modified,
                                   $userdata[$field_userid],
                                   $userdata[$field_uid],
-                                  $userdata[$field_gid],
+                                  $userdata[$field_ugid],
                                   $passwd,
                                   $userdata[$field_homedir],
                                   $userdata[$field_shell],
@@ -374,7 +374,7 @@ class AdminClass {
     function get_users_by_gid($gid) {
         if (empty($gid)) return false;
         $format = 'SELECT %s, %s FROM %s WHERE %s="%s"';
-        $query = sprintf($format, $this->config['field_id'], $this->config['field_userid'], $this->config['table_users'], $this->config['field_gid'], $gid);
+        $query = sprintf($format, $this->config['field_id'], $this->config['field_userid'], $this->config['table_users'], $this->config['field_ugid'], $gid);
         $result = $this->dbConn->get_results($query);
         if (!$result) return false;
 
@@ -399,7 +399,7 @@ class AdminClass {
     function get_user_count_by_gid($gid) {
         if (empty($gid)) return false;
         $format = 'SELECT COUNT(*) FROM %s WHERE %s="%s"';
-        $query = sprintf($format, $this->config['table_users'], $this->config['field_gid'], $gid);
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_ugid'], $gid);
         $result = $this->dbConn->get_var($query);
         if (!$result) return 0;
         return $result;
@@ -513,7 +513,7 @@ class AdminClass {
      */
     function update_group($gid, $new_gid) {
         $format = 'UPDATE %s SET %s="%s" WHERE %s="%s"';
-        $query = sprintf($format, $this->config['table_users'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_ugid'], $new_gid, $this->config['field_ugid'], $gid);
         $result = $this->dbConn->query($query);
 
         $query = sprintf($format, $this->config['table_groups'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
@@ -542,7 +542,7 @@ class AdminClass {
         $field_id       = $this->config['field_id'];
         $field_userid   = $this->config['field_userid'];
         $field_uid      = $this->config['field_uid'];
-        $field_gid      = $this->config['field_gid'];
+        $field_ugid     = $this->config['field_ugid'];
         $field_passwd   = $this->config['field_passwd'];
         $field_homedir  = $this->config['field_homedir'];
         $field_shell    = $this->config['field_shell'];
@@ -572,7 +572,7 @@ class AdminClass {
                                   $passwd_query,
                                   $field_userid,   $userdata[$field_userid],
                                   $field_uid,      $userdata[$field_uid],
-                                  $field_gid,      $userdata[$field_gid],
+                                  $field_ugid,     $userdata[$field_ugid],
                                   $field_homedir,  $userdata[$field_homedir],
                                   $field_shell,    $userdata[$field_shell],
                                   $field_title,    $userdata[$field_title],
