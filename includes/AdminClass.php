@@ -506,10 +506,10 @@ class AdminClass {
      */
     function update_group($gid, $new_gid) {
         $format = 'UPDATE %s SET %s="%s" WHERE %s="%s"';
-        $query = sprintf($format, $this->config['table_groups'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
         $result = $this->dbConn->query($query);
 
-        $query = sprintf($format, $this->config['table_users'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
+        $query = sprintf($format, $this->config['table_groups'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
         $result = $this->dbConn->query($query);
         return $result;
     }
