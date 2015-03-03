@@ -3,9 +3,21 @@
  *
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
- * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ * @copyright Christian Beer <djangofett@gmx.net>
+ * @copyright Ricardo Padilha <ricardo@droboports.com>
  */
+
+Release: 2.1
+Changes:
+* using Bootstrap for HTML styling
+* code cleanup in AdminClass.php:
+  * most of UI tasks are now implemented client-side
+  * consolidation of method results as associative arrays
+  * redundant and obsolete code removed
+* separation of editing and removal in different php files
+* fixed several bugs in the data model, e.g., updating a group's gid
+  also updates the gids of the users
 
 Release: 2.0
 Changes:

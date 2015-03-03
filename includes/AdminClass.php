@@ -5,14 +5,16 @@
  * @package ProFTPd-Admin
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
- * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ * @copyright Christian Beer <djangofett@gmx.net>
+ * @copyright Ricardo Padilha <ricardo@droboports.com>
  *
  */
 
+require "hash_pbkdf2_compat.php"; // hash_pbkdf2 implementation for 5.3 <= PHP < 5.5 
 include_once "ez_sql_core.php";
 include_once "ez_sql_mysql.php";
-include_once "configs/config.php";
+include_once "ez_sql_sqlite3.php";
 
 /**
  * Provides all functions needed by the individual scripts
@@ -27,7 +29,7 @@ include_once "configs/config.php";
 class AdminClass {
     /**
      * database layer
-     * @var ezSQL_mysql
+     * @var ezSQLcore (ezSQL_mysql or ezSQL_sqlite3)
      */
     var $dbConn = false;
     /**
@@ -40,7 +42,7 @@ class AdminClass {
      * @access private
      * @var String
      */
-    var $version = "2.0";
+    var $version = "2.1";
 
     /**
      * initialize the database connection via ezSQL_mysql
@@ -48,7 +50,14 @@ class AdminClass {
      */
     function AdminClass($cfg) {
         $this->config = $cfg;
-        $this->dbConn = new ezSQL_mysql($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
+        // if db_type is not set, default to mysql
+        if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysql") {
+            $this->dbConn = new ezSQL_mysql($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
+        } elseif ($cfg['db_type'] == "sqlite3") {
+            $this->dbConn = new ezSQL_sqlite3($this->config['db_path'], $this->config['db_name']);
+        } else {
+            trigger_error('Unsupported database type: "'.$cfg['db_type'].'"', E_USER_WARNING);
+        }
     }
 
     /**
@@ -60,64 +69,383 @@ class AdminClass {
     }
 
     /**
-     * Retrieves HTML from header.html and replaces some placeholders
-     * @return String retrieved and replaced html from header.html
-     */
-    function get_header() {
-        $header_file = file_get_contents("header.html", true);
-        $header_file = str_replace("[VERSION]", $this->version, $header_file);
-        return $header_file;
-    }
-
-    /**
-     * Retrieves HTML from footer.html and replaces some placeholders
-     * @return String retrieved and replaced html from footer.html
-     */
-    function get_footer() {
-        $footer_file = file_get_contents("footer.html", true);
-
-        return $footer_file;
-    }
-
-    /**
      * retrieves groups for each user and populates an array of $data[userid][gid] = groupname
      * @return Array like $data[userid][gid] = groupname
      */
-    function parse_groups() {
-        $result = $this->dbConn->get_results("select * from " . $this->config['table_groups']);
-        if (!$result) return false;
-
+    function parse_groups($userid = false) {
+        $format = 'SELECT * FROM %s';
+        $query = sprintf($format, $this->config['table_groups']);
+        $result = $this->dbConn->get_results($query);
         $data = array();
-        $field_members = $this->config['field_members'];
-        $field_gid = $this->config['field_gid'];
-        $field_groupname = $this->config['field_groupname'];
-        foreach ($result as $group) {
-            $names = explode(",", $group->$field_members);
-            reset($names);
-            while (list($key, $name) = each($names)) {
-                $data[$name][$group->$field_gid] = $group->$field_groupname;
+        if ($result) {
+            $field_groupname = $this->config['field_groupname'];
+            $field_gid = $this->config['field_gid'];
+            $field_members = $this->config['field_members'];
+            foreach ($result as $group) {
+                $names = explode(",", $group->$field_members);
+                reset($names);
+                while (list($key, $name) = each($names)) {
+                    $data[$name][$group->$field_gid] = $group->$field_groupname;
+                }
+            }
+        }
+        /* no userid provided, return all data */
+        if ($userid === false) return $data;
+        /* if there is data for provided userid, return only that */
+        if (array_key_exists($userid, $data)) return $data[$userid];
+        /* return nothing otherwise */
+        return array();
+    }
+
+    /**
+     * retrieves the list of groups and populates an array of $data[gid] = groupname
+     * @return Array like $data[gid] = groupname
+     */
+    function get_groups() {
+        $format = 'SELECT * FROM %s ORDER BY %s ASC';
+        $query = sprintf($format, $this->config['table_groups'], $this->config['field_gid']);
+        $result = $this->dbConn->get_results($query);
+        $data = array();
+        if ($result) {
+            $field_gid = $this->config['field_gid'];
+            $field_groupname = $this->config['field_groupname'];
+            foreach ($result as $group) {
+                $data[$group->$field_gid] = $group->$field_groupname;
             }
         }
         return $data;
     }
 
     /**
-     * retrieves the list of groups and populates an array of $data[gid] = groupname
-     * @return Array like $data[gid] = groupname
-     *
-     * @todo make database fields generic from config
+     * retrieves all users from db and populates an associative array
+     * @return Array an array containing the users or false on failure
      */
-    function get_groups() {
-        $result = $this->dbConn->get_results("select * from " . $this->config['table_groups'] . " ORDER BY " . $this->config['field_gid'] . " ASC");
+    function get_users() {
+        $format = 'SELECT * FROM %s ORDER BY %s ASC';
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_id']);
+        $result = $this->dbConn->get_results($query, ARRAY_A);
+        if (!$result) return false;
+        return $result;
+    }
+
+    /**
+     * returns either the total number or the number of empty groups in the db
+     * @param Boolean $only_emtpy
+     * @return Integer number or false on error
+     */
+    function get_group_count($only_empty = false) {
+        $format = 'SELECT COUNT(*) FROM %s';
+        $query = sprintf($format, $this->config['table_groups']);
+        if ($only_empty) {
+            $where_format = ' WHERE %s=""';
+            $where_clause = sprintf($where_format, $this->config['field_members']);
+            $query .= $where_clause;
+        }
+        $result = $this->dbConn->get_var($query);
+        return $result;
+    }
+
+    /**
+     * returns either the total number or the number of disabled users in the db
+     * @param Boolean $only_disabled
+     * @return Integer number or false on error
+     */
+    function get_user_count($only_disabled = false) {
+        $format = 'SELECT COUNT(*) FROM %s';
+        $query = sprintf($format, $this->config['table_users']);
+        if ($only_disabled) {
+            $where_format = ' WHERE %s="1"';
+            $where_clause = sprintf($where_format, $this->config['field_disabled']);
+            $query .= $where_clause;
+        }
+        $result = $this->dbConn->get_var($query);
+        return $result;
+    }
+
+    /**
+     * returns the last index number of the user table
+     * @return Integer
+     */
+    function get_last_uid() {
+        $format = 'SELECT MAX(%s) FROM %s';
+        $query = sprintf($format, $this->config['field_uid'], $this->config['table_users']);
+        $result = $this->dbConn->get_var($query);
+        return $result;
+    }
+
+    /**
+     * Checks if the given groupname is already in the database
+     * @param String $groupname
+     * @return boolean true if groupname exists, false if not
+     */
+    function check_groupname($groupname) {
+        $format = 'SELECT 1 FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_groups'], $this->config['field_groupname'], $groupname);
+        $result = $this->dbConn->get_row($query);
+        if (is_object($result)) return true;
+        return false;
+    }
+
+    /**
+     * Checks if the given gid is already in the database
+     * @param String $gid
+     * @return boolean true if gid exists, false if not
+     */
+    function check_gid($gid) {
+        $format = 'SELECT 1 FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_groups'], $this->config['field_gid'], $gid);
+        $result = $this->dbConn->get_row($query);
+        if (is_object($result)) return true;
+        return false;
+    }
+
+    /**
+     * Checks if the given username is already in the database
+     * @param String $userid
+     * @return boolean true if username exists, false if not
+     */
+    function check_username($userid) {
+        $format = 'SELECT 1 FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_userid'], $userid);
+        $result = $this->dbConn->get_row($query);
+        if (is_object($result)) return true;
+        return false;
+    }
+
+    /**
+     * Checks if the given id is already in the database
+     * @param String $id
+     * @return boolean true if id exists, false if not
+     */
+    function check_id($id) {
+        $format = 'SELECT 1 FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_id'], $id);
+        $result = $this->dbConn->get_row($query);
+        if (is_object($result)) return true;
+        return false;
+    }
+
+    /**
+     * Checks if the given uid is already in the database
+     * @param String $uid
+     * @return boolean true if id exists, false if not
+     */
+    function check_uid($uid) {
+        $format = 'SELECT 1 FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_uid'], $uid);
+        $result = $this->dbConn->get_row($query);
+        if (is_object($result)) return true;
+        return false;
+    }
+
+    /**
+     * Adds a group entry into the database
+     * @param Array $groupdata
+     * @return Boolean true on success, false on failure
+     */
+    function add_group($groupdata) {
+        $field_groupname = $this->config['field_groupname'];
+        $field_gid       = $this->config['field_gid'];
+        $field_members   = $this->config['field_members'];
+        $format = 'INSERT INTO %s (%s,%s,%s) VALUES ("%s","%s","%s")';
+        $query = sprintf($format, $this->config['table_groups'],
+                                  $field_groupname,
+                                  $field_gid,
+                                  $field_members,
+                                  $groupdata[$field_groupname],
+                                  $groupdata[$field_gid],
+                                  $groupdata[$field_members]);
+        $result = $this->dbConn->query($query);
+        return $result;
+    }
+
+    /**
+     * Adds a user entry into the database
+     * @param Array $userdata
+     * @return Boolean true on success, false on failure
+     */
+    function add_user($userdata) {
+        $field_userid   = $this->config['field_userid'];
+        $field_uid      = $this->config['field_uid'];
+        $field_gid      = $this->config['field_gid'];
+        $field_passwd   = $this->config['field_passwd'];
+        $field_homedir  = $this->config['field_homedir'];
+        $field_shell    = $this->config['field_shell'];
+        $field_title    = $this->config['field_title'];
+        $field_name     = $this->config['field_name'];
+        $field_company  = $this->config['field_company'];
+        $field_email    = $this->config['field_email'];
+        $field_comment  = $this->config['field_comment'];
+        $field_disabled = $this->config['field_disabled'];
+        $field_last_modified = $this->config['field_last_modified'];
+        $passwd_encryption = $this->config['passwd_encryption'];
+        if ($passwd_encryption == 'pbkdf2') {
+          $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
+        } else {
+          $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
+        }
+        $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")';
+        $query = sprintf($format, $this->config['table_users'],
+                                  $field_userid,
+                                  $field_uid,
+                                  $field_gid,
+                                  $field_passwd,
+                                  $field_homedir,
+                                  $field_shell,
+                                  $field_title,
+                                  $field_name,
+                                  $field_company,
+                                  $field_email,
+                                  $field_comment,
+                                  $field_disabled,
+                                  $field_last_modified,
+                                  $userdata[$field_userid],
+                                  $userdata[$field_uid],
+                                  $userdata[$field_gid],
+                                  $passwd,
+                                  $userdata[$field_homedir],
+                                  $userdata[$field_shell],
+                                  $userdata[$field_title],
+                                  $userdata[$field_name],
+                                  $userdata[$field_company],
+                                  $userdata[$field_email],
+                                  $userdata[$field_comment],
+                                  $userdata[$field_disabled],
+                                  date('Y-m-d H:i:s'));
+        $result = $this->dbConn->query($query);
+        return $result;
+    }
+
+    /**
+     * retrieve a group by gid
+     * @param Integer $gid
+     * @return Object
+     */
+    function get_group_by_gid($gid) {
+        if (empty($gid)) return false;
+        $format = 'SELECT * FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_groups'], $this->config['field_gid'], $gid);
+        $result = $this->dbConn->get_row($query, ARRAY_A);
+        if (!$result) return false;
+        return $result;
+    }
+
+    /**
+     * retrieve a user by userid
+     * @param String $userid
+     * @return Array
+     */
+    function get_user_by_userid($userid) {
+        if (empty($userid)) return false;
+        $format = 'SELECT * FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_userid'], $userid);
+        $result = $this->dbConn->get_row($query, ARRAY_A);
+        if (!$result) return false;
+        return $result;
+    }
+
+    /**
+     * retrieve a user by id
+     * @param Integer $id
+     * @return Array
+     */
+    function get_user_by_id($id) {
+        if (empty($id)) return false;
+        $format = 'SELECT * FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_id'], $id);
+        $result = $this->dbConn->get_row($query, ARRAY_A);
+        if (!$result) return false;
+        return $result;
+    }
+
+    /**
+     * retrieves user from database with given maingroup
+     * and populates an array of $data[id] = userid
+     * @param Integer $gid
+     * @return Array form is $data[id] = userid
+     */
+    function get_users_by_gid($gid) {
+        if (empty($gid)) return false;
+        $format = 'SELECT %s, %s FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['field_id'], $this->config['field_userid'], $this->config['table_users'], $this->config['field_gid'], $gid);
+        $result = $this->dbConn->get_results($query);
         if (!$result) return false;
 
+        $field_id = $this->config['field_id'];
+        $field_userid = $this->config['field_userid'];
+        $field_members = $this->config['field_members'];
+
         $data = array();
-        $field_gid = $this->config['field_gid'];
-        $field_groupname = $this->config['field_groupname'];
-        foreach ($result as $group){
-            $data[$group->$field_gid] = $group->$field_groupname;
+        foreach ($result as $user) {
+            $data[$user->$field_id] = $user->$field_userid;
         }
+        if (count($data) == 0) return false;
         return $data;
+    }
+
+    /**
+     * retrieves user from database with given maingroup
+     * and returns their count
+     * @param Integer $gid
+     * @return Integer number
+     */
+    function get_user_count_by_gid($gid) {
+        if (empty($gid)) return false;
+        $format = 'SELECT COUNT(*) FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_gid'], $gid);
+        $result = $this->dbConn->get_var($query);
+        if (!$result) return 0;
+        return $result;
+    }
+
+    /**
+     * retrieves members from group and populates an array of $data[id] = userid
+     * @param Integer $gid
+     * @return Array form is $data[id] = userid
+     */
+    function get_add_users_by_gid($gid) {
+        if (empty($gid)) return false;
+        $group = $this->get_group_by_gid($gid);
+        if (!$group) return false;
+
+        $field_id = $this->config['field_id'];
+        $field_userid = $this->config['field_userid'];
+        $field_members = $this->config['field_members'];
+
+        $userids = explode(",", $group[$field_members]);
+        $data = array();
+        foreach ($userids as $userid) {
+            $user = $this->get_user_by_userid($userid);
+            if (!$user) continue;
+            $data[$user[$field_id]] = $user[$field_userid];
+        }
+        if (count($data) == 0) return false;
+        return $data;
+    }
+
+    /**
+     * retrieves user from database with given maingroup
+     * and returns their count
+     * @param Integer $gid
+     * @return Integer number
+     */
+    function get_user_add_count_by_gid($gid) {
+        if (empty($gid)) return false;
+        $group = $this->get_group_by_gid($gid);
+        if (!$group) return false;
+
+        $field_id = $this->config['field_id'];
+        $field_userid = $this->config['field_userid'];
+        $field_members = $this->config['field_members'];
+
+        $userids = explode(",", $group[$field_members]);
+        $data = array();
+        foreach ($userids as $userid) {
+            $user = $this->get_user_by_userid($userid);
+            if (!$user) continue;
+            $data[$user[$field_id]] = $user[$field_userid];
+        }
+        return count($data);
     }
 
     /**
@@ -127,30 +455,18 @@ class AdminClass {
      * @return boolean false on error
      */
     function add_user_to_group($userid, $gid) {
-        $result = $this->dbConn->get_var("SELECT ". $this->config['field_members']. " from " . $this->config['table_groups'] . " WHERE " . $this->config['field_gid'] . "='" . $gid . "'");
+        if (empty($userid) || empty($gid)) return false;
+        $format = 'SELECT %s FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['field_members'], $this->config['table_groups'], $this->config['field_gid'], $gid);
+        $result = $this->dbConn->get_var($query);
         if ($result != "") {
-            $query = "UPDATE " . $this->config['table_groups'] . " set " . $this->config['field_members'] . "=CONCAT(" . $this->config['field_members'] . ",\"," . $userid . "\") where " . $this->config['field_gid'] . "='" . $gid . "'";
+            $members = $result.','.$userid;
         } else {
-            $query = "UPDATE " . $this->config['table_groups'] . " set " . $this->config['field_members'] . "=\"" . $userid . "\" where " . $this->config['field_gid'] . "='" . $gid . "'";
+            $members = $userid;
         }
-        $result = $this->dbConn->query($query);
-        if (!$result) return false;
-        return true;
-    }
 
-    /**
-     * Adds a user to a group using the groupid, does not check if user is already a member!
-     * @param Integer $userid
-     * @param String $groupname
-     * @return boolean false on error
-     */
-    function add_user_to_group_by_name($userid, $groupname) {
-        $result = $this->dbConn->get_var("SELECT ". $this->config['field_members']. " from " . $this->config['table_groups'] . " WHERE " . $this->config['field_groupname'] . "='" . $groupname . "'");
-        if ($result != "") {
-            $query = "UPDATE " . $this->config['table_groups'] . " set " . $this->config['field_members'] . "=CONCAT(" . $this->config['field_members'] . ",\"," . $userid . "\") where " . $this->config['field_groupname'] . "='" . $groupname . "'";
-        } else {
-            $query = "UPDATE " . $this->config['table_groups'] . " set " . $this->config['field_members'] . "=\"" . $userid . "\" WHERE " . $this->config['field_groupname'] . "='" . $groupname . "'";
-        }
+        $format = 'UPDATE %s SET %s="%s" WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_groups'], $this->config['field_members'], $members, $this->config['field_gid'], $gid);
         $result = $this->dbConn->query($query);
         if (!$result) return false;
         return true;
@@ -163,129 +479,23 @@ class AdminClass {
      * @return boolean false on error
      */
     function remove_user_from_group($userid, $gid) {
-        $result = $this->dbConn->get_row("SELECT " . $this->config['field_members'] . " from " . $this->config['table_groups'] . " where " . $this->config['field_gid'] . "='" . $gid . "'");
-        $list = explode(",", $result->members);
-        $diff = array_diff($list, array("$userid", ""));
-
-        if (is_array($diff)) {
-            $members_new = implode(",", $diff);
+        if (empty($userid) || empty($gid)) return false;
+        $format = 'SELECT %s FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['field_members'], $this->config['table_groups'], $this->config['field_gid'], $gid);
+        $result = $this->dbConn->get_var($query);
+        $members_array = explode(",", $result);
+        $members_new_array = array_diff($members_array, array("$userid", ""));
+        if (is_array($members_new_array)) {
+            $members_new = implode(",", $members_new_array);
         } else {
             $members_new = "";
         }
-        $result = $this->dbConn->query("UPDATE " . $this->config['table_groups'] . " set " . $this->config['field_members'] . "=\"" . $members_new . "\" where " . $this->config['field_gid'] . "='" . $gid . "'");
+
+        $format = 'UPDATE %s SET %s="%s" WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_groups'], $this->config['field_members'], $members_new, $this->config['field_gid'], $gid);
+        $result = $this->dbConn->query($query);
         if (!$result) return false;
         return true;
-    }
-
-    /**
-     * removes a user from a given group using the groupname
-     * @param Integer $userid
-     * @param String $groupname
-     * @return boolean false on error
-     */
-    function remove_user_from_group_by_name($userid, $groupname) {
-        $result = $this->dbConn->get_row("SELECT " . $this->config['field_members'] . " from " . $this->config['table_groups'] . " where " . $this->config['field_groupname'] . "='" . $groupname . "'");
-        $list = explode(",", $result->members);
-        //check if $userid is member of this group
-        if(in_array($userid, $list)) {
-            // remove $userid and empty values from $list array
-            $diff = array_diff($list, array("$userid", ""));
-
-            if (is_array($diff)) {
-                $members_new = implode(",", $diff);
-            } else {
-                $members_new = "";
-            }
-            $result = $this->dbConn->query("UPDATE " . $this->config['table_groups'] . " set " . $this->config['field_members'] . "=\"" . $members_new . "\" where " . $this->config['field_groupname'] . "='" . $groupname . "'");
-            if (!$result) return false;
-            return true;
-        } else {
-            return 2;
-        }
-    }
-
-    /**
-     * returns either the total number or the number of disabled users in the db
-     * @param Boolean $only_disabled
-     * @return Integer number or false on error
-     */
-    function get_user_count($only_disabled = false) {
-        $where_clause = "";
-        if ($only_disabled) {
-            $where_clause = " WHERE ". $this->config['field_disabled'] ."=\"1\"";
-        }
-        $result = $this->dbConn->get_var("select COUNT(*) from " . $this->config['table_users']. $where_clause);
-        return $result;
-    }
-
-    /**
-     * returns either the total number or the number of empty groups in the db
-     * @param Boolean $only_emtpy
-     * @return Integer number or false on error
-     */
-    function get_group_count($only_emtpy=false) {
-        $where_clause = "";
-        if ($only_emtpy) {
-            $where_clause = " WHERE ". $this->config['field_members'] ."=\"\"";
-        }
-        $result = $this->dbConn->get_var("select COUNT(*) from " . $this->config['table_groups']. $where_clause);
-        return $result;
-    }
-
-    /**
-     * returns the last index number of the user table
-     * @return Integer
-     */
-    function get_last_user_index() {
-        $result = $this->dbConn->get_var("select MAX(".$this->config['field_uid'].") from " . $this->config['table_users']);
-        return $result;
-    }
-
-    /**
-     * Checks if the given Username is already in the database
-     * @param String $userid
-     * @return boolean true if username exists, false if not
-     */
-    function check_username($userid) {
-        $result = $this->dbConn->get_row("select 1 from " . $this->config['table_users'] . " where " . $this->config['field_userid'] . "='" . $userid . "'");
-        if (is_object($result)) return true;
-        return false;
-    }
-
-    /**
-     * retrieves all users from db and populates an associativ array
-     * @param String $sort column to order by (will be pass directly into SQL statement)
-     * @param String $order either asc or desc (will be passed directly into SQL statement
-     * @return String an array containing the users or false on failure
-     *
-     * @todo Check the order by variable if correct column or not
-     */
-    function get_users_as_array($sort, $order) {
-        $result = $this->dbConn->get_results("SELECT * FROM " . $this->config['table_users'] . " ORDER BY " . $sort . " " . $order, ARRAY_A);
-        if (!$result) return false;
-        return $result;
-    }
-
-    /**
-     * Adds a user entry into the database
-     * @param Array $userdata
-     * @return Boolean true on success, false on failure
-     */
-    function add_user($userdata) {
-        $query = "INSERT INTO ".$this->config['table_users']." (".$this->config['field_userid'].",".$this->config['field_name'].",".$this->config['field_email'].",".$this->config['field_title'].",".$this->config['field_company'].",".$this->config['field_comment'].",".$this->config['field_gid'].",".$this->config['field_uid'].",".$this->config['field_passwd'].",". $this->config['field_homedir'].",".$this->config['field_shell'].",".$this->config['field_disabled'].") values ('".$userdata["userid"]."','".$userdata["name"]."','".$userdata["email"]."','".$userdata["title"]."','".$userdata["company"]."', '".$userdata["comment"]."','".$userdata["gid"]."','".$userdata["user_uid"]."',".$this->config['passwd_encryption']."('".$userdata["passwd"] . "'),'".$userdata["homedir"]."','".$userdata["shell"]."','".$userdata["disabled"] . "')";
-        $result = $this->dbConn->query($query);
-        return $result;
-    }
-
-    /**
-     * Adds a group entry into the database
-     * @param Array $groupdata
-     * @return Boolean true on success, false on failure
-     */
-    function add_group($groupdata) {
-        $query = "INSERT INTO ".$this->config['table_groups']." (".$this->config['field_groupname'].",".$this->config['field_gid'].",".$this->config['field_members'].") values ('".$groupdata["new_group_name"]."','".$groupdata["new_group_gid"]."','".$groupdata["new_group_members"]."')";
-        $result = $this->dbConn->query($query);
-        return $result;
     }
 
     /**
@@ -295,37 +505,12 @@ class AdminClass {
      * @return Boolean true on success, false on failure
      */
     function update_group($gid, $new_gid) {
-        $query = "UPDATE ".$this->config['table_groups']." SET ".$this->config['field_gid']."='".$new_gid."' WHERE ".$this->config['field_gid']."='".$gid."'";
+        $format = 'UPDATE %s SET %s="%s" WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_groups'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
         $result = $this->dbConn->query($query);
-        return $result;
-    }
 
-    /**
-     * retrieves user from database with given maingroup and populates an array of $data[id] = userid
-     * @param Integer $gid
-     * @return Array form is $data[id] = userid
-     */
-    function get_users_by_groupid($gid) {
-        $result = $this->dbConn->get_results("SELECT ".$this->config['field_userid'].", ".$this->config['field_id']." FROM ".$this->config['table_users']." WHERE ".$this->config['field_gid']."='".$gid."'");
-        if (!$result) return false;
-
-        $data = array();
-        $field_userid = $this->config['field_userid'];
-        $field_id = $this->config['field_id'];
-        foreach ($result as $user) {
-            $data[$user->$field_id] = $user->$field_userid;
-        }
-        return $data;
-    }
-
-    /**
-     * retrieve a group by gid
-     * @param Integer $gid
-     * @return Object
-     */
-    function get_group_by_gid($gid) {
-        $result = $this->dbConn->get_row("SELECT * FROM " . $this->config['table_groups'] . " WHERE " . $this->config['field_gid'] . "='".$gid."'");
-        if (!$result) return false;
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
+        $result = $this->dbConn->query($query);
         return $result;
     }
 
@@ -335,29 +520,9 @@ class AdminClass {
      * @return Boolean true on success, false on failure
      */
     function delete_group_by_gid($gid) {
-        $result = $this->dbConn->query("DELETE FROM ".$this->config['table_groups']." WHERE ".$this->config['field_gid']."='".$gid."'");
-        return $result;
-    }
-
-    /**
-     * retrieve a user by userid
-     * @param String $userid
-     * @return Array
-     */
-    function get_user_by_userid($userid) {
-        $result = $this->dbConn->get_row("SELECT * FROM " . $this->config['table_users'] . " WHERE " . $this->config['field_userid'] . "='".$userid."'", ARRAY_A);
-        if (!$result) return false;
-        return $result;
-    }
-
-    /**
-     * retrieve a user by id
-     * @param Integer $id
-     * @return Array
-     */
-    function get_user_by_id($id) {
-        $result = $this->dbConn->get_row("SELECT * FROM " . $this->config['table_users'] . " WHERE " . $this->config['field_id'] . "='".$id."'", ARRAY_A);
-        if (!$result) return false;
+        $format = 'DELETE FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_groups'], $this->config['field_gid'], $gid);
+        $result = $this->dbConn->query($query);
         return $result;
     }
 
@@ -367,43 +532,87 @@ class AdminClass {
      * @return Boolean true on success, false on failure
      */
     function update_user($userdata) {
-        $passwd = '';
-        if (strlen($userdata['passwd']) > 0) $passwd = $this->config['field_passwd']."=".$this->config['passwd_encryption']."('" . $userdata["passwd"] . "'), ";
+        $field_id       = $this->config['field_id'];
+        $field_userid   = $this->config['field_userid'];
+        $field_uid      = $this->config['field_uid'];
+        $field_gid      = $this->config['field_gid'];
+        $field_passwd   = $this->config['field_passwd'];
+        $field_homedir  = $this->config['field_homedir'];
+        $field_shell    = $this->config['field_shell'];
+        $field_title    = $this->config['field_title'];
+        $field_name     = $this->config['field_name'];
+        $field_company  = $this->config['field_company'];
+        $field_email    = $this->config['field_email'];
+        $field_comment  = $this->config['field_comment'];
+        $field_disabled = $this->config['field_disabled'];
+        $field_last_modified = $this->config['field_last_modified'];
 
-        $query = "UPDATE ".$this->config['table_users']." SET ".$this->config['field_userid']."='".$userdata["userid"]."', ".$this->config['field_name']."='".$userdata["name"]."', ".$this->config['field_email']."='".$userdata["email"]."', ".$this->config['field_title']."='".$userdata["title"]."', ".$this->config['field_company']."='".$userdata["company"]."', ".$this->config['field_comment']."='".$userdata["comment"]."', ".$this->config['field_gid']."='".$userdata["gid"]."', ".$this->config['field_uid']."='".$userdata["user_uid"]."', ".$passwd. $this->config['field_homedir']."='".$userdata["homedir"]."', ".$this->config['field_shell']."='".$userdata["shell"] . "', ".$this->config['field_disabled']."='".$userdata["disabled"] . "' WHERE ".$this->config['field_id']."='".$userdata['id']."'" ;
+        $passwd_query = '';
+        if (strlen($userdata[$field_passwd]) > 0) {
+          $passwd_format = ' %s="%s", ';
+          if ($passwd_crypto == 'pbkdf2') {
+            $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
+          } else {
+            $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
+          }
+          $passwd_query = sprintf($passwd_format, $field_passwd, $passwd);
+        }
+
+        $password = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
+        $format = 'UPDATE %s SET %s %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s" WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_users'],
+                                  $passwd_query,
+                                  $field_userid,   $userdata[$field_userid],
+                                  $field_uid,      $userdata[$field_uid],
+                                  $field_gid,      $userdata[$field_gid],
+                                  $field_homedir,  $userdata[$field_homedir],
+                                  $field_shell,    $userdata[$field_shell],
+                                  $field_title,    $userdata[$field_title],
+                                  $field_name,     $userdata[$field_name],
+                                  $field_company,  $userdata[$field_company],
+                                  $field_email,    $userdata[$field_email],
+                                  $field_comment,  $userdata[$field_comment],
+                                  $field_disabled, $userdata[$field_disabled],
+                                  $field_last_modified, date('Y-m-d H:i:s'),
+                                  $field_id,       $userdata[$field_id]);
         $result = $this->dbConn->query($query);
         return $result;
     }
 
     /**
-     * removes the given user from all additional groups
-     * @param String $userid
-     *
-     * @todo This function should probably not print anything instead return a boolean status
+     * removes the user entry from the database
+     * @param Integer $id
+     * @return Boolean true on success, false on failure
      */
-    function remove_user_from_all_groups($userid) {
-        $groups = $this->get_groups();
-        while (list($gid, $group) = each($groups)) {
-            //print("Removing&nbsp;" . $userid . "&nbsp;from " . $group . "<br />");
-            $ret = $this->remove_user_from_group_by_name($userid, $group);
-            if ($ret === true) {
-                print("Successfully removed " . $userid . " from " . $group . "<br />");
-            } elseif($ret === false) {
-                print("Failure while removing " . $userid . " from " . $group . "<br />");
-            } elseif($ret === 2) {
-                //print("Not removing " . $userid . " from " . $group . ". Is not a member.<br />");
-            }
-        }
+    function remove_user_by_id($id) {
+        $format = 'DELETE FROM %s WHERE %s="%s"';
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_id'], $id);
+        $result = $this->dbConn->query($query);
+        return $result;
     }
 
     /**
-     * deletes the user entry from the database
-     * @param String $userid
-     * @return Boolean true on success, false on failure
+     * generate a random string
+     * @param Integer $length default 6
+     * @return String of random characters of the specified length
      */
-    function delete_user_by_userid($userid) {
-        $result = $this->dbConn->query("DELETE FROM ".$this->config['table_users']." WHERE ".$this->config['field_userid']."='".$userid."'");
-        return $result;
+    function generate_random_string($length = 6) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    /**
+     * check the validity of the id 
+     * @param Integer $id
+     * @return Boolean true if the given id is a positive integer
+     */
+    function is_valid_id($id) {
+        return is_numeric($id) && (int)$id > 0 && $id == round($id);
     }
 }
 ?>

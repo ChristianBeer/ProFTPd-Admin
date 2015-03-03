@@ -5,6 +5,7 @@
  *
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
+ * @copyright Ricardo Padilha <ricardo@droboports.com>
  * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
  */
@@ -27,7 +28,9 @@ As the software has undergone a complete rewrite of the config file you
 should not overwrite your old config.php and compare and change values manually.
 
 Installation
--------
+------------
+
+# Using MySQL and SHA1:
 
 1. Install ProFTPd with MySQL support
      - Debian: apt-get install proftpd-mysql
@@ -38,25 +41,31 @@ Installation
 3. Use tables.sql to populate the database (you can use phpMyAdmin for this).
 
 4. Add the following to your proftpd.conf (edit to your needs):
- SQLBackend                      mysql
- SQLConnectInfo                  database@localhost username password
- SQLAuthenticate                 on
- SQLAuthTypes                    Crypt   Backend
- SQLUserInfo                     users userid passwd uid gid homedir shell
- SQLGroupInfo                    groups groupname gid members
- SQLUserWhereClause              "disabled != 1"
- SQLLog PASS                     updatecount
- SQLNamedQuery                   updatecount UPDATE "login_count=login_count+1, last_login=now() WHERE userid='%u'" users
- # Used to track xfer traffic per user (without invoking a quota)
- SQLLog RETR                     bytes-out-count
- SQLNamedQuery                   bytes-out-count UPDATE "bytes_out_used=bytes_out_used+%b WHERE userid='%u'" users
- SQLLog RETR                     files-out-count
- SQLNamedQuery                   files-out-count UPDATE "files_out_used=files_out_used+1 WHERE userid='%u'" users
 
- SQLLog STOR                     bytes-in-count
- SQLNamedQuery                   bytes-in-count UPDATE "bytes_in_used=bytes_in_used+%b WHERE userid='%u'" users
- SQLLog STOR                     files-in-count
- SQLNamedQuery                   files-in-count UPDATE "files_in_used=files_in_used+1 WHERE userid='%u'" users
+  AuthOrder               mod_sql.c
+  SQLBackend              mysql
+  SQLEngine               on
+  SQLPasswordEngine       on
+  SQLAuthenticate         on
+  SQLAuthTypes            SHA1
+  
+  SQLConnectInfo          database@localhost username password
+  SQLUserInfo             users userid passwd uid gid homedir shell
+  SQLGroupInfo            groups groupname gid members
+  SQLUserWhereClause      "disabled != 1"
+  SQLLog PASS             updatecount
+  SQLNamedQuery           updatecount UPDATE "login_count=login_count+1, last_login=datetime() WHERE userid='%u'" users
+  
+  # Used to track xfer traffic per user (without invoking a quota)
+  SQLLog RETR             bytes-out-count
+  SQLNamedQuery           bytes-out-count UPDATE "bytes_out_used=bytes_out_used+%b WHERE userid='%u'" users
+  SQLLog RETR             files-out-count
+  SQLNamedQuery           files-out-count UPDATE "files_out_used=files_out_used+1 WHERE userid='%u'" users
+  
+  SQLLog STOR             bytes-in-count
+  SQLNamedQuery           bytes-in-count UPDATE "bytes_in_used=bytes_in_used+%b WHERE userid='%u'" users
+  SQLLog STOR             files-in-count
+  SQLNamedQuery           files-in-count UPDATE "files_in_used=files_in_used+1 WHERE userid='%u'" users
 
 5. Extract all files to your webspace (into a subdirectory like "proftpdadmin").
 
@@ -68,4 +77,55 @@ Installation
 
 9. Go to http://yourwebspace/proftpdadmin/ and start using it!
 
-Please mail me if you've got any problems/comments or questions <djangofett@gmx.net>
+# Using sqlite3 and pbkdf2:
+
+1. Install ProFTPd with sqlite3 support
+
+2. Use tables-sqlite3.sql to create an sqlite3 database:
+   $ sqlite3 auth.sqlite3 < tables-sqlite3.sql
+
+3. Add the following to your proftpd.conf (edit to your needs):
+
+  AuthOrder               mod_sql.c
+  SQLBackend              sqlite3
+  SQLEngine               on
+  SQLPasswordEngine       on
+  SQLAuthenticate         on
+  SQLAuthTypes            pbkdf2
+  SQLPasswordPBKDF2       sha1 5000 20
+  SQLPasswordUserSalt     name Prepend
+  SQLPasswordEncoding     hex
+  
+  SQLConnectInfo          /path/to/auth.sqlite3
+  SQLUserInfo             users userid passwd uid gid homedir shell
+  SQLGroupInfo            groups groupname gid members
+  SQLUserWhereClause      "disabled != 1"
+  SQLLog PASS             updatecount
+  SQLNamedQuery           updatecount UPDATE "login_count=login_count+1, last_login=datetime() WHERE userid='%u'" users
+  
+  # Used to track xfer traffic per user (without invoking a quota)
+  SQLLog RETR             bytes-out-count
+  SQLNamedQuery           bytes-out-count UPDATE "bytes_out_used=bytes_out_used+%b WHERE userid='%u'" users
+  SQLLog RETR             files-out-count
+  SQLNamedQuery           files-out-count UPDATE "files_out_used=files_out_used+1 WHERE userid='%u'" users
+  
+  SQLLog STOR             bytes-in-count
+  SQLNamedQuery           bytes-in-count UPDATE "bytes_in_used=bytes_in_used+%b WHERE userid='%u'" users
+  SQLLog STOR             files-in-count
+  SQLNamedQuery           files-in-count UPDATE "files_in_used=files_in_used+1 WHERE userid='%u'" users
+
+5. Extract all files to your webspace (into a subdirectory like "proftpdadmin").
+
+6. Secure access to this directory (for example: create a .htaccess file if using apache)
+
+7. Edit the configs/config_example.php file to your needs and rename it to config.php.
+
+8. Start ProFTPd.
+
+9. Go to http://yourwebspace/proftpdadmin/ and start using it!
+
+Thanks / Links
+--------------
+
+Lex Brugman for initiating this project  
+Justin Vincent for the ezSQL library

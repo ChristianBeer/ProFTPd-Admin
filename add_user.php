@@ -5,8 +5,9 @@
  * @package ProFTPd-Admin
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  *
- * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ * @copyright Christian Beer <djangofett@gmx.net>
+ * @copyright Ricardo Padilha <ricardo@droboports.com>
  *
  */
 
@@ -15,123 +16,273 @@ include_once ("includes/AdminClass.php");
 global $cfg;
 
 $ac = new AdminClass($cfg);
-echo $ac->get_header();
 
-if (@isset($_REQUEST["p_new"])) {
-    ob_start();
-}
-
-if (isset($_REQUEST["p_new"])) {
-    if (!is_numeric($_REQUEST["user_uid"])) {
-        ob_get_contents();
-        print("Bad UID, please try again.");
-        echo $ac->get_footer();
-        ob_end_flush();
-        die;
-    }
-
-    if (!preg_match($cfg['userid_regex'], $_REQUEST["userid"])) {
-        ob_get_contents();
-        print("Bad username, please try again.");
-        echo $ac->get_footer();
-        ob_end_flush();
-        die;
-    }
-
-    if ($ac->check_username($_REQUEST["userid"])) {
-        print("Username is already in use, please try again.");
-        echo $ac->get_footer();
-        ob_end_flush();
-        die;
-    }
-
-    $pw_len = strlen($_REQUEST["passwd"]);
-    if ($pw_len < $cfg['min_passwd_length']) {
-        print "Password is too short, must be at least ".$cfg['min_passwd_length']." characters. Please try again.<br />";
-        echo $ac->get_footer();
-        die;
-    }
-
-    if (strlen($_REQUEST["homedir"]) <= 1) {
-        print("Incorrect home dir, please try again.");
-        include ("includes/footer.php.inc");
-        ob_end_flush();
-        die;
-    }
-
-    if (strlen($_REQUEST["gid"]) <= 0) {
-        print("Incorrect main group, please try again.");
-        include ("includes/footer.php.inc");
-        ob_end_flush();
-        die;
-    }
-
-    if (strlen($_REQUEST["shell"]) <= 1) {
-        print("Incorrect shell type, please try again.");
-        include ("includes/footer.php.inc");
-        ob_end_flush();
-        die;
-    }
-/*
-    if (strlen($_REQUEST["name"]) <= 1) {
-        print("Incorrect name, please try again.");
-        include ("includes/footer.php.inc");
-        ob_end_flush();
-        die;
-    }
-
-    if (strlen($_REQUEST["email"]) <= 4) {
-        print("Incorrect mail adress, please try again.");
-        include ("includes/footer.php.inc");
-        ob_end_flush();
-        die;
-    }
-*/
-    $disabled = isset($_REQUEST["disabled"])?'1':'0';
-    $userdata = array("userid" => $_REQUEST["userid"], "name" => $_REQUEST["name"] , "email" => $_REQUEST["email"] , "title" => $_REQUEST["title"] , "company" => $_REQUEST["company"] , "comment" => $_REQUEST["comment"] , "gid" => $_REQUEST["gid"] , "user_uid" => $_REQUEST["user_uid"] , "passwd" => $_REQUEST["passwd"] , "homedir" => $_REQUEST["homedir"] , "shell" => $_REQUEST["shell"], "disabled" => $disabled);
-    if(!$ac->add_user($userdata)) {
-        print("An error occured while creating <b>" . $_REQUEST["userid"] . "</b> please check database consistency");
-        echo $ac->get_footer();
-        die;
-    }
-    $groups = $ac->get_groups();
-
-    if (isset($_REQUEST["ad_gid"])) {
-        while (list($key, $group) = each($_REQUEST["ad_gid"])) {
-            $ac->add_user_to_group_by_name($_REQUEST["userid"], $group);
-        }
-    }
-    print("Added user: <b>" . $_REQUEST["userid"] . "</b>");
-    echo $ac->get_footer();
-    die;
-}
+$field_userid   = $cfg['field_userid'];
+$field_uid      = $cfg['field_uid'];
+$field_gid      = $cfg['field_gid'];
+$field_ad_gid   = 'ad_gid';
+$field_passwd   = $cfg['field_passwd'];
+$field_homedir  = $cfg['field_homedir'];
+$field_shell    = $cfg['field_shell'];
+$field_title    = $cfg['field_title'];
+$field_name     = $cfg['field_name'];
+$field_company  = $cfg['field_company'];
+$field_email    = $cfg['field_email'];
+$field_comment  = $cfg['field_comment'];
+$field_disabled = $cfg['field_disabled'];
 
 $groups = $ac->get_groups();
-if (!is_array($groups)) {
-    print("<strong>No groups available, please create at least one group!</strong>");
-    echo $ac->get_footer();
-    die;
+
+if (count($groups) == 0) {
+  $errormsg = 'There are no groups in the database; please create at least one group before creating users.';
 }
 
-$random_password_length = 6;
-$rnd_password = crypt(uniqid(rand(), 1));
-$rnd_password = strip_tags(stripslashes($rnd_password));
-$rnd_password = str_replace(".", "", $rnd_password);
-$rnd_password = strrev(str_replace("/", "", $rnd_password));
-$password = substr($rnd_password, 0, $random_password_length);
+/* Data validation */
+if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {
+  /* user id validation */
+  if (empty($_REQUEST[$field_userid])
+      || !preg_match($cfg['userid_regex'], $_REQUEST[$field_userid])
+      || strlen($_REQUEST[$field_userid]) > $cfg['max_userid_length']) {
+    $errormsg = 'Invalid user name; user name must contain only letters, numbers, hyphens, and underscores with a maximum of '.$cfg['max_userid_length'].' characters.';
+  }
+  /* uid validation */
+  if (empty($errormsg) && (empty($_REQUEST[$field_uid]) || !$ac->is_valid_id($_REQUEST[$field_uid]))) {
+    $errormsg = 'Invalid UID; must be a positive integer.';
+  }
+  /* gid validation */
+  if (empty($errormsg) && (empty($_REQUEST[$field_gid]) || !$ac->is_valid_id($_REQUEST[$field_gid]))) {
+    $errormsg = 'Invalid main group; GID must be a positive integer.';
+  }
+  /* password length validation */
+  if (empty($errormsg) && strlen($_REQUEST[$field_passwd]) < $cfg['min_passwd_length']) {
+    $errormsg = 'Password is too short; minimum length is '.$cfg['min_passwd_length'].' characters.';
+  }
+  /* home directory validation */
+  if (empty($errormsg) && strlen($_REQUEST[$field_homedir]) <= 1) {
+    $errormsg = 'Invalid home directory; home directory cannot be empty.';
+  }
+  /* shell validation */
+  if (empty($errormsg) && strlen($_REQUEST[$field_shell]) <= 1) {
+    $errormsg = 'Invalid shell; shell cannot be empty.';
+  }
+  /* user name uniqueness validation */
+  if (empty($errormsg) && $ac->check_username($_REQUEST[$field_userid])) {
+    $errormsg = 'User name already exists; name must be unique.';
+  }
+  /* gid uniqueness validation */
+  if (empty($errormsg) && !$ac->check_gid($_REQUEST[$field_gid])) {
+    $errormsg = 'Main group does not exist; GID cannot be found in the database.';
+  }
+  /* data validation passed */
+  if (empty($errormsg)) {
+    $disabled = isset($_REQUEST[$field_disabled]) ? '1':'0';
+    $userdata = array($field_userid   => $_REQUEST[$field_userid],
+                      $field_uid      => $_REQUEST[$field_uid],
+                      $field_gid      => $_REQUEST[$field_gid],
+                      $field_passwd   => $_REQUEST[$field_passwd],
+                      $field_homedir  => $_REQUEST[$field_homedir],
+                      $field_shell    => $_REQUEST[$field_shell],
+                      $field_title    => $_REQUEST[$field_title],
+                      $field_name     => $_REQUEST[$field_name],
+                      $field_email    => $_REQUEST[$field_email],
+                      $field_company  => $_REQUEST[$field_company],
+                      $field_comment  => $_REQUEST[$field_comment],
+                      $field_disabled => $disabled);
+    if ($ac->add_user($userdata)) {
+      if (isset($_REQUEST[$field_ad_gid])) {
+        while (list($g_key, $g_gid) = each($_REQUEST[$field_ad_gid])) {
+          if (!$ac->is_valid_id($g_gid)) {
+            $warnmsg = 'Adding additional group failed; at least one of the additional groups had an invalid GID.';
+            continue;
+          }
+          // XXX: fix error handling here
+          $ac->add_user_to_group($_REQUEST[$field_userid], $g_gid);
+        }
+      }
+      $infomsg = 'User "'.$_REQUEST[$field_userid].'" created successfully.';
+    } else {
+      $errormsg = 'User "'.$_REQUEST[$field_userid].'" creation failed; check log files.';
+    }
+  }
+}
 
-if (empty($cfg['default_uid'])) {
-    $uid = $ac->get_last_user_index() + 1;
+/* Form values */
+if (isset($errormsg)) {
+  /* This is a failed attempt */
+  $userid   = $_REQUEST[$field_userid];
+  $uid      = $_REQUEST[$field_uid];
+  $gid      = $_REQUEST[$field_gid];
+  $ad_gid   = $_REQUEST[$field_ad_gid];
+  $passwd   = $_REQUEST[$field_passwd];
+  $homedir  = $_REQUEST[$field_homedir];
+  $shell    = $_REQUEST[$field_shell];
+  $title    = $_REQUEST[$field_title];
+  $name     = $_REQUEST[$field_name];
+  $email    = $_REQUEST[$field_email];
+  $company  = $_REQUEST[$field_company];
+  $comment  = $_REQUEST[$field_comment];
+  $disabled = isset($_REQUEST[$field_disabled]) ? '1' : '0';
 } else {
-    $uid = $cfg['default_uid'];
+  /* Default values */
+  $userid   = "";
+  if (empty($cfg['default_uid'])) {
+    $uid    = $ac->get_last_uid() + 1;
+  } else {
+    $uid    = $cfg['default_uid'];
+  }
+  if (empty($infomsg)) {
+    $gid    = "";
+    $ad_gid = array();
+    $shell  = "/bin/false";
+  } else {
+    $gid    = $_REQUEST[$field_gid];
+    $ad_gid = $_REQUEST[$field_ad_gid];
+    $shell  = $_REQUEST[$field_shell];
+  }
+  $passwd   = $ac->generate_random_string((int) $cfg['min_passwd_length']);
+  $homedir  = $cfg['default_homedir'];
+  $title    = "m";
+  $name     = "";
+  $email    = "";
+  $company  = "";
+  $comment  = "";
+  $disabled = '0';
 }
 
-$homedir = $cfg['default_homedir'];
-
-include ("includes/userform.php");
-print("<tr><td colspan=\"2\" align=\"center\">" .
-        "<input type=\"submit\" name=\"p_new\" value=\"Create\">" .
-        "</td></tr></form></table>");
-
-echo $ac->get_footer();
+include ("includes/header.php");
 ?>
+<?php include ("includes/messages.php"); ?>
+
+<div class="col-xs-12 col-sm-8 col-md-6 center">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Add user</h3>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <form role="form" class="form-horizontal" method="post" data-toggle="validator">
+            <!-- User name -->
+            <div class="form-group">
+              <label for="<?php echo $field_userid; ?>" class="col-sm-4 control-label">User name</label>
+              <div class="controls col-sm-8">
+                <input type="text" class="form-control" id="<?php echo $field_userid; ?>" name="<?php echo $field_userid; ?>" value="<?php echo $userid; ?>" placeholder="Enter a user name" maxlength="<?php echo $cfg['max_userid_length']; ?>" pattern="<?php echo substr($cfg['userid_regex'], 2, -3); ?>" required />
+                <p class="help-block"><small>Only letters, numbers, hyphens, and underscores. Maximum <?php echo $cfg['max_userid_length']; ?> characters.</small></p>
+              </div>
+            </div>
+            <!-- UID -->
+            <div class="form-group">
+              <label for="<?php echo $field_uid; ?>" class="col-sm-4 control-label">UID</label>
+              <div class="controls col-sm-8">
+                <input type="number" class="form-control" id="<?php echo $field_uid; ?>" name="<?php echo $field_uid; ?>" value="<?php echo $uid; ?>" min="1" placeholder="Enter a UID" required />
+                <p class="help-block"><small>Positive integer.</small></p>
+              </div>
+            </div>
+            <!-- Main group -->
+            <div class="form-group">
+              <label for="<?php echo $field_gid; ?>" class="col-sm-4 control-label">Main group</label>
+              <div class="controls col-sm-8">
+                <select class="form-control multiselect" id="<?php echo $field_gid; ?>" name="<?php echo $field_gid; ?>" required>
+                <?php while (list($g_gid, $g_group) = each($groups)) { ?>
+                  <option value="<?php echo $g_gid; ?>" <?php if ($gid == $g_gid) { echo 'selected="selected"'; } ?>><?php echo $g_group; ?></option>
+                <?php } ?>
+                </select>
+              </div>
+            </div>
+            <!-- Additional groups -->
+            <div class="form-group">
+              <label for="<?php echo $field_ad_gid; ?>" class="col-sm-4 control-label">Additional groups</label>
+              <div class="controls col-sm-8">
+                <select class="form-control multiselect" id="<?php echo $field_ad_gid; ?>" name="<?php echo $field_ad_gid; ?>[]" multiple="multiple">
+                <?php reset ($groups); while (list($g_gid, $g_group) = each($groups)) { ?>
+                  <option value="<?php echo $g_gid; ?>" <?php if (array_key_exists($g_gid, $ad_gid)) { echo 'selected="selected"'; } ?>><?php echo $g_group; ?></option>
+                <?php } ?>
+                </select>
+              </div>
+            </div>
+            <!-- Password -->
+            <div class="form-group">
+              <label for="<?php echo $field_passwd; ?>" class="col-sm-4 control-label">Password</label>
+              <div class="controls col-sm-8">
+                <input type="text" class="form-control" id="<?php echo $field_passwd; ?>" name="<?php echo $field_passwd; ?>" value="<?php echo $passwd; ?>" placeholder="Enter a password" minlength="<?php echo $cfg['min_passwd_length']; ?>" required />
+                <p class="help-block"><small>Minimum length <?php echo $cfg['min_passwd_length']; ?> characters.</small></p>
+              </div>
+            </div>
+            <!-- Home directory -->
+            <div class="form-group">
+              <label for="<?php echo $field_homedir; ?>" class="col-sm-4 control-label">Home directory</label>
+              <div class="controls col-sm-8">
+                <input type="text" class="form-control" id="<?php echo $field_homedir; ?>" name="<?php echo $field_homedir; ?>" value="<?php echo $homedir; ?>" placeholder="Enter a home directory" />
+              </div>
+            </div>
+            <!-- Shell -->
+            <div class="form-group">
+              <label for="<?php echo $field_shell; ?>" class="col-sm-4 control-label">Shell</label>
+              <div class="controls col-sm-8">
+                <input type="text" class="form-control" id="<?php echo $field_shell; ?>" name="<?php echo $field_shell; ?>" value="<?php echo $shell; ?>" placeholder="Enter the user's shell" />
+              </div>
+            </div>
+            <!-- Title -->
+            <div class="form-group">
+              <label for="<?php echo $field_title; ?>" class="col-sm-4 control-label">Title</label>
+              <div class="col-sm-8">
+                <select class="form-control" id="<?php echo $field_title; ?>" name="<?php echo $field_title; ?>" required>
+                  <option value="m" <?php if ($title == 'm') { echo 'selected="selected"'; } ?>>Mr.</option>
+                  <option value="f" <?php if ($title == 'f') { echo 'selected="selected"'; } ?>>Ms.</option>
+                </select>
+              </div>
+            </div>
+            <!-- Real name -->
+            <div class="form-group">
+              <label for="<?php echo $field_name; ?>" class="col-sm-4 control-label">Name</label>
+              <div class="controls col-sm-8">
+                <input type="text" class="form-control" id="<?php echo $field_name; ?>" name="<?php echo $field_name; ?>" value="<?php echo $name; ?>" placeholder="Enter the user's real name" />
+              </div>
+            </div>
+            <!-- Email -->
+            <div class="form-group">
+              <label for="<?php echo $field_email; ?>" class="col-sm-4 control-label">E-mail</label>
+              <div class="controls col-sm-8">
+                <input type="email" class="form-control" id="<?php echo $field_email; ?>" name="<?php echo $field_email; ?>" value="<?php echo $email; ?>" placeholder="Enter the user's email" />
+              </div>
+            </div>
+            <!-- Company -->
+            <div class="form-group">
+              <label for="<?php echo $field_company; ?>" class="col-sm-4 control-label">Company</label>
+              <div class="controls col-sm-8">
+                <input type="text" class="form-control" id="<?php echo $field_company; ?>" name="<?php echo $field_company; ?>" value="<?php echo $company; ?>" placeholder="Enter a company or department" />
+              </div>
+            </div>
+            <!-- Comment -->
+            <div class="form-group">
+              <label for="<?php echo $field_comment; ?>" class="col-sm-4 control-label">Comment</label>
+              <div class="controls col-sm-8">
+                <textarea class="form-control" id="<?php echo $field_comment; ?>" name="<?php echo $field_comment; ?>" rows="3" placeholder="Enter a comment or additional information about the user"><?php echo $comment; ?></textarea>
+              </div>
+            </div>
+            <!-- Suspended -->
+            <div class="form-group">
+              <label for="<?php echo $field_disabled; ?>" class="col-sm-4 control-label">Status</label>
+              <div class="controls col-sm-8">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="<?php echo $field_disabled; ?>" name="<?php echo $field_disabled; ?>" <?php if ($disabled) { echo 'checked="checked"'; } ?> />Suspended account
+                  </label>
+                </div>
+              </div>
+            </div>
+            <!-- Actions -->
+            <div class="form-group">
+              <div class="col-sm-12">
+                <a class="btn btn-default" href="users.php">&laquo; View users</a>
+                <button type="submit" class="btn btn-primary pull-right" name="action" value="create">Create user</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<?php include ("includes/footer.php"); ?>

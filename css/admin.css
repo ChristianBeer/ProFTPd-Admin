@@ -1,0 +1,29 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 80px;
+  padding-bottom: 20px;
+}
+
+.table tbody>tr>td.pull-middle {
+    vertical-align: middle;
+}
+
+.multiselect-container>li>a>label {
+    padding-bottom: 7px;
+}
+
+.checkbox>.checkbox-inline {
+    margin-left: 10px;
+}
+
+.oneline {
+  overflow: hidden;
+  white-space:nowrap;
+  text-overflow: ellipsis;
+}
+
+.center {
+  float: none;
+  margin-left: auto;
+  margin-right: auto;
+}
