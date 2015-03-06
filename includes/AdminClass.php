@@ -506,10 +506,10 @@ class AdminClass {
      */
     function update_group($gid, $new_gid) {
         $format = 'UPDATE %s SET %s="%s" WHERE %s="%s"';
-        $query = sprintf($format, $this->config['table_groups'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
+        $query = sprintf($format, $this->config['table_users'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
         $result = $this->dbConn->query($query);
 
-        $query = sprintf($format, $this->config['table_users'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
+        $query = sprintf($format, $this->config['table_groups'], $this->config['field_gid'], $new_gid, $this->config['field_gid'], $gid);
         $result = $this->dbConn->query($query);
         return $result;
     }
@@ -546,11 +546,12 @@ class AdminClass {
         $field_comment  = $this->config['field_comment'];
         $field_disabled = $this->config['field_disabled'];
         $field_last_modified = $this->config['field_last_modified'];
+        $passwd_encryption = $this->config['passwd_encryption'];
 
         $passwd_query = '';
         if (strlen($userdata[$field_passwd]) > 0) {
           $passwd_format = ' %s="%s", ';
-          if ($passwd_crypto == 'pbkdf2') {
+          if ($passwd_encryption == 'pbkdf2') {
             $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
           } else {
             $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
