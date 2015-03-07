@@ -20,7 +20,7 @@ $ac = new AdminClass($cfg);
 $field_userid   = $cfg['field_userid'];
 $field_id       = $cfg['field_id'];
 $field_uid      = $cfg['field_uid'];
-$field_gid      = $cfg['field_gid'];
+$field_ugid     = $cfg['field_ugid'];
 $field_homedir  = $cfg['field_homedir'];
 $field_shell    = $cfg['field_shell'];
 $field_title    = $cfg['field_title'];
@@ -63,13 +63,13 @@ if ($cfg['userid_filter_separator'] != "") {
 if (!empty($all_users)) {
   foreach ($all_users as $user) { 
     if ($ufilter != "") {
-      // None means users without a prefix
-      if ($ufilter == "None" && strpos($user[$field_userid], $cfg['userid_filter_separator']) != 0) {
-          continue;
-      }
-      // else check if user has the filtered prefix
-      if (strncmp($user[$field_userid], $ufilter, strlen($ufilter)) != 0) {
+      if ($ufilter == "None" && strpos($user[$field_userid], $cfg['userid_filter_separator'])) {
+        // filter is None and user has a prefix
         continue;
+      }
+      if ($ufilter != "None" && strncmp($user[$field_userid], $ufilter, strlen($ufilter)) != 0) {
+        // filter is something else and user does not have a prefix
+      	continue;
       }
     }
     $users[] = $user;
@@ -117,12 +117,14 @@ include ("includes/header.php");
             <div class="btn-group" role="group">
               <a type="button" class="btn btn-default" href="users.php">All users</a>
               <a type="button" class="btn btn-default" href="users.php?uf=None">No prefix</a>
-              <button type="button" class="btn btn-default dropdown-toggle">Prefix<span class="caret"></span></button>
-              <ul class="dropdown-menu" role="menu">
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default dropdown-toggle" id="idPrefix" data-toggle="dropdown" aria-expanded="false">Prefix <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="idPrefix">
                 <?php foreach ($userfilter as $uf) { ?>
-                  <li><a href="users.php?uf=<?php echo $uf; ?>"><?php echo $uf; ?></a></li>
+                  <li role="presentation"><a role="menuitem" tabindex="-1" href="users.php?uf=<?php echo $uf; ?>"><?php echo $uf; ?></a></li>
                 <?php } ?>
-              </ul>
+                </ul>
+              </div>
             </div>
           </div>
           <?php } ?>
@@ -150,7 +152,7 @@ include ("includes/header.php");
                   <tr>
                     <td class="pull-middle"><?php echo $user[$field_uid]; ?></td>
                     <td class="pull-middle"><a href="edit_user.php?action=show&<?php echo $field_id; ?>=<?php echo $user[$field_id]; ?>"><?php echo $user[$field_userid]; ?></a></td>
-                    <td class="pull-middle"><?php echo $all_groups[$user[$field_gid]]; ?></td>
+                    <td class="pull-middle"><?php echo $all_groups[$user[$field_ugid]]; ?></td>
                     <td class="pull-middle hidden-xs hidden-sm">
                       <?php if (empty($groups[$user[$field_userid]])) { ?>
                         none

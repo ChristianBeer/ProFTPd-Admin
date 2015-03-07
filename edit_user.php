@@ -20,7 +20,7 @@ $ac = new AdminClass($cfg);
 $field_userid   = $cfg['field_userid'];
 $field_id       = $cfg['field_id'];
 $field_uid      = $cfg['field_uid'];
-$field_gid      = $cfg['field_gid'];
+$field_ugid     = $cfg['field_ugid'];
 $field_ad_gid   = 'ad_gid';
 $field_passwd   = $cfg['field_passwd'];
 $field_homedir  = $cfg['field_homedir'];
@@ -56,10 +56,10 @@ if (!$ac->is_valid_id($id)) {
     $errormsg = 'User does not exist; cannot find ID '.$id.' in the database.';
   } else {
     $userid = $user[$field_userid];
-    $gid = $user[$field_gid];
-    $group = $ac->get_group_by_gid($gid);
+    $ugid = $user[$field_ugid];
+    $group = $ac->get_group_by_gid($ugid);
     if (!$group) {
-      $warnmsg = 'Main group does not exist; cannot find GID '.$gid.' in the database.';
+      $warnmsg = 'Main group does not exist; cannot find GID '.$ugid.' in the database.';
     }
     $ad_gid = $ac->parse_groups($userid);
   }
@@ -77,7 +77,7 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
     $errormsg = 'Invalid UID; must be a positive integer.';
   }
   /* gid validation */
-  if (empty($errormsg) && (empty($_REQUEST[$field_gid]) || !$ac->is_valid_id($_REQUEST[$field_gid]))) {
+  if (empty($errormsg) && (empty($_REQUEST[$field_ugid]) || !$ac->is_valid_id($_REQUEST[$field_ugid]))) {
     $errormsg = 'Invalid main group; GID must be a positive integer.';
   }
   /* password length validation */
@@ -97,8 +97,8 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
     $errormsg = 'User name already exists; name must be unique.';
   }
   /* gid uniqueness validation */
-  if (empty($errormsg) && !$ac->check_gid($_REQUEST[$field_gid])) {
-    $errormsg = 'Main group does not exist; GID '.$_REQUEST[$field_gid].' cannot be found in the database.';
+  if (empty($errormsg) && !$ac->check_gid($_REQUEST[$field_ugid])) {
+    $errormsg = 'Main group does not exist; GID '.$_REQUEST[$field_ugid].' cannot be found in the database.';
   }
   /* data validation passed */
   if (empty($errormsg)) {
@@ -116,7 +116,7 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
     $userdata = array($field_id       => $_REQUEST[$field_id],
                       $field_userid   => $_REQUEST[$field_userid],
                       $field_uid      => $_REQUEST[$field_uid],
-                      $field_gid      => $_REQUEST[$field_gid],
+                      $field_ugid     => $_REQUEST[$field_ugid],
                       $field_passwd   => $_REQUEST[$field_passwd],
                       $field_homedir  => $_REQUEST[$field_homedir],
                       $field_shell    => $_REQUEST[$field_shell],
@@ -155,7 +155,7 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
 if (empty($errormsg)) {
   /* Default values */
   $uid      = $user[$field_uid];
-  $gid      = $user[$field_gid];
+  $ugid     = $user[$field_ugid];
   $passwd   = '';
   $homedir  = $user[$field_homedir];
   $shell    = $user[$field_shell];
@@ -169,7 +169,7 @@ if (empty($errormsg)) {
   /* This is a failed attempt */
   $userid   = $_REQUEST[$field_userid];
   $uid      = $_REQUEST[$field_uid];
-  $gid      = $_REQUEST[$field_gid];
+  $ugid     = $_REQUEST[$field_ugid];
   $ad_gid   = $_REQUEST[$field_ad_gid];
   $passwd   = $_REQUEST[$field_passwd];
   $homedir  = $_REQUEST[$field_homedir];
@@ -281,11 +281,11 @@ include ("includes/header.php");
           </div>
           <!-- Main group -->
           <div class="form-group">
-            <label for="<?php echo $field_gid; ?>" class="col-sm-4 control-label">Main group</label>
+            <label for="<?php echo $field_ugid; ?>" class="col-sm-4 control-label">Main group</label>
             <div class="controls col-sm-8">
-              <select class="form-control multiselect" id="<?php echo $field_gid; ?>" name="<?php echo $field_gid; ?>" required>
+              <select class="form-control multiselect" id="<?php echo $field_ugid; ?>" name="<?php echo $field_ugid; ?>" required>
               <?php reset ($groups); while (list($g_gid, $g_group) = each($groups)) { ?>
-                <option value="<?php echo $g_gid; ?>" <?php if ($gid == $g_gid) { echo 'selected="selected"'; } ?>><?php echo $g_group; ?></option>
+                <option value="<?php echo $g_gid; ?>" <?php if ($ugid == $g_gid) { echo 'selected="selected"'; } ?>><?php echo $g_group; ?></option>
               <?php } ?>
               </select>
             </div>
