@@ -288,10 +288,11 @@ class AdminClass {
         $passwd_encryption = $this->config['passwd_encryption'];
         if ($passwd_encryption == 'pbkdf2') {
           $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
+          $passwd = '"'.$passwd.'"';
         } else {
           $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
         }
-        $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")';
+        $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s","%s","%s")';
         $query = sprintf($format, $this->config['table_users'],
                                   $field_userid,
                                   $field_uid,
@@ -557,11 +558,13 @@ class AdminClass {
 
         $passwd_query = '';
         if (strlen($userdata[$field_passwd]) > 0) {
-          $passwd_format = ' %s="%s", ';
+          $passwd_format = '';
           if ($passwd_encryption == 'pbkdf2') {
             $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
+            $passwd_format = ' %s="%s", ';
           } else {
             $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
+            $passwd_format = ' %s=%s, ';
           }
           $passwd_query = sprintf($passwd_format, $field_passwd, $passwd);
         }
@@ -615,7 +618,7 @@ class AdminClass {
     }
 
     /**
-     * check the validity of the id 
+     * check the validity of the id
      * @param Integer $id
      * @return Boolean true if the given id is a positive integer
      */

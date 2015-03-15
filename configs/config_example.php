@@ -43,7 +43,7 @@ $cfg['default_uid'] = ""; //if empty next incremental will be default
 $cfg['default_homedir'] = "/srv/ftp";
 // Use either SHA1 or MD5 or any other supported by your MySQL-Server and ProFTPd
 // "pbkdf2" is supported if you are using ProFTPd 1.3.5.
-$cfg['passwd_encryption'] = "SHA1"; 
+$cfg['passwd_encryption'] = "SHA1";
 $cfg['min_passwd_length'] = "6";
 $cfg['max_userid_length'] = "20";
 $cfg['max_groupname_length'] = "20";
@@ -62,7 +62,7 @@ $cfg['db_user'] = "user";
 $cfg['db_pass'] = "password";
 
 // use this block for an sqlite3 backend
-$cfg['db_type'] = "sqlite3";
-$cfg['db_path'] = "configs/";
-$cfg['db_name'] = "auth.sqlite3";
+//$cfg['db_type'] = "sqlite3";
+//$cfg['db_path'] = "configs/";
+//$cfg['db_name'] = "auth.sqlite3";
 ?>

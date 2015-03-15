@@ -18,6 +18,8 @@ Changes:
 * separation of editing and removal in different php files
 * fixed several bugs in the data model, e.g., updating a group's gid
   also updates the gids of the users
+* support for sqlite3 database
+* support for pbkdf2 hash algorithm
 
 Release: 2.0
 Changes:
