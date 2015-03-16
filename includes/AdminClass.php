@@ -569,7 +569,6 @@ class AdminClass {
           $passwd_query = sprintf($passwd_format, $field_passwd, $passwd);
         }
 
-        $password = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
         $format = 'UPDATE %s SET %s %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s" WHERE %s="%s"';
         $query = sprintf($format, $this->config['table_users'],
                                   $passwd_query,
