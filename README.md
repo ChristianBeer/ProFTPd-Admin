@@ -34,7 +34,7 @@ A lot ;) so help is very much appreciated
 
 ## Upgrade
 
-As the software has undergone a complete rewrite of the config file you should not overwrite your old config.php and compare and change values manually. If you want to upgrade the hashing algorithm you have to change all passwords after changing the configs (both ProFTPd and ProFTPd Admin).
+If you want to upgrade the hashing algorithm you have to change all passwords after changing the configs (both ProFTPd and ProFTPd Admin).
 
 ## Installation
 
@@ -48,6 +48,7 @@ As the software has undergone a complete rewrite of the config file you should n
 4. Add the following to your proftpd.conf (edit to your needs):
 
 ```
+CreateHome              on 775
 AuthOrder               mod_sql.c
 SQLBackend              mysql
 SQLEngine               on
@@ -60,7 +61,7 @@ SQLUserInfo             users userid passwd uid gid homedir shell
 SQLGroupInfo            groups groupname gid members
 SQLUserWhereClause      "disabled != 1"
 SQLLog PASS             updatecount
-SQLNamedQuery           updatecount UPDATE "login_count=login_count+1, last_login=datetime() WHERE userid='%u'" users
+SQLNamedQuery           updatecount UPDATE "login_count=login_count+1, last_login=now() WHERE userid='%u'" users
 
  # Used to track xfer traffic per user (without invoking a quota)
 SQLLog RETR             bytes-out-count
@@ -88,6 +89,7 @@ SQLNamedQuery           files-in-count UPDATE "files_in_used=files_in_used+1 WHE
 3. Add the following to your proftpd.conf (edit to your needs):
 
 ```
+CreateHome              on 775
 AuthOrder               mod_sql.c
 SQLBackend              sqlite3
 SQLEngine               on
@@ -103,7 +105,7 @@ SQLUserInfo             users userid passwd uid gid homedir shell
 SQLGroupInfo            groups groupname gid members
 SQLUserWhereClause      "disabled != 1"
 SQLLog PASS             updatecount
-SQLNamedQuery           updatecount UPDATE "login_count=login_count+1, last_login=datetime() WHERE userid='%u'" users
+SQLNamedQuery           updatecount UPDATE "login_count=login_count+1, last_login=now() WHERE userid='%u'" users
 
  # Used to track xfer traffic per user (without invoking a quota)
 SQLLog RETR             bytes-out-count
