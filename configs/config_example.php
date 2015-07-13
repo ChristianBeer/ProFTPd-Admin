@@ -47,8 +47,8 @@ $cfg['passwd_encryption'] = "SHA1";
 $cfg['min_passwd_length'] = "6";
 $cfg['max_userid_length'] = "32";
 $cfg['max_groupname_length'] = "32";
-$cfg['userid_regex']    = "/^([a-z][a-z0-9_.\-]{0,32})$/i"; //every username must comply with this regex
-$cfg['groupname_regex'] = "/^([a-z][a-z0-9_.\-]{0,32})$/i"; //every username must comply with this regex
+$cfg['userid_regex']    = "/^([a-z][a-z0-9_\.\-]{0,32})$/i"; //every username must comply with this regex
+$cfg['groupname_regex'] = "/^([a-z][a-z0-9_\.\-]{0,32})$/i"; //every username must comply with this regex
 
 // next option activates a userid filter on users.php. Usefull if you want to manage a lot of users
 // that have a prefix like "pre-username", the first occurence of separator is recognized only!
