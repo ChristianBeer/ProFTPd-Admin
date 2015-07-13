@@ -290,7 +290,7 @@ class AdminClass {
           $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
           $passwd = '"'.$passwd.'"';
         } else {
-          $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
+          $passwd = 'CONCAT("{'.$passwd_encryption.'}",TO_BASE64(UNHEX('.$passwd_encryption.'("'.$userdata[$field_passwd].'"))))';
         }
         $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s","%s","%s")';
         $query = sprintf($format, $this->config['table_users'],
@@ -563,7 +563,7 @@ class AdminClass {
             $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
             $passwd_format = ' %s="%s", ';
           } else {
-            $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
+            $passwd = 'CONCAT("{'.$passwd_encryption.'}",TO_BASE64(UNHEX('.$passwd_encryption.'("'.$userdata[$field_passwd].'"))))';
             $passwd_format = ' %s=%s, ';
           }
           $passwd_query = sprintf($passwd_format, $field_passwd, $passwd);
