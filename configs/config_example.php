@@ -45,10 +45,10 @@ $cfg['default_homedir'] = "/srv/ftp";
 // "pbkdf2" is supported if you are using ProFTPd 1.3.5.
 $cfg['passwd_encryption'] = "SHA1";
 $cfg['min_passwd_length'] = "6";
-$cfg['max_userid_length'] = "20";
-$cfg['max_groupname_length'] = "20";
-$cfg['userid_regex']    = "/^([a-z][a-z0-9_\-]{0,20})$/i"; //every username must comply with this regex
-$cfg['groupname_regex'] = "/^([a-z][a-z0-9_\-]{0,20})$/i"; //every username must comply with this regex
+$cfg['max_userid_length'] = "32";
+$cfg['max_groupname_length'] = "32";
+$cfg['userid_regex']    = "/^([a-z][a-z0-9_\.\-]{0,32})$/i"; //every username must comply with this regex
+$cfg['groupname_regex'] = "/^([a-z][a-z0-9_\.\-]{0,32})$/i"; //every username must comply with this regex
 
 // next option activates a userid filter on users.php. Usefull if you want to manage a lot of users
 // that have a prefix like "pre-username", the first occurence of separator is recognized only!
