@@ -20,28 +20,34 @@ $ac = new AdminClass($cfg);
 $field_gid       = $cfg['field_gid'];
 $field_groupname = $cfg['field_groupname'];
 $field_members   = $cfg['field_members'];
+$errors          = array();
 
 if (!empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {
   /* group name validation */
   if (empty($_REQUEST[$field_groupname])
       || !preg_match($cfg['groupname_regex'], $_REQUEST[$field_groupname])
       || strlen($_REQUEST[$field_groupname]) > $cfg['max_groupname_length']) {
-    $errormsg = 'Invalid group name; group name must contain only letters, numbers, hyphens, and underscores with a maximum of '.$cfg['max_groupname_length'].' characters.';
+    array_push($errors, 'Invalid group name; group name must contain only letters, numbers, hyphens, and underscores with a maximum of '.$cfg['max_groupname_length'].' characters.');
   }
   /* group name uniqueness validation */
-  if (empty($errormsg) && $ac->check_groupname($_REQUEST[$field_groupname])) {
-    $errormsg = 'Name already exists; name must be unique.';
+  if ($ac->check_groupname($_REQUEST[$field_groupname])) {
+    array_push($errors, 'Name already exists; name must be unique.');
   }
   /* gid validation */
-  if (empty($errormsg) && (empty($_REQUEST[$field_gid]) || !$ac->is_valid_id($_REQUEST[$field_gid]))) {
-    $errormsg = 'Invalid GID; GID must be a positive integer.';
+  if (empty($_REQUEST[$field_gid]) || !$ac->is_valid_id($_REQUEST[$field_gid])) {
+    array_push($errors, 'Invalid GID; GID must be a positive integer.');
   }
+	if ($cfg['max_gid'] != -1 && $cfg['min_gid'] != -1) {
+		if ($_REQUEST[$field_gid] > $cfg['max_gid'] || $_REQUEST[$field_gid] < $cfg['min_gid']) {
+			array_push($errors, 'Invalid GID; GID must be between ' . $cfg['min_gid'] . ' and ' . $cfg['max_gid'] . '.');
+		}
+	}
   /* gid uniqueness validation */
-  if (empty($errormsg) && $ac->check_gid($_REQUEST[$field_gid])) {
-    $errormsg = 'GID already exists; GID must be unique.';
+  if ($ac->check_gid($_REQUEST[$field_gid])) {
+    array_push($errors, 'GID already exists; GID must be unique.');
   }
   /* data validation passed */
-  if (empty($errormsg)) {
+  if (count($errors) == 0) {
     $groupdata = array($field_groupname => $_REQUEST[$field_groupname],
                        $field_gid       => $_REQUEST[$field_gid],
                        $field_members   => '');
@@ -50,7 +56,9 @@ if (!empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {
     } else {
         $errormsg = 'Group "'.$_REQUEST[$cfg['field_groupname']].'" creation failed; check log files.';
     }
-  }
+  }	else {
+		$errormsg = implode($errors, "<br />\n");
+	}
 }
 
 include ("includes/header.php");
