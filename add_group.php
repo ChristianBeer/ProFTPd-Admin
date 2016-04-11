@@ -37,15 +37,15 @@ if (!empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {
   if (empty($_REQUEST[$field_gid]) || !$ac->is_valid_id($_REQUEST[$field_gid])) {
     array_push($errors, 'Invalid GID; GID must be a positive integer.');
   }
-	if ($cfg['max_gid'] != -1 && $cfg['min_gid'] != -1) {
-		if ($_REQUEST[$field_gid] > $cfg['max_gid'] || $_REQUEST[$field_gid] < $cfg['min_gid']) {
-			array_push($errors, 'Invalid GID; GID must be between ' . $cfg['min_gid'] . ' and ' . $cfg['max_gid'] . '.');
-		}
-	}	else if ($cfg['max_gid'] != -1 && $_REQUEST[$field_gid] > $cfg['max_gid']) {
-		array_push($errors, 'Invalid GID; GID must be at most ' . $cfg['max_gid'] . '.');
-	}	else if ($cfg['min_gid'] != -1 && $_REQUEST[$field_gid] < $cfg['min_gid']) {
-		array_push($errors, 'Invalid GID; GID must be at least ' . $cfg['min_gid'] . '.');
-	}
+  if ($cfg['max_gid'] != -1 && $cfg['min_gid'] != -1) {
+    if ($_REQUEST[$field_gid] > $cfg['max_gid'] || $_REQUEST[$field_gid] < $cfg['min_gid']) {
+      array_push($errors, 'Invalid GID; GID must be between ' . $cfg['min_gid'] . ' and ' . $cfg['max_gid'] . '.');
+    }
+  }  else if ($cfg['max_gid'] != -1 && $_REQUEST[$field_gid] > $cfg['max_gid']) {
+    array_push($errors, 'Invalid GID; GID must be at most ' . $cfg['max_gid'] . '.');
+  }  else if ($cfg['min_gid'] != -1 && $_REQUEST[$field_gid] < $cfg['min_gid']) {
+    array_push($errors, 'Invalid GID; GID must be at least ' . $cfg['min_gid'] . '.');
+  }
   /* gid uniqueness validation */
   if ($ac->check_gid($_REQUEST[$field_gid])) {
     array_push($errors, 'GID already exists; GID must be unique.');
@@ -60,9 +60,9 @@ if (!empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {
     } else {
         $errormsg = 'Group "'.$_REQUEST[$cfg['field_groupname']].'" creation failed; check log files.';
     }
-  }	else {
-		$errormsg = implode($errors, "<br />\n");
-	}
+  }  else {
+    $errormsg = implode($errors, "<br />\n");
+  }
 }
 
 include ("includes/header.php");
