@@ -39,42 +39,52 @@ if (count($groups) == 0) {
 
 /* Data validation */
 if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {
+  $errors = array();
   /* user id validation */
   if (empty($_REQUEST[$field_userid])
       || !preg_match($cfg['userid_regex'], $_REQUEST[$field_userid])
       || strlen($_REQUEST[$field_userid]) > $cfg['max_userid_length']) {
-    $errormsg = 'Invalid user name; user name must contain only letters, numbers, hyphens, and underscores with a maximum of '.$cfg['max_userid_length'].' characters.';
+    array_push($errors, 'Invalid user name; user name must contain only letters, numbers, hyphens, and underscores with a maximum of '.$cfg['max_userid_length'].' characters.');
   }
   /* uid validation */
-  if (empty($errormsg) && (empty($_REQUEST[$field_uid]) || !$ac->is_valid_id($_REQUEST[$field_uid]))) {
-    $errormsg = 'Invalid UID; must be a positive integer.';
+  if (empty($_REQUEST[$field_uid]) || !$ac->is_valid_id($_REQUEST[$field_uid])) {
+    array_push($errors, 'Invalid UID; must be a positive integer.');
+  }
+  if ($cfg['max_uid'] != -1 && $cfg['min_uid'] != -1) {
+    if ($_REQUEST[$field_uid] > $cfg['max_uid'] || $_REQUEST[$field_uid] < $cfg['min_uid']) {
+      array_push($errors, 'Invalid UID; UID must be between ' . $cfg['min_uid'] . ' and ' . $cfg['max_uid'] . '.');
+    }
+  } else if ($cfg['max_uid'] != -1 && $_REQUEST[$field_uid] > $cfg['max_uid']) {
+    array_push($errors, 'Invalid UID; UID must be at most ' . $cfg['max_uid'] . '.');
+  } else if ($cfg['min_uid'] != -1 && $_REQUEST[$field_uid] < $cfg['min_uid']) {
+    array_push($errors, 'Invalid UID; UID must be at least ' . $cfg['min_uid'] . '.');
   }
   /* gid validation */
-  if (empty($errormsg) && (empty($_REQUEST[$field_ugid]) || !$ac->is_valid_id($_REQUEST[$field_ugid]))) {
-    $errormsg = 'Invalid main group; GID must be a positive integer.';
+  if (empty($_REQUEST[$field_ugid]) || !$ac->is_valid_id($_REQUEST[$field_ugid])) {
+    array_push($errors, 'Invalid main group; GID must be a positive integer.');
   }
   /* password length validation */
-  if (empty($errormsg) && strlen($_REQUEST[$field_passwd]) < $cfg['min_passwd_length']) {
-    $errormsg = 'Password is too short; minimum length is '.$cfg['min_passwd_length'].' characters.';
+  if (strlen($_REQUEST[$field_passwd]) < $cfg['min_passwd_length']) {
+    array_push($errors, 'Password is too short; minimum length is '.$cfg['min_passwd_length'].' characters.');
   }
   /* home directory validation */
-  if (empty($errormsg) && strlen($_REQUEST[$field_homedir]) <= 1) {
-    $errormsg = 'Invalid home directory; home directory cannot be empty.';
+  if (strlen($_REQUEST[$field_homedir]) <= 1) {
+    array_push($errors, 'Invalid home directory; home directory cannot be empty.');
   }
   /* shell validation */
-  if (empty($errormsg) && strlen($_REQUEST[$field_shell]) <= 1) {
-    $errormsg = 'Invalid shell; shell cannot be empty.';
+  if (strlen($_REQUEST[$field_shell]) <= 1) {
+    array_push($errors, 'Invalid shell; shell cannot be empty.');
   }
   /* user name uniqueness validation */
-  if (empty($errormsg) && $ac->check_username($_REQUEST[$field_userid])) {
-    $errormsg = 'User name already exists; name must be unique.';
+  if ($ac->check_username($_REQUEST[$field_userid])) {
+    array_push($errors, 'User name already exists; name must be unique.');
   }
-  /* gid uniqueness validation */
-  if (empty($errormsg) && !$ac->check_gid($_REQUEST[$field_ugid])) {
-    $errormsg = 'Main group does not exist; GID cannot be found in the database.';
+  /* gid existance validation */
+  if (!$ac->check_gid($_REQUEST[$field_ugid])) {
+    array_push($errors, 'Main group does not exist; GID cannot be found in the database.');
   }
   /* data validation passed */
-  if (empty($errormsg)) {
+  if (count($errors) == 0) {
     $disabled = isset($_REQUEST[$field_disabled]) ? '1':'0';
     $userdata = array($field_userid   => $_REQUEST[$field_userid],
                       $field_uid      => $_REQUEST[$field_uid],
@@ -103,6 +113,8 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "c
     } else {
       $errormsg = 'User "'.$_REQUEST[$field_userid].'" creation failed; check log files.';
     }
+  } else {
+    $errormsg = implode($errors, "<br />\n");
   }
 }
 

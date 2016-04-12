@@ -49,6 +49,11 @@ $cfg['max_userid_length'] = "20";
 $cfg['max_groupname_length'] = "20";
 $cfg['userid_regex']    = "/^([a-z][a-z0-9_\-]{0,20})$/i"; //every username must comply with this regex
 $cfg['groupname_regex'] = "/^([a-z][a-z0-9_\-]{0,20})$/i"; //every username must comply with this regex
+// Set any of these to -1 to remove the constraint
+$cfg['min_uid'] = 1000;
+$cfg['max_uid'] = 19999;
+$cfg['min_gid'] = 1000;
+$cfg['max_gid'] = 19999;
 
 // next option activates a userid filter on users.php. Usefull if you want to manage a lot of users
 // that have a prefix like "pre-username", the first occurence of separator is recognized only!
