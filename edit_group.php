@@ -58,12 +58,12 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
   }
   /* gid range validation */
   if ($cfg['max_gid'] != -1 && $cfg['min_gid'] != -1) {
-    if ($_REQUEST[$field_gid] > $cfg['max_gid'] || $_REQUEST[$field_gid] < $cfg['min_gid']) {
+    if ($_REQUEST[$field_newgid] > $cfg['max_gid'] || $_REQUEST[$field_newgid] < $cfg['min_gid']) {
       array_push($errors, 'Invalid GID; GID must be between ' . $cfg['min_gid'] . ' and ' . $cfg['max_gid'] . '.');
     }
-  }  else if ($cfg['max_gid'] != -1 && $_REQUEST[$field_gid] > $cfg['max_gid']) {
+  }  else if ($cfg['max_gid'] != -1 && $_REQUEST[$field_newgid] > $cfg['max_gid']) {
     array_push($errors, 'Invalid GID; GID must be at most ' . $cfg['max_gid'] . '.');
-  }  else if ($cfg['min_gid'] != -1 && $_REQUEST[$field_gid] < $cfg['min_gid']) {
+  }  else if ($cfg['min_gid'] != -1 && $_REQUEST[$field_newgid] < $cfg['min_gid']) {
     array_push($errors, 'Invalid GID; GID must be at least ' . $cfg['min_gid'] . '.');
   }
   if (count($errors) == 0) {
