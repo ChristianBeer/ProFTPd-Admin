@@ -55,6 +55,8 @@ $cfg['min_uid'] = 1000;
 $cfg['max_uid'] = 19999;
 $cfg['min_gid'] = 1000;
 $cfg['max_gid'] = 19999;
+// Uncomment this to read crypt() settings from login.defs.
+// $cfg['read_login_defs'] = true;
 
 // next option activates a userid filter on users.php. Usefull if you want to manage a lot of users
 // that have a prefix like "pre-username", the first occurence of separator is recognized only!
