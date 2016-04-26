@@ -16,9 +16,13 @@ if ($cfg['passwd_encryption'] == "pbkdf2") {
   require "hash_pbkdf2_compat.php";
 }
 include_once "ez_sql_core.php";
-if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysql") {
+if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysqli") {
+  include_once "ez_sql_mysqli.php";
+}
+if ($cfg['db_type'] == "mysql") {
   include_once "ez_sql_mysql.php";
 }
+
 if ($cfg['db_type'] == "sqlite3") {
   include_once "ez_sql_sqlite3.php";
 }
@@ -57,8 +61,10 @@ class AdminClass {
      */
     function AdminClass($cfg) {
         $this->config = $cfg;
-        // if db_type is not set, default to mysql
-        if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysql") {
+        // if db_type is not set, default to mysqli
+        if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysqli") {
+            $this->dbConn = new ezSQL_mysqli($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
+        } elseif ($cfg['db_type'] == "sqlite3") {
             $this->dbConn = new ezSQL_mysql($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
         } elseif ($cfg['db_type'] == "sqlite3") {
             $this->dbConn = new ezSQL_sqlite3($this->config['db_path'], $this->config['db_name']);

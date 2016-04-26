@@ -60,7 +60,7 @@ $cfg['max_gid'] = 19999;
 $cfg['userid_filter_separator'] = ""; // try "-" or "_" as separators
 
 // use this block for a mysql backend
-$cfg['db_type'] = "mysql"; // if unset, 'db_type' defaults to mysql
+$cfg['db_type'] = "mysqli"; // if unset, 'db_type' defaults to mysqli
 $cfg['db_host'] = "localhost";
 $cfg['db_name'] = "database";
 $cfg['db_user'] = "user";
