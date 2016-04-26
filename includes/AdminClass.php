@@ -15,6 +15,9 @@
 if ($cfg['passwd_encryption'] == "pbkdf2") {
   require "hash_pbkdf2_compat.php";
 }
+if ($cfg['passwd_encryption'] == "crypt") {
+  require "unix_crypt.php";
+}
 include_once "ez_sql_core.php";
 if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysql") {
   include_once "ez_sql_mysql.php";
@@ -289,6 +292,9 @@ class AdminClass {
         if ($passwd_encryption == 'pbkdf2') {
           $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
           $passwd = '"'.$passwd.'"';
+        } else if ($passwd_encryption == 'crypt') {
+          $passwd = unix_crypt($userdata[$field_passwd]);
+          $passwd = '"'.$passwd.'"';
         } else {
           $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
         }
@@ -561,6 +567,9 @@ class AdminClass {
           $passwd_format = '';
           if ($passwd_encryption == 'pbkdf2') {
             $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
+            $passwd_format = ' %s="%s", ';
+          } else if ($passwd_encryption == 'crypt') {
+            $passwd = unix_crypt($userdata[$field_passwd]);
             $passwd_format = ' %s="%s", ';
           } else {
             $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';

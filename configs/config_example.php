@@ -43,6 +43,7 @@ $cfg['default_uid'] = ""; //if empty next incremental will be default
 $cfg['default_homedir'] = "/srv/ftp";
 // Use either SHA1 or MD5 or any other supported by your MySQL-Server and ProFTPd
 // "pbkdf2" is supported if you are using ProFTPd 1.3.5.
+// "crypt" uses the unix crypt() function.
 $cfg['passwd_encryption'] = "SHA1";
 $cfg['min_passwd_length'] = "6";
 $cfg['max_userid_length'] = "20";
@@ -54,6 +55,8 @@ $cfg['min_uid'] = 1000;
 $cfg['max_uid'] = 19999;
 $cfg['min_gid'] = 1000;
 $cfg['max_gid'] = 19999;
+// Uncomment this to read crypt() settings from login.defs.
+// $cfg['read_login_defs'] = true;
 
 // next option activates a userid filter on users.php. Usefull if you want to manage a lot of users
 // that have a prefix like "pre-username", the first occurence of separator is recognized only!
