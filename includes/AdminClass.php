@@ -14,20 +14,19 @@
 // hash_pbkdf2 implementation for 5.3 <= PHP < 5.5
 if ($cfg['passwd_encryption'] == "pbkdf2") {
   require "hash_pbkdf2_compat.php";
-}
-if ($cfg['passwd_encryption'] == "crypt") {
+} elseif ($cfg['passwd_encryption'] == "crypt") {
   require "unix_crypt.php";
 }
+
 include_once "ez_sql_core.php";
 if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysqli") {
   include_once "ez_sql_mysqli.php";
-}
-if ($cfg['db_type'] == "mysql") {
+} elseif ($cfg['db_type'] == "mysql") {
   include_once "ez_sql_mysql.php";
-}
-
-if ($cfg['db_type'] == "sqlite3") {
+} elseif ($cfg['db_type'] == "sqlite3") {
   include_once "ez_sql_sqlite3.php";
+} else {
+  trigger_error('Unsupported database type: "'.$cfg['db_type'].'"', E_USER_WARNING);
 }
 
 /**
@@ -67,7 +66,7 @@ class AdminClass {
         // if db_type is not set, default to mysqli
         if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysqli") {
             $this->dbConn = new ezSQL_mysqli($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
-        } elseif ($cfg['db_type'] == "sqlite3") {
+        } elseif ($cfg['db_type'] == "mysql") {
             $this->dbConn = new ezSQL_mysql($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
         } elseif ($cfg['db_type'] == "sqlite3") {
             $this->dbConn = new ezSQL_sqlite3($this->config['db_path'], $this->config['db_name']);
