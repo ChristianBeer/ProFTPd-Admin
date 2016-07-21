@@ -68,7 +68,10 @@
 				$this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
 			}
 			else
+			{
 				$return_val = true;
+				$this->conn_queries = 0;
+			}
 
 			return $return_val;			
 		}
@@ -141,7 +144,7 @@
 
 			// Perform the query via std mysql_query function..
 			$this->result = $this->dbh->query($query);
-			$this->num_queries++;
+			$this->count(true, true);
 
 			// If there is an error then take note of it..
 			if (@$this->dbh->lastErrorCode())
@@ -176,7 +179,7 @@
 				$this->col_info = array();
 				while ($i < @$this->result->numColumns())
 				{
-					$this->col_info[$i]             = new stdClass();
+					$this->col_info[$i] = new StdClass;
 					$this->col_info[$i]->name       = $this->result->columnName($i);
 					$this->col_info[$i]->type       = null;
 					$this->col_info[$i]->max_length = null;

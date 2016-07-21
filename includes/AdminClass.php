@@ -22,7 +22,10 @@ include_once "ez_sql_core.php";
 if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysql") {
   include_once "ez_sql_mysql.php";
 }
-if ($cfg['db_type'] == "sqlite3") {
+elseif ($cfg['db_type'] == "mysqli") {
+    include_once "ez_sql_mysqli.php";
+}
+elseif ($cfg['db_type'] == "sqlite3") {
   include_once "ez_sql_sqlite3.php";
 }
 
@@ -39,7 +42,7 @@ if ($cfg['db_type'] == "sqlite3") {
 class AdminClass {
     /**
      * database layer
-     * @var ezSQLcore (ezSQL_mysql or ezSQL_sqlite3)
+     * @var ezSQLcore (ezSQL_mysql or ezSQL_mysqli or ezSQL_sqlite3)
      */
     var $dbConn = false;
     /**
@@ -63,6 +66,8 @@ class AdminClass {
         // if db_type is not set, default to mysql
         if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysql") {
             $this->dbConn = new ezSQL_mysql($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
+        } elseif ($cfg['db_type'] == "mysqli") {
+                $this->dbConn = new ezSQL_mysqli($this->config['db_user'], $this->config['db_pass'], $this->config['db_name'], $this->config['db_host']);
         } elseif ($cfg['db_type'] == "sqlite3") {
             $this->dbConn = new ezSQL_sqlite3($this->config['db_path'], $this->config['db_name']);
         } else {
