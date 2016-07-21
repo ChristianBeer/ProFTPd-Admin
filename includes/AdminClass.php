@@ -55,7 +55,7 @@ class AdminClass {
      * @access private
      * @var String
      */
-    var $version = "2.1";
+    var $version = "2.2";
 
     /**
      * initialize the database connection via ezSQL_mysql

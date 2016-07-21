@@ -8,6 +8,13 @@
  * @copyright Ricardo Padilha <ricardo@droboports.com>
  */
 
+Release: 2.2
+Changes:
+* added UID/GID limits (from Greg Arnold)
+* support for unix crypt() (from Greg Arnold)
+* support for mysqli interface (also makes it PHP 7.0 compatible)
+* updated ezSQL abstraction layer
+
 Release: 2.1
 Changes:
 * using Bootstrap for HTML styling
