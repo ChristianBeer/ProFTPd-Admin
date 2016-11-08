@@ -41,7 +41,7 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "r
   $groups = $ac->get_groups();
   while (list($g_gid, $g_group) = each($groups)) {
     if (!$ac->remove_user_from_group($userid, $g_gid)) {
-      $errormsg = 'Cannot remove user "'.$userid.'" from group "'.$ggroup.'"; see log files for more information.';
+      $errormsg = 'Cannot remove user "'.$userid.'" from group "'.$g_group.'"; see log files for more information.';
       break;
     }
   }

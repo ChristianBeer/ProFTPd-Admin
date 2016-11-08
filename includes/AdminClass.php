@@ -479,9 +479,13 @@ class AdminClass {
         $query = sprintf($format, $this->config['field_members'], $this->config['table_groups'], $this->config['field_gid'], $gid);
         $result = $this->dbConn->get_var($query);
         if ($result != "") {
-            $members = $result.','.$userid;
+                if(strpos($result, $userid) !== false) {
+                        return true;
+                } else {
+            		$members = $result.','.$userid;
+		}
         } else {
-            $members = $userid;
+        	$members = $userid;
         }
 
         $format = 'UPDATE %s SET %s="%s" WHERE %s="%s"';
@@ -502,6 +506,9 @@ class AdminClass {
         $format = 'SELECT %s FROM %s WHERE %s="%s"';
         $query = sprintf($format, $this->config['field_members'], $this->config['table_groups'], $this->config['field_gid'], $gid);
         $result = $this->dbConn->get_var($query);
+        if(strpos($result, $userid) === false) {
+		return true;
+	}
         $members_array = explode(",", $result);
         $members_new_array = array_diff($members_array, array("$userid", ""));
         if (is_array($members_new_array)) {
