@@ -468,7 +468,7 @@ class AdminClass {
     }
 
     /**
-     * Adds a user to a group using the groupid, does not check if user is already a member!
+     * Adds a user to a group using the groupid
      * @param Integer $userid
      * @param Integer $gid
      * @return boolean false on error
@@ -479,13 +479,13 @@ class AdminClass {
         $query = sprintf($format, $this->config['field_members'], $this->config['table_groups'], $this->config['field_gid'], $gid);
         $result = $this->dbConn->get_var($query);
         if ($result != "") {
-                if(strpos($result, $userid) !== false) {
-                        return true;
-                } else {
-            		$members = $result.','.$userid;
-		}
+            if(strpos($result, $userid) !== false) {
+                return true;
+            } else {
+                $members = $result.','.$userid;
+            }
         } else {
-        	$members = $userid;
+            $members = $userid;
         }
 
         $format = 'UPDATE %s SET %s="%s" WHERE %s="%s"';
@@ -507,8 +507,8 @@ class AdminClass {
         $query = sprintf($format, $this->config['field_members'], $this->config['table_groups'], $this->config['field_gid'], $gid);
         $result = $this->dbConn->get_var($query);
         if(strpos($result, $userid) === false) {
-		return true;
-	}
+            return true;
+        }
         $members_array = explode(",", $result);
         $members_new_array = array_diff($members_array, array("$userid", ""));
         if (is_array($members_new_array)) {
