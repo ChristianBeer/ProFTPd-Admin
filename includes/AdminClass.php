@@ -294,12 +294,16 @@ class AdminClass {
         $field_disabled = $this->config['field_disabled'];
         $field_last_modified = $this->config['field_last_modified'];
         $passwd_encryption = $this->config['passwd_encryption'];
+        $passwd = "";
         if ($passwd_encryption == 'pbkdf2') {
           $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
           $passwd = '"'.$passwd.'"';
         } else if ($passwd_encryption == 'crypt') {
           $passwd = unix_crypt($userdata[$field_passwd]);
           $passwd = '"'.$passwd.'"';
+        } else if (strpos($passwd_encryption, "OpenSSL:") === 0) {
+          $passwd_digest = substr($passwd_encryption, strpos($passwd_encryption, ':')+1);
+          $passwd = 'CONCAT("{'.$passwd_digest.'}",TO_BASE64(UNHEX('.$passwd_digest.'("'.$userdata[$field_passwd].'"))))';
         } else {
           $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
         }
@@ -583,6 +587,9 @@ class AdminClass {
           } else if ($passwd_encryption == 'crypt') {
             $passwd = unix_crypt($userdata[$field_passwd]);
             $passwd_format = ' %s="%s", ';
+          } else if (strpos($passwd_encryption, "OpenSSL:") === 0) {
+            $passwd_digest = substr($passwd_encryption, strpos($passwd_encryption, ':')+1);
+            $passwd = 'CONCAT("{'.$passwd_digest.'}",TO_BASE64(UNHEX('.$passwd_digest.'("'.$userdata[$field_passwd].'"))))';
           } else {
             $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
             $passwd_format = ' %s=%s, ';
