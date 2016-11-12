@@ -46,10 +46,14 @@ $cfg['default_homedir'] = "/srv/ftp";
 // "crypt" uses the unix crypt() function.
 $cfg['passwd_encryption'] = "SHA1";
 $cfg['min_passwd_length'] = "6";
-$cfg['max_userid_length'] = "20";
-$cfg['max_groupname_length'] = "20";
-$cfg['userid_regex']    = "/^([a-z][a-z0-9_\-]{0,20})$/i"; //every username must comply with this regex
-$cfg['groupname_regex'] = "/^([a-z][a-z0-9_\-]{0,20})$/i"; //every username must comply with this regex
+$cfg['max_userid_length'] = "32";
+$cfg['max_groupname_length'] = "32";
+// the expressions used to validate user and groupnames are used in two places
+// on the website (HTML5) and on the server (PHP)
+// the HTML5 validation doesn't understand the i modifier so you need to specify lowercase and uppercase characters
+// for some reason the PHP validation still needs the i modifier so just leave it in
+$cfg['userid_regex']    = "/^([a-zA-Z][a-zA-Z0-9_\-]{0,".($cfg['max_userid_length']-1)."})$/i"; //every username must comply with this regex
+$cfg['groupname_regex'] = "/^([a-zA-Z][a-zA-Z0-9_\-]{0,".($cfg['max_groupname_length']-1)."})$/i"; //every username must comply with this regex
 // Set any of these to -1 to remove the constraint
 $cfg['min_uid'] = 1000;
 $cfg['max_uid'] = 19999;

@@ -3,7 +3,7 @@
 #
 
 CREATE TABLE `groups` (
-  `groupname` varchar(16) NOT NULL default '',
+  `groupname` varchar(32) NOT NULL default '',
   `gid` smallint(6) unsigned NOT NULL auto_increment,
   `members` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`gid`),

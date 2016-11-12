@@ -1,5 +1,5 @@
 CREATE TABLE `groups` (
-  `groupname` VARCHAR(16) UNIQUE NOT NULL default '',
+  `groupname` VARCHAR(32) UNIQUE NOT NULL default '',
   `gid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   `members` VARCHAR(255) NOT NULL default ''
 );
