@@ -2,8 +2,8 @@
 
 Graphical User Interface for ProFTPd with MySQL and sqlite3 support
 
-&copy; 2004 The Netherlands, Lex Brugman <lex_brugman@users.sourceforge.net>
-&copy; 2012 Christian Beer <djangofett@gmx.net>
+&copy; 2004 The Netherlands, Lex Brugman <lex_brugman@users.sourceforge.net><br/>
+&copy; 2012 Christian Beer <djangofett@gmx.net><br/>
 &copy; 2015 Ricardo Padilha <ricardo@droboports.com>
 
 Published under the GPLv2 License (see LICENSE for details)
@@ -28,9 +28,13 @@ There is no build-in security, so you have to protect the directory with somethi
 
 It's possible to use either of SHA1 and pbkdf2 with either of MySQL/MariaDB and sqlite3. pbkdf2 is supported since ProFTPd 1.3.5.
 
+You can look at some [screenshots](screenshots/README.md) to see if this is the tool you need.
+
 ## To-Do
 
-A lot ;) so help is very much appreciated
+* add postgresql support (#26)
+* Add default user settings to groups so it is easier to create a new user with default values (#28)
+* Email new users with password (#35)
 
 ## Upgrade
 
@@ -127,6 +131,6 @@ SQLNamedQuery           files-in-count UPDATE "files_in_used=files_in_used+1 WHE
 
 ## Thanks / Links
 
-Lex Brugman for initiating this project
-Justin Vincent for the ezSQL library
+Lex Brugman for initiating this project<br/>
+Justin Vincent for the ezSQL library<br/>
 Ricardo Padilha for implementing sqlite3, pbkdf2 and bootstrap support
