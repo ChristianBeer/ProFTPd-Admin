@@ -45,15 +45,16 @@ If you want to upgrade the hashing algorithm you have to change all passwords af
 ### Using MySQL and SHA1
 
 1. Install ProFTPd with MySQL support
-     - Debian: apt-get install proftpd-mysql
+     - Debian: apt-get install proftpd-mod-mysql
      - Gentoo: USE="mysql" emerge proftpd
 2. Create a MySQL database (use something like phpMyAdmin for this), for example: "proftpd".
 3. Use tables.sql to populate the database (you can use phpMyAdmin for this).
-4. Add the following to your proftpd.conf (edit to your needs):
+4. Add the following to your proftpd.conf and sql.conf (edit to your needs):
 
 ```
 CreateHome              on 775
 AuthOrder               mod_sql.c
+
 SQLBackend              mysql
 SQLEngine               on
 SQLPasswordEngine       on
@@ -90,11 +91,12 @@ SQLNamedQuery           files-in-count UPDATE "files_in_used=files_in_used+1 WHE
 1. Install ProFTPd with sqlite3 support
 2. Use tables-sqlite3.sql to create an sqlite3 database:
    `sqlite3 auth.sqlite3 < tables-sqlite3.sql`
-3. Add the following to your proftpd.conf (edit to your needs):
+3. Add the following to your proftpd.conf and sql.conf (edit to your needs):
 
 ```
 CreateHome              on 775
 AuthOrder               mod_sql.c
+
 SQLBackend              sqlite3
 SQLEngine               on
 SQLPasswordEngine       on
