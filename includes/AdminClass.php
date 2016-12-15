@@ -590,6 +590,7 @@ class AdminClass {
           } else if (strpos($passwd_encryption, "OpenSSL:") === 0) {
             $passwd_digest = substr($passwd_encryption, strpos($passwd_encryption, ':')+1);
             $passwd = 'CONCAT("{'.$passwd_digest.'}",TO_BASE64(UNHEX('.$passwd_digest.'("'.$userdata[$field_passwd].'"))))';
+            $passwd_format = ' %s=%s, ';
           } else {
             $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
             $passwd_format = ' %s=%s, ';
