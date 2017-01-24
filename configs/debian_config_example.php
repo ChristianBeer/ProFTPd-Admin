@@ -8,6 +8,8 @@
  * @copyright Ricardo Padilha <ricardo@droboports.com>
  * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ * 
+ * rename to config.php
  */
 
 $cfg = array();
