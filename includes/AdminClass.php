@@ -305,7 +305,7 @@ class AdminClass {
           $passwd_digest = substr($passwd_encryption, strpos($passwd_encryption, ':')+1);
           $passwd = 'CONCAT("{'.$passwd_digest.'}",TO_BASE64(UNHEX('.$passwd_digest.'("'.$userdata[$field_passwd].'"))))';
         } else {
-          $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
+          $passwd = 'CONCAT("{'.$passwd_encryption.'}",TO_BASE64(UNHEX('.$passwd_encryption.'("'.$userdata[$field_passwd].'"))))';
         }
         $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s","%s","%s")';
         $query = sprintf($format, $this->config['table_users'],
@@ -592,7 +592,7 @@ class AdminClass {
             $passwd = 'CONCAT("{'.$passwd_digest.'}",TO_BASE64(UNHEX('.$passwd_digest.'("'.$userdata[$field_passwd].'"))))';
             $passwd_format = ' %s=%s, ';
           } else {
-            $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
+            $passwd = 'CONCAT("{'.$passwd_encryption.'}",TO_BASE64(UNHEX('.$passwd_encryption.'("'.$userdata[$field_passwd].'"))))';
             $passwd_format = ' %s=%s, ';
           }
           $passwd_query = sprintf($passwd_format, $field_passwd, $passwd);
