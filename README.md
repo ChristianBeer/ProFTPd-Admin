@@ -57,9 +57,8 @@ AuthOrder               mod_sql.c
 
 SQLBackend              mysql
 SQLEngine               on
-SQLPasswordEngine       on
-SQLAuthenticate         on
-SQLAuthTypes            SHA1
+SQLAuthenticate         users groups
+SQLAuthTypes            OpenSSL Crypt
 
 SQLConnectInfo          database@localhost username password
 SQLUserInfo             users userid passwd uid gid homedir shell
