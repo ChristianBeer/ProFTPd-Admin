@@ -12,6 +12,16 @@
 
 $cfg = array();
 
+// Login data
+$cfg['login'] = array(
+  // Username
+  'username' => 'admin',
+  // Password
+  'password' => 'password',
+  // Blowfish secret key (22 chars)
+  'blowfish' => 'XBu5pjOTa8H7UIwYSzMZxD'
+);
+
 $cfg['table_users'] = "users";
 $cfg['field_userid'] = "userid";
 $cfg['field_id'] = "id";
@@ -78,4 +88,4 @@ $cfg['db_pass'] = "password";
 //$cfg['db_type'] = "sqlite3";
 //$cfg['db_path'] = "configs/";
 //$cfg['db_name'] = "auth.sqlite3";
-?>
+

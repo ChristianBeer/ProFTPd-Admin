@@ -654,4 +654,4 @@ class AdminClass {
         return is_numeric($id) && (int)$id > 0 && $id == round($id);
     }
 }
-?>
+

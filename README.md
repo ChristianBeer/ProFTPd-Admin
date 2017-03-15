@@ -4,7 +4,8 @@ Graphical User Interface for ProFTPd with MySQL and sqlite3 support
 
 &copy; 2004 The Netherlands, Lex Brugman <lex_brugman@users.sourceforge.net><br/>
 &copy; 2012 Christian Beer <djangofett@gmx.net><br/>
-&copy; 2015 Ricardo Padilha <ricardo@droboports.com>
+&copy; 2015 Ricardo Padilha <ricardo@droboports.com><br/>
+&copy; 2017 Michael Keck <github@michaelkeck.de>
 
 Published under the GPLv2 License (see LICENSE for details)
 

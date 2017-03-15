@@ -11,9 +11,11 @@
  *
  */
 
-include_once ("configs/config.php");
-include_once ("includes/AdminClass.php");
 global $cfg;
+
+include_once ("configs/config.php");
+include_once ("includes/Session.php");
+include_once ("includes/AdminClass.php");
 
 $ac = new AdminClass($cfg);
 
@@ -61,7 +63,7 @@ if ($cfg['userid_filter_separator'] != "") {
 
 /* filter users */
 if (!empty($all_users)) {
-  foreach ($all_users as $user) { 
+  foreach ($all_users as $user) {
     if ($ufilter != "") {
       if ($ufilter == "None" && strpos($user[$field_userid], $cfg['userid_filter_separator'])) {
         // filter is None and user has a prefix

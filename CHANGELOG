@@ -6,7 +6,16 @@
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
  * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Ricardo Padilha <ricardo@droboports.com>
+ * @copyright 2017 Michael Keck <github@michaelkeck.de>
  */
+
+2017-03-15
+----------
+Changes: <github@michaelkeck.de>
+* Login form
+* Added session class for login form
+* Display different navigations user is logged in / logged out
+
 
 Release: 2.2
 Changes:
