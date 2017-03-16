@@ -8,7 +8,7 @@
  * @copyright Ricardo Padilha <ricardo@droboports.com>
  * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
- * @copyright Michael Leck <https://github.com/mkkeck>
+ * @copyright Michael Keck <https://github.com/mkkeck>
  */
 
 $cfg = array();
@@ -16,7 +16,7 @@ $cfg = array();
 /**
  * Login data
  *
- * Important: Please change this values in
+ * Important: Please change this values on
  *            live systems!
  */
 $cfg['login'] = array(
@@ -27,6 +27,14 @@ $cfg['login'] = array(
   /* Blowfish secret key (22 chars). CHANGE IT! */
   'blowfish' => 'XBu5pjOTa8H7UIwYSzMZxD'
 );
+
+/**
+ * Force SSL usage
+ *
+ * Important: You should change this to true on live systems or configure
+ *            your webserver to use SSL!
+ */
+$cfg['force_ssl'] = false;
 
 $cfg['table_users'] = "users";
 $cfg['field_userid'] = "userid";

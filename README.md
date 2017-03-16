@@ -10,9 +10,9 @@ Graphical User Interface for ProFTPd with MySQL and sqlite3 support
 This GUI for ProFTPd was written to support a basic user management feature
 when using the SQL module. Originally written by Lex Brugmann in 2004, 
 updated by [Christian Beer](https://github.com/ChristianBeer/ProFTPd-Admin)
-in 2012 to support the latest PHP version. 
+in 2012 to support the latest PHP version.  
 2017 updated by [Michael Keck](https://github.com/mkkeck) with build-in login for
-the admin user, secure the directories _`configs/`_ and _`includes` and moved 
+the admin user, secure the directories _`configs/`_ and _`includes`_ and moved 
 _`tables*.sql`_ to _`install/tables*.sql`_.
 Added _`install/config-examples`_ for [OS specific configurations](install/config-examples).
 
@@ -25,6 +25,21 @@ the tool you need.
 
 
 ## Installation
+
+**Note:**  
+Please use, if available, a secured connection to your webserver via `https`.
+You can do this by your webserver configurations or simple set in the
+_`config.php`_:
+```php
+/**
+ * Force SSL usage
+ *
+ * Important: You should change this to true on live systems or configure
+ *            your webserver to use SSL!
+ */
+$cfg['force_ssl'] = true; // default was false
+```
+Please notice that you need a SSL-certificate to use secured connection.
 
 
 #### (A) Using MySQL and SHA1

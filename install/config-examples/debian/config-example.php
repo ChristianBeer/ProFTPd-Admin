@@ -9,7 +9,7 @@
  * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
  * @copyright Robert Tulke <rt@debian.sh>
- * @copyright Michael Leck <https://github.com/mkkeck>
+ * @copyright Michael Keck <https://github.com/mkkeck>
  *
  * rename to config.php
  */
@@ -31,6 +31,14 @@ $cfg['login'] = array(
   /* Blowfish secret key (22 chars). CHANGE IT! */
   'blowfish' => 'XBu5pjOTa8H7UIwYSzMZxD'
 );
+
+/**
+ * Force SSL usage
+ *
+ * Important: You should change this to true on live systems or configure
+ *            your webserver to use SSL!
+ */
+$cfg['force_ssl'] = false;
 
 $cfg['table_users'] = "users";
 $cfg['field_userid'] = "userid";

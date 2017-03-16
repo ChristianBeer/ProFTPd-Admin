@@ -2,7 +2,7 @@
 /*
  * @class:  Session
  * @file:   includes/Session.php
- * @date:   2017-03-15
+ * @date:   2017-03-16
  * @author: Michael Keck
  */
 
@@ -189,13 +189,13 @@ class Session {
   /**
    * User login session
    *
-   * @param array        $conf
-   * @param null|string  $action
-   * @param null|array   $data
+   * @param array        $conf;     configuration from gloabl $cfg['login']
+   * @param null|string  [$action]; optional: 'login' or 'logout'
+   * @param null|array   [$data];   optional: array('username' => $_POST['username'], 'password' => $_POST['password']),
    * @return bool
    */
   public static function user($conf = array(), $action = null, $data = null) {
-    $action = ($action !== NULL ? ($action === 'login' ? 'login' : 'logout') : NULL);
+    $action = ($action !== null ? ($action === 'login' ? 'login' : 'logout') : null);
     foreach (array('username','password','blowfish') as $key) {
       if (!isset($conf[$key]) || empty($conf[$key]) && trim('' . $conf[$key]) === '') {
         return false;
@@ -234,13 +234,14 @@ class Session {
     }
 
     // Logout action or uid invalid
-    if ($action === 'logout' || self::get('uid') != $hash) {
+    if ($action === 'logout' || self::get('uid') !== $hash) {
       self::delete();
       self::close();
       return false;
     }
 
-    if (self::get('uid') == $hash) {
+    // Only check uid is valid
+    if (self::get('uid') === $hash) {
       self::close();
       return true;
     }
@@ -249,6 +250,17 @@ class Session {
   }
 }
 
+
+/* Only accessible via SSL if required */
+if (isset($cfg) && isset($cfg['force_ssl']) && $cfg['force_ssl'] === true) {
+  if ($_SERVER['SERVER_PORT'] !== '443') {
+    header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+    exit();
+  }
+}
+
+
+/* Login required */
 if (isset($cfg) && isset($cfg['login']) && is_array($cfg['login'])) {
   $session_usage = true;
   $session_valid = false;

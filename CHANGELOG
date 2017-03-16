@@ -20,8 +20,15 @@ Changes: Michael Keck <https://github.com/mkkeck>
   - `includes/` not accessible via browser
 * Moved `tables*.sql` to `install/tables*.sql`
 * Added `install/config-examples` for Linux Distributions
-* Added `install/config-examples/debian` as example and info how to setup on Debian Jessie
-
+* Added `install/config-examples/debian` as example and info how to
+  setup on Debian Jessie
+* Added config param `force_ssl` and check if secured connection is
+  used if `$cfg['force_ssl'] = true'`
+* Fixed typos in follow files:
+  - `README.md`
+  - `includes/Session.php`
+  - `configs/config_sample.php`
+  - `install/config-example/debian/config-example.php`
 
 Release: 2.2
 Changes:
