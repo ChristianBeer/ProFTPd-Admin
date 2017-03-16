@@ -12,13 +12,18 @@
 
 $cfg = array();
 
-// Login data
+/**
+ * Login data
+ *
+ * Important: Please change this values in
+ *            live systems!
+ */
 $cfg['login'] = array(
-  // Username
+  /* Username. Please use any username you want */
   'username' => 'admin',
-  // Password
+  /* Password. CHANGE IT and use secure password! */
   'password' => 'password',
-  // Blowfish secret key (22 chars)
+  /* Blowfish secret key (22 chars). CHANGE IT! */
   'blowfish' => 'XBu5pjOTa8H7UIwYSzMZxD'
 );
 
