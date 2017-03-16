@@ -154,12 +154,15 @@ changing the configs (both ProFTPd and ProFTPd Admin).
 
 ## Plans
 
-* Add postgresql support [#26](https://github.com/ChristianBeer/ProFTPd-Admin/issues/26)
+* Add postgresql support  
+  » [Issue #26 / Feature request](https://github.com/ChristianBeer/ProFTPd-Admin/issues/26)
 
 * Add default user settings to groups so it is easier to create a new user
-  with default values [#28](https://github.com/ChristianBeer/ProFTPd-Admin/issues/28)
+  with default values  
+  » [Issue #28 / Feature request](https://github.com/ChristianBeer/ProFTPd-Admin/issues/28)
 
-* Email new users with password [#35](https://github.com/ChristianBeer/ProFTPd-Admin/issues/35)
+* Send e-mail to new users with their password  
+  » [Issue #35 / Feature request](https://github.com/ChristianBeer/ProFTPd-Admin/issues/35)
 
 
 
