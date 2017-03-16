@@ -6,15 +6,21 @@
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
  * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Ricardo Padilha <ricardo@droboports.com>
- * @copyright 2017 Michael Keck <github@michaelkeck.de>
+ * @copyright Michael Keck <https://github.com/mkkeck>
  */
 
-2017-03-15
+2017-03-16
 ----------
-Changes: <github@michaelkeck.de>
+Changes: Michael Keck <https://github.com/mkkeck>
 * Login form
 * Added session class for login form
 * Display different navigations user is logged in / logged out
+* Added security for Apache Webserver:
+  - `configs/`  not accessible via browser
+  - `includes/` not accessible via browser
+* Moved `tables*.sql` to `install/tables*.sql`
+* Added `install/config-examples` for Linux Distributions
+* Added `install/config-examples/debian` as example and info how to setup on Debian Jessie
 
 
 Release: 2.2

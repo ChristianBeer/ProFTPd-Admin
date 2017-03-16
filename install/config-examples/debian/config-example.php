@@ -8,10 +8,14 @@
  * @copyright Ricardo Padilha <ricardo@droboports.com>
  * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
+ * @copyright Robert Tulke <rt@debian.sh>
  * @copyright Michael Leck <https://github.com/mkkeck>
+ *
+ * rename to config.php
  */
 
 $cfg = array();
+
 
 /**
  * Login data
@@ -55,14 +59,14 @@ $cfg['field_groupname'] = "groupname";
 $cfg['field_gid'] = "gid";
 $cfg['field_members'] = "members";
 
-$cfg['default_uid'] = ""; //if empty next incremental will be default
-$cfg['default_homedir'] = "/srv/ftp";
+$cfg['default_uid'] = "8000"; //if empty next incremental will be default
+$cfg['default_homedir'] = "/home/web";
 // Use either SHA1 or MD5 or any other supported by your MySQL-Server and ProFTPd
 // "pbkdf2" is supported if you are using ProFTPd 1.3.5.
 // "crypt" uses the unix crypt() function.
 // "OpenSSL:sha1" other digest-names also possible; see: http://www.proftpd.org/docs/directives/configuration_full.html#SQLAUTHTYPES
-$cfg['passwd_encryption'] = "SHA1";
-$cfg['min_passwd_length'] = "6";
+$cfg['passwd_encryption'] = "crypt";
+$cfg['min_passwd_length'] = "4";
 $cfg['max_userid_length'] = "32";
 $cfg['max_groupname_length'] = "32";
 // the expressions used to validate user and groupnames are used in two places
@@ -72,10 +76,10 @@ $cfg['max_groupname_length'] = "32";
 $cfg['userid_regex']    = "/^([a-zA-Z][a-zA-Z0-9_\-]{0,".($cfg['max_userid_length']-1)."})$/i"; //every username must comply with this regex
 $cfg['groupname_regex'] = "/^([a-zA-Z][a-zA-Z0-9_\-]{0,".($cfg['max_groupname_length']-1)."})$/i"; //every username must comply with this regex
 // Set any of these to -1 to remove the constraint
-$cfg['min_uid'] = 1000;
-$cfg['max_uid'] = 19999;
-$cfg['min_gid'] = 1000;
-$cfg['max_gid'] = 19999;
+$cfg['min_uid'] = 8000;
+$cfg['max_uid'] = 8999;
+$cfg['min_gid'] = 8000;
+$cfg['max_gid'] = 8999;
 // Uncomment this to read crypt() settings from login.defs.
 // $cfg['read_login_defs'] = true;
 
@@ -86,12 +90,11 @@ $cfg['userid_filter_separator'] = ""; // try "-" or "_" as separators
 // use this block for a mysql backend
 $cfg['db_type'] = "mysqli"; // if unset, 'db_type' defaults to mysqli
 $cfg['db_host'] = "localhost";
-$cfg['db_name'] = "database";
-$cfg['db_user'] = "user";
-$cfg['db_pass'] = "password";
+$cfg['db_name'] = "proftpd";
+$cfg['db_user'] = "proftpd";
+$cfg['db_pass'] = "yourdbpasswordhere";
 
 // use this block for an sqlite3 backend
 //$cfg['db_type'] = "sqlite3";
 //$cfg['db_path'] = "configs/";
 //$cfg['db_name'] = "auth.sqlite3";
-
