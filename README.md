@@ -60,8 +60,8 @@ SQLLog STOR             files-in-count
 SQLNamedQuery           files-in-count UPDATE "files_in_used=files_in_used+1 WHERE userid='%u'" users
 ```
 
-5. Extract all files to your webspace (into a subdirectory like "proftpdadmin").
-6. Edit the configs/config_example.php file to your needs and rename it to config.php.
+5. Extract all files to your webspace (into a subdirectory like _`proftpdadmin`_).
+6. Edit the _`configs/config_example.php`_ file to your needs and rename it to _**`config.php`**_.  
 **Notice:** Change the default login settings!
  ```php
 /**
@@ -80,7 +80,7 @@ $cfg['login'] = array(
 );
 ```
 7. Start ProFTPd.
-8. Go to http://yourwebspace/proftpdadmin/ and start using it!
+8. Go to `http://your.server.com/proftpdadmin/` and start using it!
 
 
 #### (B) Using sqlite3 and pbkdf2
@@ -122,10 +122,10 @@ SQLLog STOR             files-in-count
 SQLNamedQuery           files-in-count UPDATE "files_in_used=files_in_used+1 WHERE userid='%u'" users
 ```
 
-5. Extract all files to your webspace (into a subdirectory like "proftpdadmin").
-6. Edit the configs/config_example.php file to your needs and rename it to config.php.
-**Notice:** Change the default login settings
- ```php
+5. Extract all files to your webspace (into a subdirectory like _`proftpdadmin`_).
+6. Edit the _`configs/config_example.php`_ file to your needs and rename it to _**`config.php`**_.  
+  **Notice:** Change the default login settings!
+```php
 /**
   * Login data
   *
@@ -142,7 +142,7 @@ $cfg['login'] = array(
 );
 ```
 7. Start ProFTPd.
-8. Go to http://yourwebspace/proftpdadmin/ and start using it!
+8. Go to `http://your.server.com/proftpdadmin/` and start using it!
 
 
 ### Upgrade
