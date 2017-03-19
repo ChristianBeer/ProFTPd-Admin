@@ -89,7 +89,7 @@ $cfg['userid_filter_separator'] = ""; // try "-" or "_" as separators
 
 // use this block for a mysql backend
 $cfg['db_type'] = "mysqli"; // if unset, 'db_type' defaults to mysqli
-$cfg['db_host'] = "sql.example.com";
+$cfg['db_host'] = "localhost";
 $cfg['db_name'] = "proftpd_db";
 $cfg['db_user'] = "proftpd_db_user";
 $cfg['db_pass'] = "proftpd_db_password";
