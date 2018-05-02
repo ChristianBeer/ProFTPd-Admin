@@ -145,7 +145,7 @@ if (isset($errormsg)) {
   if (empty($infomsg)) {
     $ugid   = "";
     $ad_gid = array();
-    $shell  = "/bin/false";
+    $shell  = $cfg['default_shell'];
   } else {
     $ugid    = $_REQUEST[$field_ugid];
     $ad_gid = $_REQUEST[$field_ad_gid];
