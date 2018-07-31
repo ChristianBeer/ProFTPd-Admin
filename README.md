@@ -40,6 +40,11 @@ You can look at some [screenshots](screenshots/README.md) to see if this is the 
 
 If you want to upgrade the hashing algorithm you have to change all passwords after changing the configs (both ProFTPd and ProFTPd Admin).
 
+## Migration
+
+If you want to migrate from ProFTPd Admin 1.0 (http://proftpd-adm.sourceforge.net/), please use migrate_proftpd_admin_1_to_2.sh script (think to edit it to comply with your setup)
+Data will be read from original DB and reordered in a new DB. Please follow installation steps before starting the migration script.
+
 ## Installation
 
 ### Using MySQL and SHA1
