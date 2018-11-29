@@ -37,6 +37,16 @@ if (count($groups) == 0) {
   $errormsg = 'There are no groups in the database; please create at least one group before creating users.';
 }
 
+/* find the right message for uid */
+$uidMessage = "Positive integer.";
+if ($cfg['max_uid'] != -1 && $cfg['min_uid'] != -1) {
+  $uidMessage = 'UID must be between ' . $cfg['min_uid'] . ' and ' . $cfg['max_uid'] . '.';
+} else if ($cfg['max_uid'] != -1) {
+  $uidMessage = 'UID must be at most ' . $cfg['max_uid'] . '.';
+} else if ($cfg['min_uid'] != -1) {
+  $uidMessage = 'UID must be at least ' . $cfg['min_uid'] . '.';
+}
+
 /* Data validation */
 if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {
   $errors = array();
@@ -50,14 +60,8 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "c
   if (empty($_REQUEST[$field_uid]) || !$ac->is_valid_id($_REQUEST[$field_uid])) {
     array_push($errors, 'Invalid UID; must be a positive integer.');
   }
-  if ($cfg['max_uid'] != -1 && $cfg['min_uid'] != -1) {
-    if ($_REQUEST[$field_uid] > $cfg['max_uid'] || $_REQUEST[$field_uid] < $cfg['min_uid']) {
-      array_push($errors, 'Invalid UID; UID must be between ' . $cfg['min_uid'] . ' and ' . $cfg['max_uid'] . '.');
-    }
-  } else if ($cfg['max_uid'] != -1 && $_REQUEST[$field_uid] > $cfg['max_uid']) {
-    array_push($errors, 'Invalid UID; UID must be at most ' . $cfg['max_uid'] . '.');
-  } else if ($cfg['min_uid'] != -1 && $_REQUEST[$field_uid] < $cfg['min_uid']) {
-    array_push($errors, 'Invalid UID; UID must be at least ' . $cfg['min_uid'] . '.');
+  if (($cfg['max_uid'] != -1 && $_REQUEST[$field_uid] > $cfg['max_uid']) or ($cfg['min_uid'] != -1 && $_REQUEST[$field_uid] < $cfg['min_uid'])) {
+    array_push($errors, 'Invalid UID; '.$uidMessage );
   }
   /* gid validation */
   if (empty($_REQUEST[$field_ugid]) || !$ac->is_valid_id($_REQUEST[$field_ugid])) {
@@ -192,7 +196,7 @@ include ("includes/header.php");
               <label for="<?php echo $field_uid; ?>" class="col-sm-4 control-label">UID</label>
               <div class="controls col-sm-8">
                 <input type="number" class="form-control" id="<?php echo $field_uid; ?>" name="<?php echo $field_uid; ?>" value="<?php echo $uid; ?>" min="1" placeholder="Enter a UID" required />
-                <p class="help-block"><small>Positive integer.</small></p>
+                <p class="help-block"><small><?php echo $uidMessage; ?></small></p>
               </div>
             </div>
             <!-- Main group -->
