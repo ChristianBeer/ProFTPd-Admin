@@ -138,7 +138,12 @@ if (isset($errormsg)) {
   /* Default values */
   $userid   = "";
   if (empty($cfg['default_uid'])) {
-    $uid    = $ac->get_last_uid() + 1;
+    $uid    = $ac->get_last_uid();
+    if ($uid == 0 && $cfg['min_uid'] != -1) {
+      $uid = $cfg['min_uid'];
+    } else {
+      $uid = $uid + 1;
+    }
   } else {
     $uid    = $cfg['default_uid'];
   }
