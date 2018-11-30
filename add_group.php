@@ -22,6 +22,16 @@ $field_groupname = $cfg['field_groupname'];
 $field_members   = $cfg['field_members'];
 $errors          = array();
 
+/* find the right message for gid */
+$gidMessage = "Positive integer.";
+if ($cfg['max_gid'] != -1 && $cfg['min_gid'] != -1) {
+  $gidMessage = 'GID must be between ' . $cfg['min_gid'] . ' and ' . $cfg['max_gid'] . '.';
+} else if ($cfg['max_gid'] != -1) {
+  $gidMessage = 'GID must be at most ' . $cfg['max_gid'] . '.';
+} else if ($cfg['min_gid'] != -1) {
+  $gidMessage = 'GID must be at least ' . $cfg['min_gid'] . '.';
+}
+
 if (!empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {
   /* group name validation */
   if (empty($_REQUEST[$field_groupname])
@@ -37,15 +47,10 @@ if (!empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {
   if (empty($_REQUEST[$field_gid]) || !$ac->is_valid_id($_REQUEST[$field_gid])) {
     array_push($errors, 'Invalid GID; GID must be a positive integer.');
   }
-  if ($cfg['max_gid'] != -1 && $cfg['min_gid'] != -1) {
-    if ($_REQUEST[$field_gid] > $cfg['max_gid'] || $_REQUEST[$field_gid] < $cfg['min_gid']) {
-      array_push($errors, 'Invalid GID; GID must be between ' . $cfg['min_gid'] . ' and ' . $cfg['max_gid'] . '.');
-    }
-  }  else if ($cfg['max_gid'] != -1 && $_REQUEST[$field_gid] > $cfg['max_gid']) {
-    array_push($errors, 'Invalid GID; GID must be at most ' . $cfg['max_gid'] . '.');
-  }  else if ($cfg['min_gid'] != -1 && $_REQUEST[$field_gid] < $cfg['min_gid']) {
-    array_push($errors, 'Invalid GID; GID must be at least ' . $cfg['min_gid'] . '.');
+  if (($cfg['max_gid'] != -1 && $_REQUEST[$field_gid] > $cfg['max_gid']) or ($cfg['min_gid'] != -1 && $_REQUEST[$field_gid] < $cfg['min_gid'])) {
+    array_push($errors, 'Invalid GID; '.$gidMessage);
   }
+
   /* gid uniqueness validation */
   if ($ac->check_gid($_REQUEST[$field_gid])) {
     array_push($errors, 'GID already exists; GID must be unique.');
@@ -62,6 +67,26 @@ if (!empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {
     }
   }  else {
     $errormsg = implode($errors, "<br />\n");
+  }
+}
+
+/* Form values */
+if (isset($errormsg)) {
+  /* This is a failed attempt */
+  $groupname = $_REQUEST[$field_groupname];
+  $gid = $_REQUEST[$field_gid];
+} else {
+  /* Default values */
+  $groupname = "";
+  if (empty($cfg['default_gid'])) {
+    $gid = $ac->get_last_gid();
+    if ($gid == 0 && $cfg['min_gid'] != -1) {
+      $gid = $cfg['min_gid'];
+    } else {
+      $gid = $gid + 1;
+    }
+  } else {
+    $gid = $cfg['default_gid'];
   }
 }
 
@@ -82,7 +107,7 @@ include ("includes/header.php");
             <div class="form-group">
               <label for="<?php echo $cfg['field_groupname']; ?>" class="col-sm-4 control-label">Group name</label>
               <div class="controls col-sm-8">
-                <input type="text" class="form-control" id="<?php echo $cfg['field_groupname']; ?>" name="<?php echo $cfg['field_groupname']; ?>" placeholder="Enter a group name" maxlength="<?php echo $cfg['max_groupname_length']; ?>" pattern="<?php echo substr($cfg['groupname_regex'], 2, -3); ?>" required>
+                <input type="text" class="form-control" id="<?php echo $cfg['field_groupname']; ?>" name="<?php echo $cfg['field_groupname']; ?>" value="<?php echo $groupname; ?>" placeholder="Enter a group name" maxlength="<?php echo $cfg['max_groupname_length']; ?>" pattern="<?php echo substr($cfg['groupname_regex'], 2, -3); ?>" required>
                 <p class="help-block"><small>Only letters, numbers, hyphens, and underscores. Maximum <?php echo $cfg['max_groupname_length']; ?> characters.</small></p>
               </div>
             </div>
@@ -90,8 +115,8 @@ include ("includes/header.php");
             <div class="form-group">
               <label for="<?php echo $cfg['field_gid']; ?>" class="col-sm-4 control-label">GID</label>
               <div class="col-sm-8">
-                <input type="number" class="form-control" id="<?php echo $field_gid; ?>" name="<?php echo $field_gid; ?>" placeholder="Enter the GID" min="1" required>
-                <p class="help-block"><small>Positive integer.</small></p>
+                <input type="number" class="form-control" id="<?php echo $field_gid; ?>" name="<?php echo $field_gid; ?>" value="<?php echo $gid; ?>" placeholder="Enter the GID" min="1" required>
+                <p class="help-block"><small><?php echo $gidMessage; ?></small></p>
               </div>
             </div>
             <!-- Actions -->
