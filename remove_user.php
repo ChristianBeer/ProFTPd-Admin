@@ -98,7 +98,7 @@ include ("includes/header.php");
             <div class="form-group">
               <div class="col-sm-12">
                 <input type="hidden" name="<?php echo $field_id; ?>" value="<?php echo $id; ?>" />
-                <a class="btn btn-default" role="group" href="edit_user.php?action=show&<?php echo $field_id; ?>=<?php echo $id; ?>">Cancel</a>
+                <a class="btn btn-default" role="group" href="edit_user.php?action=show&<?php echo $field_id; ?>=<?php echo $id; ?>">View user</a>
                 <button type="submit" class="btn btn-danger pull-right" role="group" name="action" value="reallyremove" <?php if (isset($errormsg)) { echo 'disabled="disabled"'; } ?>>Remove user</button>
               </div>
             </div>
