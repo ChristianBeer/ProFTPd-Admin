@@ -34,7 +34,8 @@ $field_disabled = $cfg['field_disabled'];
 $groups = $ac->get_groups();
 
 if (count($groups) == 0) {
-  $errormsg = 'There are no groups in the database; please create at least one group before creating users.';
+  header('Location: add_group.php?error=createLoginWithoutGroup');
+  exit();
 }
 
 /* find the right message for uid */

@@ -21,6 +21,7 @@ $field_gid       = $cfg['field_gid'];
 $field_groupname = $cfg['field_groupname'];
 $field_members   = $cfg['field_members'];
 $errors          = array();
+$action = explode('?', $_SERVER['REQUEST_URI'], 2)[0];
 
 /* find the right message for gid */
 $gidMessage = "Positive integer.";
@@ -88,6 +89,9 @@ if (isset($errormsg)) {
   } else {
     $gid = $cfg['default_gid'];
   }
+  if (!empty($_REQUEST["error"]) && $_REQUEST["error"] == "createLoginWithoutGroup") {
+    $errormsg = "There are no groups in the database; please create at least one group before creating users.";
+  }
 }
 
 include ("includes/header.php");
@@ -102,7 +106,7 @@ include ("includes/header.php");
     <div class="panel-body">
       <div class="row">
         <div class="col-sm-12">
-          <form role="form" class="form-horizontal" method="post" data-toggle="validator">
+            <form role="form" class="form-horizontal" method="post" data-toggle="validator" action="<?php echo $action ?>">
             <!-- Group name -->
             <div class="form-group">
               <label for="<?php echo $cfg['field_groupname']; ?>" class="col-sm-4 control-label">Group name</label>
