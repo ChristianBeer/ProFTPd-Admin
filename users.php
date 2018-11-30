@@ -41,6 +41,17 @@ $groups = $ac->parse_groups();
 $all_users = $ac->get_users();
 $users = array();
 
+if (!empty($_REQUEST["error"]) && $_REQUEST["error"] == "removeUser") {
+  if (!empty($_REQUEST["g_group"]) ) {
+    $errormsg = 'Cannot remove user "'.$_REQUEST["userid"].'" from group "'.$_REQUEST["g_group"].'"; see log files for more information.';
+  } else {
+    $errormsg = 'User "'.$_REQUEST["userid"].'" removal failed; see log files for more information.';
+  }
+}
+if (!empty($_REQUEST["info"]) && $_REQUEST["info"] == "removeUser") {
+  $infomsg = 'User "'.$_REQUEST["userid"].'" removed successfully.';
+}
+
 /* parse filter  */
 $userfilter = array();
 $ufilter="";

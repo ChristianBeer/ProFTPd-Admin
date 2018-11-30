@@ -41,43 +41,24 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "r
   $groups = $ac->get_groups();
   while (list($g_gid, $g_group) = each($groups)) {
     if (!$ac->remove_user_from_group($userid, $g_gid)) {
-      $errormsg = 'Cannot remove user "'.$userid.'" from group "'.$g_group.'"; see log files for more information.';
+      header('Location: users.php?info=removeUser&userid='.$userid.'&g_group='.$g_group);
       break;
     }
   }
   if (empty($errormsg)) {
     if ($ac->remove_user_by_id($id)) {
-      $infomsg = 'User "'.$userid.'" removed successfully.';
+      header('Location: users.php?info=removeUser&userid='.$userid);
     } else {
-      $errormsg = 'User "'.$userid.'" removal failed; see log files for more information.';
+      header('Location: users.php?error=removeUser&userid='.$userid);
     }
   }
+  exit();
 }
 
 include ("includes/header.php");
+include ("includes/messages.php");
 ?>
-<?php include ("includes/messages.php"); ?>
 
-<?php if (!empty($_REQUEST["action"]) && $_REQUEST["action"] == "reallyremove") { ?>
-<!-- action: reallyremove -->
-<div class="col-xs-12 col-sm-8 col-md-6 center">
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <div class="row">
-        <div class="col-sm-12">
-          <!-- Actions -->
-          <div class="form-group">
-            <div class="col-sm-12">
-              <a class="btn btn-primary pull-right" href="users.php" role="button">View users &raquo;</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<?php } else { ?>
 <!-- action: remove -->
 <div class="col-xs-12 col-sm-8 col-md-6 center">
   <div class="panel panel-default">
@@ -108,6 +89,5 @@ include ("includes/header.php");
     </div>
   </div>
 </div>
-<?php } ?>
 
 <?php include ("includes/footer.php"); ?>
