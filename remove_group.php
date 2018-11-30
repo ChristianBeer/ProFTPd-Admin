@@ -81,7 +81,7 @@ include ("includes/messages.php"); ?>
             <div class="form-group">
               <div class="col-sm-12">
                 <input type="hidden" name="<?php echo $field_gid; ?>" value="<?php echo $gid; ?>" />
-                <a class="btn btn-default" role="group" href="edit_group.php?action=show&<?php echo $field_gid; ?>=<?php echo $gid; ?>">Cancel</a>
+                <a class="btn btn-default" role="group" href="edit_group.php?action=show&<?php echo $field_gid; ?>=<?php echo $gid; ?>">View group</a>
                 <button type="submit" class="btn btn-danger pull-right" role="group" name="action" value="reallyremove" <?php if (isset($errormsg)) { echo 'disabled="disabled"'; } ?>>Remove group</button>
               </div>
             </div>
