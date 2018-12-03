@@ -321,6 +321,10 @@ class AdminClass {
         } else if (strpos($passwd_encryption, "OpenSSL:") === 0) {
           $passwd_digest = substr($passwd_encryption, strpos($passwd_encryption, ':')+1);
           $passwd = 'CONCAT("{'.$passwd_digest.'}",TO_BASE64(UNHEX('.$passwd_digest.'("'.$userdata[$field_passwd].'"))))';
+        } else if ($passwd_encryption == 'SHA256') {
+          $passwd = "SHA2('$userdata[$field_passwd]', 256)";
+        } else if ($passwd_encryption == 'SHA512') {
+          $passwd = "SHA2('$userdata[$field_passwd]', 512)";
         } else {
           $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
         }
@@ -611,6 +615,12 @@ class AdminClass {
             $passwd_digest = substr($passwd_encryption, strpos($passwd_encryption, ':')+1);
             $passwd = 'CONCAT("{'.$passwd_digest.'}",TO_BASE64(UNHEX('.$passwd_digest.'("'.$userdata[$field_passwd].'"))))';
             $passwd_format = ' %s=%s, ';
+          } else if ($passwd_encryption == 'SHA256') {
+            $passwd = "SHA2('$userdata[$field_passwd]', 256)";
+            $passwd_format = ' %s=%s, ';
+          } else if ($passwd_encryption == 'SHA512') {
+            $passwd = "SHA2('$userdata[$field_passwd]', 512)";
+            $passwd_format = ' %s=%s, '; 
           } else {
             $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
             $passwd_format = ' %s=%s, ';
@@ -673,5 +683,5 @@ class AdminClass {
     function is_valid_id($id) {
         return is_numeric($id) && (int)$id > 0 && $id == round($id);
     }
-}
+        }
 ?>
