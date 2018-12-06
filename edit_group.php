@@ -45,6 +45,16 @@ if (!$ac->is_valid_id($gid)) {
   }
 }
 
+/* find the right message for gid */
+$gidMessage = "Positive integer.";
+if ($cfg['max_gid'] != -1 && $cfg['min_gid'] != -1) {
+  $gidMessage = 'GID must be between ' . $cfg['min_gid'] . ' and ' . $cfg['max_gid'] . '.';
+} else if ($cfg['max_gid'] != -1) {
+  $gidMessage = 'GID must be at most ' . $cfg['max_gid'] . '.';
+} else if ($cfg['min_gid'] != -1) {
+  $gidMessage = 'GID must be at least ' . $cfg['min_gid'] . '.';
+}
+
 if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "update") {
   $errors = array();
   /* gid validation */
@@ -57,14 +67,8 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
     array_push($errors, 'GID already exists; GID must be unique.');
   }
   /* gid range validation */
-  if ($cfg['max_gid'] != -1 && $cfg['min_gid'] != -1) {
-    if ($_REQUEST[$field_newgid] > $cfg['max_gid'] || $_REQUEST[$field_newgid] < $cfg['min_gid']) {
-      array_push($errors, 'Invalid GID; GID must be between ' . $cfg['min_gid'] . ' and ' . $cfg['max_gid'] . '.');
-    }
-  }  else if ($cfg['max_gid'] != -1 && $_REQUEST[$field_newgid] > $cfg['max_gid']) {
-    array_push($errors, 'Invalid GID; GID must be at most ' . $cfg['max_gid'] . '.');
-  }  else if ($cfg['min_gid'] != -1 && $_REQUEST[$field_newgid] < $cfg['min_gid']) {
-    array_push($errors, 'Invalid GID; GID must be at least ' . $cfg['min_gid'] . '.');
+  if (($cfg['max_gid'] != -1 && $_REQUEST[$field_newgid] > $cfg['max_gid']) or ($cfg['min_gid'] != -1 && $_REQUEST[$field_newgid] < $cfg['min_gid'])) {
+    array_push($errors, 'Invalid GID; '.$gidMessage);
   }
   if (count($errors) == 0) {
     /* data validation passed */
@@ -185,7 +189,7 @@ include ("includes/header.php");
             <label for="<?php echo $cfg['field_gid']; ?>" class="col-sm-4 control-label">New GID</label>
             <div class="col-sm-8">
               <input type="number" class="form-control" id="new_<?php echo $cfg['field_gid']; ?>" name="new_<?php echo $cfg['field_gid']; ?>" value="<?php echo $gid; ?>" placeholder="Enter the new GID" min="1" required />
-              <p class="help-block"><small>Positive integer.</small></p>
+              <p class="help-block"><small><?php echo $gidMessage; ?></small></p>
             </div>
           </div>
           <!-- Actions -->
