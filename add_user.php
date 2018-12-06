@@ -39,14 +39,7 @@ if (count($groups) == 0) {
 }
 
 /* find the right message for uid */
-$uidMessage = "Positive integer.";
-if ($cfg['max_uid'] != -1 && $cfg['min_uid'] != -1) {
-  $uidMessage = 'UID must be between ' . $cfg['min_uid'] . ' and ' . $cfg['max_uid'] . '.';
-} else if ($cfg['max_uid'] != -1) {
-  $uidMessage = 'UID must be at most ' . $cfg['max_uid'] . '.';
-} else if ($cfg['min_uid'] != -1) {
-  $uidMessage = 'UID must be at least ' . $cfg['min_uid'] . '.';
-}
+$uidMessage = $ac->get_uid_message();
 
 /* Data validation */
 if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {

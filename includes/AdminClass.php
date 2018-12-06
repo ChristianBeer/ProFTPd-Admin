@@ -203,6 +203,40 @@ class AdminClass {
     }
 
     /**
+     * returns the right message for uid
+     * @return String
+     */
+    function get_uid_message() {
+      /* find the right message for uid */
+      $uidMessage = "Positive integer.";
+      if ($this->config['max_uid'] != -1 && $this->config['min_uid'] != -1) {
+        $uidMessage = 'UID must be between ' . $this->config['min_uid'] . ' and ' . $this->config['max_uid'] . '.';
+      } else if ($this->config['max_uid'] != -1) {
+        $uidMessage = 'UID must be at most ' . $this->config['max_uid'] . '.';
+      } else if ($this->config['min_uid'] != -1) {
+        $uidMessage = 'UID must be at least ' . $this->config['min_uid'] . '.';
+      }
+      return $uidMessage;
+    }
+
+    /**
+     * returns the right message for gid
+     * @return String
+     */
+    function get_gid_message() {
+      /* find the right message for gid */
+      $gidMessage = "Positive integer.";
+      if ($this->config['max_gid'] != -1 && $this->config['min_gid'] != -1) {
+        $gidMessage = 'GID must be between ' . $this->config['min_gid'] . ' and ' . $this->config['max_gid'] . '.';
+      } else if ($this->config['max_gid'] != -1) {
+        $gidMessage = 'GID must be at most ' . $this->config['max_gid'] . '.';
+      } else if ($this->config['min_gid'] != -1) {
+        $gidMessage = 'GID must be at least ' . $this->config['min_gid'] . '.';
+      }
+      return $gidMessage;
+    }
+
+    /**
      * Checks if the given groupname is already in the database
      * @param String $groupname
      * @return boolean true if groupname exists, false if not

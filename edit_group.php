@@ -46,14 +46,7 @@ if (!$ac->is_valid_id($gid)) {
 }
 
 /* find the right message for gid */
-$gidMessage = "Positive integer.";
-if ($cfg['max_gid'] != -1 && $cfg['min_gid'] != -1) {
-  $gidMessage = 'GID must be between ' . $cfg['min_gid'] . ' and ' . $cfg['max_gid'] . '.';
-} else if ($cfg['max_gid'] != -1) {
-  $gidMessage = 'GID must be at most ' . $cfg['max_gid'] . '.';
-} else if ($cfg['min_gid'] != -1) {
-  $gidMessage = 'GID must be at least ' . $cfg['min_gid'] . '.';
-}
+$gidMessage = $ac->get_gid_message();
 
 if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "update") {
   $errors = array();
