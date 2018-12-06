@@ -115,7 +115,7 @@ include ("includes/header.php");
                 $user = $ac->get_user_by_id($u_id); ?>
                 <tr>
                   <td class="pull-middle"><?php echo $user[$field_uid]; ?></td>
-                  <td class="pull-middle"><?php echo $u_userid; ?></td>
+                  <td class="pull-middle"><a href="edit_user.php?action=show&<?php echo $field_id; ?>=<?php echo $u_id; ?>"><?php echo $u_userid; ?></a></td>
                   <td class="pull-middle"><?php echo ($user[$field_disabled] ? 'Yes' : 'No'); ?></td>
                   <td class="pull-middle">
                     <div class="btn-toolbar pull-right" role="toolbar">
