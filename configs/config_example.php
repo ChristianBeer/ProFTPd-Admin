@@ -44,6 +44,8 @@ $cfg['default_homedir'] = "/srv/ftp";
 // Use either SHA1 or MD5 or any other supported by your MySQL-Server and ProFTPd
 // "pbkdf2" is supported if you are using ProFTPd 1.3.5.
 // "crypt" uses the unix crypt() function.
+// "MYSQL_Backend" uses the PASSWORD() function from MySQL to hash the password. Useful when migrating from ProFTPd Admin 1.0
+// Emtpy value means cleartext storage
 // "OpenSSL:sha1" other digest-names also possible; see: http://www.proftpd.org/docs/directives/configuration_full.html#SQLAUTHTYPES
 $cfg['passwd_encryption'] = "SHA1";
 $cfg['min_passwd_length'] = "6";

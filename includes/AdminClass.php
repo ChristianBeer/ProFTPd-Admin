@@ -16,6 +16,9 @@ if ($cfg['passwd_encryption'] == "pbkdf2") {
   require "hash_pbkdf2_compat.php";
 } elseif ($cfg['passwd_encryption'] == "crypt") {
   require "unix_crypt.php";
+} elseif ($cfg['passwd_encryption'] == "Backend") {
+  require "mysql_backend.php";
+
 }
 
 include_once "ez_sql_core.php";
@@ -301,13 +304,16 @@ class AdminClass {
         } else if ($passwd_encryption == 'crypt') {
           $passwd = unix_crypt($userdata[$field_passwd]);
           $passwd = '"'.$passwd.'"';
+        } else if ($passwd_encryption == 'Backend') {
+          $passwd = mysql_backend($userdata[$field_passwd]);
+          $passwd_format = ' %s="%s", ';
         } else if (strpos($passwd_encryption, "OpenSSL:") === 0) {
           $passwd_digest = substr($passwd_encryption, strpos($passwd_encryption, ':')+1);
           $passwd = 'CONCAT("{'.$passwd_digest.'}",TO_BASE64(UNHEX('.$passwd_digest.'("'.$userdata[$field_passwd].'"))))';
         } else {
           $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
         }
-        $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s","%s","%s")';
+        $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")';
         $query = sprintf($format, $this->config['table_users'],
                                   $field_userid,
                                   $field_uid,
@@ -586,6 +592,9 @@ class AdminClass {
             $passwd_format = ' %s="%s", ';
           } else if ($passwd_encryption == 'crypt') {
             $passwd = unix_crypt($userdata[$field_passwd]);
+            $passwd_format = ' %s="%s", ';
+          } else if ($passwd_encryption == 'MYSQL_Backend') {
+            $passwd = mysql_backend($userdata[$field_passwd]);
             $passwd_format = ' %s="%s", ';
           } else if (strpos($passwd_encryption, "OpenSSL:") === 0) {
             $passwd_digest = substr($passwd_encryption, strpos($passwd_encryption, ':')+1);

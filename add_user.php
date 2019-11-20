@@ -22,6 +22,7 @@ $field_uid      = $cfg['field_uid'];
 $field_ugid     = $cfg['field_ugid'];
 $field_ad_gid   = 'ad_gid';
 $field_passwd   = $cfg['field_passwd'];
+$field_passwd2  = $cfg['field_passwd2'];
 $field_homedir  = $cfg['field_homedir'];
 $field_shell    = $cfg['field_shell'];
 $field_title    = $cfg['field_title'];
@@ -67,6 +68,11 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "c
   if (strlen($_REQUEST[$field_passwd]) < $cfg['min_passwd_length']) {
     array_push($errors, 'Password is too short; minimum length is '.$cfg['min_passwd_length'].' characters.');
   }
+  /* password confirmation validation */
+  if ($_REQUEST[$field_passwd] != $_REQUEST[$field_passwd2]) {
+    array_push($errors, 'Passwords are not matching');
+  }
+
   /* home directory validation */
   if (strlen($_REQUEST[$field_homedir]) <= 1) {
     array_push($errors, 'Invalid home directory; home directory cannot be empty.');
@@ -90,6 +96,7 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "c
                       $field_uid      => $_REQUEST[$field_uid],
                       $field_ugid     => $_REQUEST[$field_ugid],
                       $field_passwd   => $_REQUEST[$field_passwd],
+                      $field_passwd2  => $_REQUEST[$field_passwd2],
                       $field_homedir  => $_REQUEST[$field_homedir],
                       $field_shell    => $_REQUEST[$field_shell],
                       $field_title    => $_REQUEST[$field_title],
@@ -126,6 +133,7 @@ if (isset($errormsg)) {
   $ugid     = $_REQUEST[$field_ugid];
   $ad_gid   = $_REQUEST[$field_ad_gid];
   $passwd   = $_REQUEST[$field_passwd];
+  $passwd2  = $_REQUEST[$field_passwd2];
   $homedir  = $_REQUEST[$field_homedir];
   $shell    = $_REQUEST[$field_shell];
   $title    = $_REQUEST[$field_title];
@@ -151,7 +159,7 @@ if (isset($errormsg)) {
     $ad_gid = $_REQUEST[$field_ad_gid];
     $shell  = $_REQUEST[$field_shell];
   }
-  $passwd   = $ac->generate_random_string((int) $cfg['min_passwd_length']);
+  //$passwd   = $ac->generate_random_string((int) $cfg['min_passwd_length']);
   $homedir  = $cfg['default_homedir'];
   $title    = "m";
   $name     = "";
@@ -216,8 +224,15 @@ include ("includes/header.php");
             <div class="form-group">
               <label for="<?php echo $field_passwd; ?>" class="col-sm-4 control-label">Password</label>
               <div class="controls col-sm-8">
-                <input type="text" class="form-control" id="<?php echo $field_passwd; ?>" name="<?php echo $field_passwd; ?>" value="<?php echo $passwd; ?>" placeholder="Enter a password" minlength="<?php echo $cfg['min_passwd_length']; ?>" required />
+                <input type="password" class="form-control" id="<?php echo $field_passwd; ?>" name="<?php echo $field_passwd; ?>" value="" placeholder="Enter a password" minlength="<?php echo $cfg['min_passwd_length']; ?>" required />
                 <p class="help-block"><small>Minimum length <?php echo $cfg['min_passwd_length']; ?> characters.</small></p>
+              </div>
+            </div>
+            <!-- Password confirmation -->
+            <div class="form-group">
+              <label for="<?php echo $field_passwd2; ?>" class="col-sm-4 control-label">Confirm password</label>
+              <div class="controls col-sm-8">
+                <input type="password" class="form-control" id="<?php echo $field_passwd2; ?>" name="<?php echo $field_passwd2; ?>" value "" placeholder="Confirm password" />
               </div>
             </div>
             <!-- Home directory -->
