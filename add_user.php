@@ -32,6 +32,7 @@ $field_company  = $cfg['field_company'];
 $field_email    = $cfg['field_email'];
 $field_comment  = $cfg['field_comment'];
 $field_disabled = $cfg['field_disabled'];
+$field_expiration = $cfg['field_expiration'];
 
 $groups = $ac->get_groups();
 
@@ -99,6 +100,7 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "c
                       $field_email    => $_REQUEST[$field_email],
                       $field_company  => $_REQUEST[$field_company],
                       $field_comment  => $_REQUEST[$field_comment],
+                      $field_expiration => $_REQUEST[$field_expiration],
                       $field_disabled => $disabled);
     if ($ac->add_user($userdata)) {
       if (isset($_REQUEST[$field_ad_gid])) {
@@ -128,6 +130,7 @@ if (isset($errormsg)) {
   $ugid     = $_REQUEST[$field_ugid];
   $ad_gid   = $_REQUEST[$field_ad_gid];
   $passwd   = $_REQUEST[$field_passwd];
+  $expiration = $_REQUEST[$field_expiration];
   $homedir  = $_REQUEST[$field_homedir];
   $shell    = $_REQUEST[$field_shell];
   $title    = $_REQUEST[$field_title];
@@ -154,6 +157,7 @@ if (isset($errormsg)) {
     $shell  = $_REQUEST[$field_shell];
   }
   $passwd   = $ac->generate_random_string((int) $cfg['min_passwd_length']);
+  $expiration= "0000-00-00 00:00:00";
   $homedir  = $cfg['default_homedir'];
   $title    = "m";
   $name     = "";
@@ -222,6 +226,15 @@ include ("includes/header.php");
                 <p class="help-block"><small>Minimum length <?php echo $cfg['min_passwd_length']; ?> characters.</small></p>
               </div>
             </div>
+
+            <!-- expiration -->
+            <div class="form-group">
+              <label for="<?php echo $field_expiration; ?>" class="col-sm-4 control-label">Expiry Date</label>
+              <div class="controls col-sm-8" >
+                <input type="text" class="form-control" id='expiration' name="<?php echo $field_expiration; ?>" value="<?php echo $expiration; ?>" maxlength="19" />
+              </div>
+            </div>
+
             <!-- Home directory -->
             <div class="form-group">
               <label for="<?php echo $field_homedir; ?>" class="col-sm-4 control-label">Home directory</label>

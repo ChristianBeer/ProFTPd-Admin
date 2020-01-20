@@ -1,3 +1,4 @@
+<?php print_r($userdata); ?>
       </div><!-- /.row -->
 
       <hr/>
@@ -12,6 +13,17 @@
     <script src="bootstrap/js/moment.min.js"></script>
     <script src="bootstrap/js/bootstrap-sortable.js"></script>
     <script src="bootstrap/js/bootstrap-multiselect.js"></script>
+    <script src="bootstrap/js/bootstrap-datetimepicker.js"></script>
+
+    <script type="text/javascript">
+      $(function () {
+        $('#expiration').datetimepicker({
+        format:'YYYY-MM-DD hh:mm:00',
+        defaultDate: '<?php echo $user[$field_expiration]; ?>'
+        });
+      });
+    </script>
+
     <script>
       $(function () {
         $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
@@ -24,5 +36,6 @@
         });
       } );
     </script>
+
   </body>
 </html>

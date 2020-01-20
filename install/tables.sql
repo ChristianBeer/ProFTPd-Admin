@@ -8,7 +8,7 @@ CREATE TABLE `groups` (
   `members` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`gid`),
   UNIQUE KEY `groupname` (`groupname`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='ProFTPd group table';
+) ENGINE=MyISAM COMMENT='ProFTPd group table';
 
 #
 # Table structure for table `users`
@@ -35,6 +35,7 @@ CREATE TABLE `users` (
   `login_count` int(11) unsigned NOT NULL default '0',
   `last_login` datetime NOT NULL default '0000-00-00 00:00:00',
   `last_modified` datetime NOT NULL default '0000-00-00 00:00:00',
+  `expiration` datetime NOT NULL default '0000-00-00 00:00:00',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `userid` (`userid`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT='ProFTPd user table';
+) ENGINE=MyISAM COMMENT='ProFTPd user table';

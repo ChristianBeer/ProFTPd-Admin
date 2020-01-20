@@ -1,4 +1,4 @@
-<?php
+#<?php
 /**
  * This file is part of ProFTPd Admin
  *
@@ -53,6 +53,9 @@ $cfg['field_disabled'] = "disabled";
 $cfg['field_login_count'] = "login_count";
 $cfg['field_last_login'] = "last_login";
 $cfg['field_last_modified'] = "last_modified";
+
+$cfg['field_expiration'] = "expiration";
+
 $cfg['field_bytes_in_used'] = "bytes_in_used";
 $cfg['field_bytes_out_used'] = "bytes_out_used";
 $cfg['field_files_in_used'] = "files_in_used";
@@ -63,14 +66,14 @@ $cfg['field_groupname'] = "groupname";
 $cfg['field_gid'] = "gid";
 $cfg['field_members'] = "members";
 
-$cfg['default_uid'] = ""; //if empty next incremental will be default
+$cfg['default_uid'] = "1000"; //if empty next incremental will be default
 $cfg['default_homedir'] = "/srv/ftp";
 // Use either SHA1 or MD5 or any other supported by your MySQL-Server and ProFTPd
 // "pbkdf2" is supported if you are using ProFTPd 1.3.5.
 // "crypt" uses the unix crypt() function.
 // "OpenSSL:sha1" other digest-names also possible; see: http://www.proftpd.org/docs/directives/configuration_full.html#SQLAUTHTYPES
-$cfg['passwd_encryption'] = "SHA1";
-$cfg['min_passwd_length'] = "6";
+$cfg['passwd_encryption'] = "crypt";
+$cfg['min_passwd_length'] = "8";
 $cfg['max_userid_length'] = "32";
 $cfg['max_groupname_length'] = "32";
 // the expressions used to validate user and groupnames are used in two places
@@ -81,9 +84,9 @@ $cfg['userid_regex']    = "/^([a-zA-Z][a-zA-Z0-9_\-]{0,".($cfg['max_userid_lengt
 $cfg['groupname_regex'] = "/^([a-zA-Z][a-zA-Z0-9_\-]{0,".($cfg['max_groupname_length']-1)."})$/i"; //every username must comply with this regex
 // Set any of these to -1 to remove the constraint
 $cfg['min_uid'] = 1000;
-$cfg['max_uid'] = 19999;
+$cfg['max_uid'] = 65534;
 $cfg['min_gid'] = 1000;
-$cfg['max_gid'] = 19999;
+$cfg['max_gid'] = 65534;
 // Uncomment this to read crypt() settings from login.defs.
 // $cfg['read_login_defs'] = true;
 

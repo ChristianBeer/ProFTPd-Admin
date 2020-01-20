@@ -37,6 +37,8 @@ $field_disabled = $cfg['field_disabled'];
 $field_login_count    = $cfg['field_login_count'];
 $field_last_login     = $cfg['field_last_login'];
 $field_last_modified  = $cfg['field_last_modified'];
+$field_expiration     = $cfg['field_expiration'];
+
 $field_bytes_in_used  = $cfg['field_bytes_in_used'];
 $field_bytes_out_used = $cfg['field_bytes_out_used'];
 $field_files_in_used  = $cfg['field_files_in_used'];
@@ -137,6 +139,7 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
                       $field_email    => $_REQUEST[$field_email],
                       $field_company  => $_REQUEST[$field_company],
                       $field_comment  => $_REQUEST[$field_comment],
+                      $field_expiration => $_REQUEST[$field_expiration],
                       $field_disabled => $disabled);
     if (!$ac->update_user($userdata)) {
       $errormsg = 'User "'.$_REQUEST[$field_userid].'" update failed; check log files.';
@@ -233,6 +236,15 @@ include ("includes/header.php");
               <input type="text" class="form-control" id="<?php echo $field_last_modified; ?>" name="<?php echo $field_last_modified; ?>" value="<?php echo $user[$field_last_modified]; ?>" readonly />
             </div>
           </div>
+
+          <!-- expiration (readonly) -->
+          <div class="form-group">
+            <label for="<?php echo $field_expiration; ?>" class="col-sm-4 control-label">Expiry Date</label>
+            <div class="controls col-sm-8">
+              <input type="text" class="form-control" id="<?php echo $field_expiration; ?>-ro" name="<?php echo $field_expiration; ?>-ro" value="<?php echo $user[$field_expiration]; ?>" readonly />
+            </div>
+          </div>
+
           <!-- Bytes in (readonly) -->
           <div class="form-group">
             <label for="<?php echo $field_bytes_in_used; ?>" class="col-sm-4 control-label">Bytes uploaded</label>
@@ -323,6 +335,15 @@ include ("includes/header.php");
               <p class="help-block"><small>Minimum length <?php echo $cfg['min_passwd_length']; ?> characters.</small></p>
             </div>
           </div>
+
+            <!-- expiration -->
+            <div class="form-group">
+              <label for="<?php echo $field_expiration; ?>" class="col-sm-4 control-label">Expiry Date</label>
+              <div class="controls col-sm-8" >
+                <input type="text" class="form-control" id='expiration' name="<?php echo $field_expiration; ?>" value="<?php echo $expiration; ?>" maxlength="19" />
+              </div>
+            </div>
+
           <!-- Home directory -->
           <div class="form-group">
             <label for="<?php echo $field_homedir; ?>" class="col-sm-4 control-label">Home directory</label>

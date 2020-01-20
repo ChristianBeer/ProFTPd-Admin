@@ -293,6 +293,7 @@ class AdminClass {
         $field_comment  = $this->config['field_comment'];
         $field_disabled = $this->config['field_disabled'];
         $field_last_modified = $this->config['field_last_modified'];
+        $field_expiration = $this->config['field_expiration'];
         $passwd_encryption = $this->config['passwd_encryption'];
         $passwd = "";
         if ($passwd_encryption == 'pbkdf2') {
@@ -307,7 +308,7 @@ class AdminClass {
         } else {
           $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
         }
-        $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s","%s","%s")';
+        $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")';
         $query = sprintf($format, $this->config['table_users'],
                                   $field_userid,
                                   $field_uid,
@@ -322,6 +323,7 @@ class AdminClass {
                                   $field_comment,
                                   $field_disabled,
                                   $field_last_modified,
+                                  $field_expiration,
                                   $userdata[$field_userid],
                                   $userdata[$field_uid],
                                   $userdata[$field_ugid],
@@ -334,7 +336,8 @@ class AdminClass {
                                   $userdata[$field_email],
                                   $userdata[$field_comment],
                                   $userdata[$field_disabled],
-                                  date('Y-m-d H:i:s'));
+                                  date('Y-m-d H:i:s'),
+                                  $userdata[$expiration]);
         $result = $this->dbConn->query($query);
         return $result;
     }
@@ -576,6 +579,7 @@ class AdminClass {
         $field_comment  = $this->config['field_comment'];
         $field_disabled = $this->config['field_disabled'];
         $field_last_modified = $this->config['field_last_modified'];
+        $field_expiration = $this->config['field_expiration'];
         $passwd_encryption = $this->config['passwd_encryption'];
 
         $passwd_query = '';
@@ -598,7 +602,7 @@ class AdminClass {
           $passwd_query = sprintf($passwd_format, $field_passwd, $passwd);
         }
 
-        $format = 'UPDATE %s SET %s %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s" WHERE %s="%s"';
+        $format = 'UPDATE %s SET %s %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s" WHERE %s="%s"';
         $query = sprintf($format, $this->config['table_users'],
                                   $passwd_query,
                                   $field_userid,   $userdata[$field_userid],
@@ -613,6 +617,7 @@ class AdminClass {
                                   $field_comment,  $userdata[$field_comment],
                                   $field_disabled, $userdata[$field_disabled],
                                   $field_last_modified, date('Y-m-d H:i:s'),
+                                  $field_expiration, $userdata[$field_expiration],
                                   $field_id,       $userdata[$field_id]);
         $result = $this->dbConn->query($query);
         return $result;
