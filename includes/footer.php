@@ -1,4 +1,7 @@
-<?php print_r($userdata); ?>
+<?php print_r($userdata); 
+
+echo $user[$field_expiration];
+?>
       </div><!-- /.row -->
 
       <hr/>
@@ -18,8 +21,14 @@
     <script type="text/javascript">
       $(function () {
         $('#expiration').datetimepicker({
-        format:'YYYY-MM-DD hh:mm:00',
-        defaultDate: '<?php echo $user[$field_expiration]; ?>'
+        useCurrent : false,
+        showClear: true,
+        format:'YYYY-MM-DD HH:mm:00',
+	minDate: 'now',
+    <?php if (!empty($user[$field_expiration]) && $user[$field_expiration] != '0000-00-00 00:00:00' ) { ?>
+        defaultDate: moment('<?php echo $user[$field_expiration]; ?>',"YYYY-MM-DD HH:mm:00"),
+    <?php } ?>
+
         });
       });
     </script>

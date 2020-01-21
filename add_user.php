@@ -157,7 +157,6 @@ if (isset($errormsg)) {
     $shell  = $_REQUEST[$field_shell];
   }
   $passwd   = $ac->generate_random_string((int) $cfg['min_passwd_length']);
-  $expiration= "0000-00-00 00:00:00";
   $homedir  = $cfg['default_homedir'];
   $title    = "m";
   $name     = "";
