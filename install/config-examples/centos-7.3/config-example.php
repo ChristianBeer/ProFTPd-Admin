@@ -45,6 +45,7 @@ $cfg['field_ugid'] = "gid";
 $cfg['field_passwd'] = "passwd";
 $cfg['field_homedir'] = "homedir";
 $cfg['field_shell'] = "shell";
+$cfg['field_sshpubkey'] = "sshpubkey";
 $cfg['field_title'] = "title";
 $cfg['field_name'] = "name";
 $cfg['field_company'] = "company";

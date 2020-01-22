@@ -16,14 +16,15 @@ CREATE TABLE `groups` (
 
 CREATE TABLE `users` (
   `id` smallint(2) unsigned NOT NULL auto_increment,
-  `userid` varchar(32) NOT NULL default '',
+  `userid` varchar(64) NOT NULL default '',
   `uid` smallint(6) unsigned default NULL,
   `gid` smallint(6) unsigned default NULL,
   `passwd` varchar(265) NOT NULL default '',
   `homedir` varchar(255) NOT NULL default '',
   `comment` varchar(255) NOT NULL default '',
   `disabled` smallint(2) unsigned NOT NULL default '0',
-  `shell` varchar(32) NOT NULL default '/sbin/nologin',
+  `shell` varchar(32) NOT NULL default '/bin/false',
+  `sshpubkey` varchar(1023) NOT NULL default '',
   `email` varchar(255) NOT NULL default '',
   `name` varchar(255) NOT NULL default '',
   `title` varchar(5) NOT NULL default '',

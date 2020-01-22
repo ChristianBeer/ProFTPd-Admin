@@ -44,6 +44,7 @@ $cfg['field_ugid'] = "gid";
 $cfg['field_passwd'] = "passwd";
 $cfg['field_homedir'] = "homedir";
 $cfg['field_shell'] = "shell";
+$cfg['field_sshpubkey'] = "sshpubkey";
 $cfg['field_title'] = "title";
 $cfg['field_name'] = "name";
 $cfg['field_company'] = "company";
@@ -74,7 +75,7 @@ $cfg['default_homedir'] = "/srv/ftp";
 // "OpenSSL:sha1" other digest-names also possible; see: http://www.proftpd.org/docs/directives/configuration_full.html#SQLAUTHTYPES
 $cfg['passwd_encryption'] = "crypt";
 $cfg['min_passwd_length'] = "8";
-$cfg['max_userid_length'] = "32";
+$cfg['max_userid_length'] = "64";
 $cfg['max_groupname_length'] = "32";
 // the expressions used to validate user and groupnames are used in two places
 // on the website (HTML5) and on the server (PHP)

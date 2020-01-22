@@ -19,18 +19,18 @@ include_once ("includes/AdminClass.php");
 
 $ac = new AdminClass($cfg);
 
-$field_userid   = $cfg['field_userid'];
-$field_id       = $cfg['field_id'];
-$field_uid      = $cfg['field_uid'];
-$field_ugid     = $cfg['field_ugid'];
-$field_homedir  = $cfg['field_homedir'];
-$field_shell    = $cfg['field_shell'];
-$field_title    = $cfg['field_title'];
-$field_name     = $cfg['field_name'];
-$field_company  = $cfg['field_company'];
-$field_email    = $cfg['field_email'];
-$field_disabled = $cfg['field_disabled'];
-
+$field_userid         = $cfg['field_userid'];
+$field_id             = $cfg['field_id'];
+$field_uid            = $cfg['field_uid'];
+$field_ugid           = $cfg['field_ugid'];
+$field_homedir        = $cfg['field_homedir'];
+$field_shell          = $cfg['field_shell'];
+$field_sshpubkey      = $cfg['field_sshpubkey'];
+$field_title          = $cfg['field_title'];
+$field_name           = $cfg['field_name'];
+$field_company        = $cfg['field_company'];
+$field_email          = $cfg['field_email'];
+$field_disabled       = $cfg['field_disabled'];
 $field_login_count    = $cfg['field_login_count'];
 $field_last_login     = $cfg['field_last_login'];
 $field_expiration     = $cfg['field_expiration'];
@@ -105,14 +105,14 @@ include ("includes/header.php");
   </div>
 </div>
 <?php } else { ?>
-<div class="col-sm-12">
+<div class="col-sm-16">
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">Users</h3>
     </div>
     <div class="panel-body">
       <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-16">
           <?php if (count($userfilter) > 0) { ?>
           <!-- Filter toolbar -->
           <div class="form-group">

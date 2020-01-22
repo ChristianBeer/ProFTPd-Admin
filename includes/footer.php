@@ -1,7 +1,3 @@
-<?php print_r($userdata); 
-
-echo $user[$field_expiration];
-?>
       </div><!-- /.row -->
 
       <hr/>
