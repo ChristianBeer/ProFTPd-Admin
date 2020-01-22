@@ -9,6 +9,17 @@
  * @copyright Michael Keck <https://github.com/mkkeck>
  */
 
+
+2020-01-22
+----------
+Changes: Alexander Preußner
+* Added field "Expiry Date" for automatic Expire Accounts
+
+2019-03-19
+----------
+Changes: Tom Larédo
+* Added field "SSH public key" for SFTP management
+
 2017-03-16
 ----------
 Changes: Michael Keck <https://github.com/mkkeck>
