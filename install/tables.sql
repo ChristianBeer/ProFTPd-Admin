@@ -24,7 +24,7 @@ CREATE TABLE `users` (
   `comment` varchar(255) NOT NULL default '',
   `disabled` smallint(2) unsigned NOT NULL default '0',
   `shell` varchar(32) NOT NULL default '/bin/false',
-  `sshpubkey` varchar(1023) NOT NULL default '',
+  `sshpubkey` varchar(8192) NOT NULL default '',
   `email` varchar(255) NOT NULL default '',
   `name` varchar(255) NOT NULL default '',
   `title` varchar(5) NOT NULL default '',

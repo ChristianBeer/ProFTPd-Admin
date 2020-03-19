@@ -11,6 +11,8 @@
  * @copyright Michael Keck <https://github.com/mkkeck>
  */
 
+$placeholder_sshpubkey = "---- BEGIN SSH2 PUBLIC KEY ---- \n Comment: ''foobar'' \n AAAAB3NzaC1..... \n .... \n .... \n .... \n .... \n qU9YwfGHe6ZRXTpV/5XvSX \n ---- END SSH2 PUBLIC KEY ----";
+
 $cfg = array();
 
 /**
@@ -42,6 +44,7 @@ $cfg['field_id'] = "id";
 $cfg['field_uid'] = "uid";
 $cfg['field_ugid'] = "gid";
 $cfg['field_passwd'] = "passwd";
+$cfg['field_expiration'] = "expiration";
 $cfg['field_homedir'] = "homedir";
 $cfg['field_shell'] = "shell";
 $cfg['field_sshpubkey'] = "sshpubkey";
@@ -54,9 +57,6 @@ $cfg['field_disabled'] = "disabled";
 $cfg['field_login_count'] = "login_count";
 $cfg['field_last_login'] = "last_login";
 $cfg['field_last_modified'] = "last_modified";
-
-$cfg['field_expiration'] = "expiration";
-
 $cfg['field_bytes_in_used'] = "bytes_in_used";
 $cfg['field_bytes_out_used'] = "bytes_out_used";
 $cfg['field_files_in_used'] = "files_in_used";

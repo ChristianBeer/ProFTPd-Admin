@@ -105,10 +105,12 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
   if (strlen($_REQUEST[$field_shell]) <= 1) {
     array_push($errors, 'Invalid shell; shell cannot be empty.');
   }
-  /* SSH public key validation */
-  if (strpos($_REQUEST[$field_sshpubkey]) != 0) {
-    array_push($errors, 'Invalid ssh public key; SSH public key must start with "ssh-".');
-  }
+
+//  /* SSH public key validation */
+//  if (strpos($_REQUEST[$field_sshpubkey]) != 0) {
+//    array_push($errors, 'Invalid ssh public key; SSH public key must start with "ssh-".');
+//  }
+
   /* user name uniqueness validation */
   if ($userid != $_REQUEST[$field_userid] && $ac->check_username($_REQUEST[$field_userid])) {
     array_push($errors, 'User name already exists; name must be unique.');
@@ -368,7 +370,8 @@ include ("includes/header.php");
           <div class="form-group">
             <label for="<?php echo $field_sshpubkey; ?>" class="col-sm-4 control-label">SSH public key</label>
             <div class="controls col-sm-8">
-              <input type="text" class="form-control" id="<?php echo $field_sshpubkey; ?>" name="<?php echo $field_sshpubkey; ?>" value="<?php echo $sshpubkey; ?>" placeholder="Enter the user's SSH public key" />
+              <textarea class="form-control" id="<?php echo $field_sshpubkey; ?>" name="<?php echo $field_sshpubkey; ?>" rows="9" placeholder="<?php echo $placeholder_sshpubkey; ?>"><?php echo $sshpubkey; ?></textarea>
+              <p class="help-block"><small> RFC4716 format </small></p>
             </div>
           </div>
           <!-- Title -->

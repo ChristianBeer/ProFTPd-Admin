@@ -87,9 +87,9 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "c
   }
 
   /* SSH public key validation */
-  if (strpos($_REQUEST[$field_sshpubkey]) != 0) {
-    array_push($errors, 'Invalid ssh public key; SSH public key must start with "ssh-".');
-  }
+//  if (strpos($_REQUEST[$field_sshpubkey]) != 0) {
+//    array_push($errors, 'Invalid ssh public key; SSH public key must start with "ssh-".');
+//  }
 
   /* user name uniqueness validation */
   if ($ac->check_username($_REQUEST[$field_userid])) {
@@ -272,7 +272,8 @@ include ("includes/header.php");
             <div class="form-group">
               <label for="<?php echo $field_sshpubkey; ?>" class="col-sm-4 control-label">SSH Public Key</label>
               <div class="controls col-sm-8">
-                <input type="text" class="form-control" id="<?php echo $field_sshpubkey; ?>" name="<?php echo $field_sshpubkey; ?>" value="<?php echo $sshpubkey; ?>" placeholder="Enter the user's SSH public key (SFTP)" />
+                <textarea class="form-control" id="<?php echo $field_sshpubkey; ?>" name="<?php echo $field_sshpubkey; ?>" rows="9" placeholder="<?php echo $placeholder_sshpubkey; ?>"><?php echo $sshpubkey; ?></textarea>
+                <p class="help-block"><small> RFC4716 format </small></p>
               </div>
 	    </div>
             <!-- Title -->
