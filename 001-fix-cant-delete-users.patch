@@ -1,0 +1,52 @@
+diff --git "a/includes/AdminClass.php" "b/includes/AdminClass.php"
+index 98b4a4e..a448068 100644
+--- "a/includes/AdminClass.php"
++++ "b/includes/AdminClass.php"
+@@ -483,7 +483,8 @@ class AdminClass {
+         $query = sprintf($format, $this->config['field_members'], $this->config['table_groups'], $this->config['field_gid'], $gid);
+         $result = $this->dbConn->get_var($query);
+         if ($result != "") {
+-            if(strpos($result, $userid) !== false) {
++            $resultMembers = explode(',', $result);
++            if(in_array($userid, $resultMembers, true)) {
+                 return true;
+             } else {
+                 $members = $result.','.$userid;
+@@ -507,13 +508,17 @@ class AdminClass {
+      */
+     function remove_user_from_group($userid, $gid) {
+         if (empty($userid) || empty($gid)) return false;
+-        $format = 'SELECT %s FROM %s WHERE %s="%s"';
+-        $query = sprintf($format, $this->config['field_members'], $this->config['table_groups'], $this->config['field_gid'], $gid);
+-        $result = $this->dbConn->get_var($query);
+-        if(strpos($result, $userid) === false) {
++        $formatSelect = 'SELECT %s FROM %s WHERE %s="%s"';
++        $querySelect = sprintf($formatSelect, $this->config['field_members'], $this->config['table_groups'], $this->config['field_gid'], $gid);
++        $resultSelect = $this->dbConn->get_var($querySelect);
++        // strpos is uneffective with same username beginnings
++        // eg. test => test_
++        $resultMembers = explode(',', $resultSelect);
++        if(!in_array($userid, $resultMembers, true)) {
+             return true;
+         }
+-        $members_array = explode(",", $result);
++
++        $members_array = explode(",", $resultSelect);
+         $members_new_array = array_diff($members_array, array("$userid", ""));
+         if (is_array($members_new_array)) {
+             $members_new = implode(",", $members_new_array);
+@@ -521,10 +526,10 @@ class AdminClass {
+             $members_new = "";
+         }
+ 
+-        $format = 'UPDATE %s SET %s="%s" WHERE %s="%s"';
+-        $query = sprintf($format, $this->config['table_groups'], $this->config['field_members'], $members_new, $this->config['field_gid'], $gid);
+-        $result = $this->dbConn->query($query);
+-        if (!$result) return false;
++        $formatUpdate = 'UPDATE %s SET %s="%s" WHERE %s="%s"';
++        $queryUpdate = sprintf($formatUpdate, $this->config['table_groups'], $this->config['field_members'], $members_new, $this->config['field_gid'], $gid);
++        $resultUpdate = $this->dbConn->query($queryUpdate);
++        if (!$resultUpdate) return false;
+         return true;
+     }
+ 
