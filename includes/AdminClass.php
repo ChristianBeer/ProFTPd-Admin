@@ -483,7 +483,8 @@ class AdminClass {
         $query = sprintf($format, $this->config['field_members'], $this->config['table_groups'], $this->config['field_gid'], $gid);
         $result = $this->dbConn->get_var($query);
         if ($result != "") {
-            if(strpos($result, $userid) !== false) {
+            $resultMembers = explode(',', $result);
+            if(in_array($userid, $resultMembers, true)) {
                 return true;
             } else {
                 $members = $result.','.$userid;
@@ -510,7 +511,8 @@ class AdminClass {
         $format = 'SELECT %s FROM %s WHERE %s="%s"';
         $query = sprintf($format, $this->config['field_members'], $this->config['table_groups'], $this->config['field_gid'], $gid);
         $result = $this->dbConn->get_var($query);
-        if(strpos($result, $userid) === false) {
+        $resultMembers = explode(',', $result);
+        if(!in_array($userid, $resultMembers, true)) {
             return true;
         }
         $members_array = explode(",", $result);
