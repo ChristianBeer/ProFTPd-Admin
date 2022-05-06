@@ -19,6 +19,13 @@ $ac = new AdminClass($cfg);
 
 $groups = $ac->get_groups();
 
+if (!empty($_REQUEST["error"]) && $_REQUEST["error"] == "removeGroup") {
+  $errormsg = 'Group "'.$_REQUEST["groupname"].'" removal failed; see log files for more information.';
+}
+if (!empty($_REQUEST["info"]) && $_REQUEST["info"] == "removeGroup") {
+  $infomsg = 'Group "'.$_REQUEST["groupname"].'" removed successfully.';
+}
+
 include ("includes/header.php");
 ?>
 <?php include ("includes/messages.php"); ?>

@@ -26,7 +26,7 @@ This GUI for ProFTPd was written to support a basic user management feature when
 
 There is no build-in security, so you have to protect the directory with something else, like Apache Basic Authentication.
 
-It's possible to use either of SHA1 and pbkdf2 with either of MySQL/MariaDB and sqlite3. pbkdf2 is supported since ProFTPd 1.3.5.
+It's possible to use either of SHA1, MYSQL_Backend and pbkdf2 with either of MySQL/MariaDB and sqlite3. pbkdf2 is supported since ProFTPd 1.3.5.
 
 You can look at some [screenshots](screenshots/README.md) to see if this is the tool you need.
 
@@ -39,6 +39,11 @@ You can look at some [screenshots](screenshots/README.md) to see if this is the 
 ## Upgrade
 
 If you want to upgrade the hashing algorithm you have to change all passwords after changing the configs (both ProFTPd and ProFTPd Admin).
+
+## Migration
+
+If you want to migrate from ProFTPd Admin 1.0 (http://proftpd-adm.sourceforge.net/), please use migrate_proftpd_admin_1_to_2.sh script (think to edit it to comply with your setup)
+Data will be read from original DB and reordered in a new DB. Please follow installation steps before starting the migration script.
 
 ## Installation
 
@@ -85,6 +90,51 @@ SQLNamedQuery           files-in-count UPDATE "files_in_used=files_in_used+1 WHE
 7. Edit the configs/config_example.php file to your needs and rename it to config.php.
 8. Start ProFTPd.
 9. Go to http://yourwebspace/proftpdadmin/ and start using it!
+
+### Using MySQL backend password hashing
+
+1. Install ProFTPd with MySQL support
+     - Debian: apt-get install proftpd-mod-mysql
+     - Gentoo: USE="mysql" emerge proftpd
+2. Create a MySQL database (use something like phpMyAdmin for this), for example: "proftpd".
+3. Use tables.sql to populate the database (you can use phpMyAdmin for this).
+4. Add the following to your proftpd.conf and sql.conf (edit to your needs):
+
+```
+CreateHome              on 775
+AuthOrder               mod_sql.c
+
+SQLBackend              mysql
+SQLEngine               on
+SQLPasswordEngine       on
+SQLAuthenticate         on
+SQLAuthTypes            Backend
+
+SQLConnectInfo          database@localhost username password
+SQLUserInfo             users userid passwd uid gid homedir shell
+SQLGroupInfo            groups groupname gid members
+SQLUserWhereClause      "disabled != 1"
+SQLLog PASS             updatecount
+SQLNamedQuery           updatecount UPDATE "login_count=login_count+1, last_login=now() WHERE userid='%u'" users
+
+ # Used to track xfer traffic per user (without invoking a quota)
+SQLLog RETR             bytes-out-count
+SQLNamedQuery           bytes-out-count UPDATE "bytes_out_used=bytes_out_used+%b WHERE userid='%u'" users
+SQLLog RETR             files-out-count
+SQLNamedQuery           files-out-count UPDATE "files_out_used=files_out_used+1 WHERE userid='%u'" users
+
+SQLLog STOR             bytes-in-count
+SQLNamedQuery           bytes-in-count UPDATE "bytes_in_used=bytes_in_used+%b WHERE userid='%u'" users
+SQLLog STOR             files-in-count
+SQLNamedQuery           files-in-count UPDATE "files_in_used=files_in_used+1 WHERE userid='%u'" users
+```
+
+5. Extract all files to your webspace (into a subdirectory like "proftpdadmin").
+6. Secure access to this directory (for example: create a .htaccess file if using apache)
+7. Edit the configs/config_example.php file to your needs and rename it to config.php.
+8. Start ProFTPd.
+9. Go to http://yourwebspace/proftpdadmin/ and start using it!
+
 
 ### Using sqlite3 and pbkdf2
 

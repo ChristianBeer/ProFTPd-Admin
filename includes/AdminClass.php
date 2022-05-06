@@ -16,6 +16,9 @@ if ($cfg['passwd_encryption'] == "pbkdf2") {
   require "hash_pbkdf2_compat.php";
 } elseif ($cfg['passwd_encryption'] == "crypt") {
   require "unix_crypt.php";
+} elseif ($cfg['passwd_encryption'] == "Backend") {
+  require "mysql_backend.php";
+
 }
 
 include_once "ez_sql_core.php";
@@ -189,6 +192,51 @@ class AdminClass {
     }
 
     /**
+     * returns the last index number of the group table
+     * @return Integer
+     */
+    function get_last_gid() {
+        $format = 'SELECT MAX(%s) FROM %s';
+        $query = sprintf($format, $this->config['field_gid'], $this->config['table_groups']);
+        $result = $this->dbConn->get_var($query);
+        return $result;
+    }
+
+    /**
+     * returns the right message for uid
+     * @return String
+     */
+    function get_uid_message() {
+      /* find the right message for uid */
+      $uidMessage = "Positive integer.";
+      if ($this->config['max_uid'] != -1 && $this->config['min_uid'] != -1) {
+        $uidMessage = 'UID must be between ' . $this->config['min_uid'] . ' and ' . $this->config['max_uid'] . '.';
+      } else if ($this->config['max_uid'] != -1) {
+        $uidMessage = 'UID must be at most ' . $this->config['max_uid'] . '.';
+      } else if ($this->config['min_uid'] != -1) {
+        $uidMessage = 'UID must be at least ' . $this->config['min_uid'] . '.';
+      }
+      return $uidMessage;
+    }
+
+    /**
+     * returns the right message for gid
+     * @return String
+     */
+    function get_gid_message() {
+      /* find the right message for gid */
+      $gidMessage = "Positive integer.";
+      if ($this->config['max_gid'] != -1 && $this->config['min_gid'] != -1) {
+        $gidMessage = 'GID must be between ' . $this->config['min_gid'] . ' and ' . $this->config['max_gid'] . '.';
+      } else if ($this->config['max_gid'] != -1) {
+        $gidMessage = 'GID must be at most ' . $this->config['max_gid'] . '.';
+      } else if ($this->config['min_gid'] != -1) {
+        $gidMessage = 'GID must be at least ' . $this->config['min_gid'] . '.';
+      }
+      return $gidMessage;
+    }
+
+    /**
      * Checks if the given groupname is already in the database
      * @param String $groupname
      * @return boolean true if groupname exists, false if not
@@ -301,9 +349,16 @@ class AdminClass {
         } else if ($passwd_encryption == 'crypt') {
           $passwd = unix_crypt($userdata[$field_passwd]);
           $passwd = '"'.$passwd.'"';
+        } else if ($passwd_encryption == 'Backend') {
+          $passwd = mysql_backend($userdata[$field_passwd]);
+          $passwd = '"'.$passwd.'"';
         } else if (strpos($passwd_encryption, "OpenSSL:") === 0) {
           $passwd_digest = substr($passwd_encryption, strpos($passwd_encryption, ':')+1);
           $passwd = 'CONCAT("{'.$passwd_digest.'}",TO_BASE64(UNHEX('.$passwd_digest.'("'.$userdata[$field_passwd].'"))))';
+        } else if ($passwd_encryption == 'SHA256') {
+          $passwd = "SHA2('$userdata[$field_passwd]', 256)";
+        } else if ($passwd_encryption == 'SHA512') {
+          $passwd = "SHA2('$userdata[$field_passwd]', 512)";
         } else {
           $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
         }
@@ -587,10 +642,19 @@ class AdminClass {
           } else if ($passwd_encryption == 'crypt') {
             $passwd = unix_crypt($userdata[$field_passwd]);
             $passwd_format = ' %s="%s", ';
+          } else if ($passwd_encryption == 'MYSQL_Backend') {
+            $passwd = mysql_backend($userdata[$field_passwd]);
+            $passwd_format = ' %s="%s", ';
           } else if (strpos($passwd_encryption, "OpenSSL:") === 0) {
             $passwd_digest = substr($passwd_encryption, strpos($passwd_encryption, ':')+1);
             $passwd = 'CONCAT("{'.$passwd_digest.'}",TO_BASE64(UNHEX('.$passwd_digest.'("'.$userdata[$field_passwd].'"))))';
             $passwd_format = ' %s=%s, ';
+          } else if ($passwd_encryption == 'SHA256') {
+            $passwd = "SHA2('$userdata[$field_passwd]', 256)";
+            $passwd_format = ' %s=%s, ';
+          } else if ($passwd_encryption == 'SHA512') {
+            $passwd = "SHA2('$userdata[$field_passwd]', 512)";
+            $passwd_format = ' %s=%s, '; 
           } else {
             $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
             $passwd_format = ' %s=%s, ';
@@ -653,5 +717,5 @@ class AdminClass {
     function is_valid_id($id) {
         return is_numeric($id) && (int)$id > 0 && $id == round($id);
     }
-}
+        }
 ?>
