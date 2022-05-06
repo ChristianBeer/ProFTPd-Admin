@@ -35,8 +35,12 @@ $field_disabled = $cfg['field_disabled'];
 $groups = $ac->get_groups();
 
 if (count($groups) == 0) {
-  $errormsg = 'There are no groups in the database; please create at least one group before creating users.';
+  header('Location: add_group.php?error=createLoginWithoutGroup');
+  exit();
 }
+
+/* find the right message for uid */
+$uidMessage = $ac->get_uid_message();
 
 /* Data validation */
 if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "create") {
@@ -51,14 +55,8 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "c
   if (empty($_REQUEST[$field_uid]) || !$ac->is_valid_id($_REQUEST[$field_uid])) {
     array_push($errors, 'Invalid UID; must be a positive integer.');
   }
-  if ($cfg['max_uid'] != -1 && $cfg['min_uid'] != -1) {
-    if ($_REQUEST[$field_uid] > $cfg['max_uid'] || $_REQUEST[$field_uid] < $cfg['min_uid']) {
-      array_push($errors, 'Invalid UID; UID must be between ' . $cfg['min_uid'] . ' and ' . $cfg['max_uid'] . '.');
-    }
-  } else if ($cfg['max_uid'] != -1 && $_REQUEST[$field_uid] > $cfg['max_uid']) {
-    array_push($errors, 'Invalid UID; UID must be at most ' . $cfg['max_uid'] . '.');
-  } else if ($cfg['min_uid'] != -1 && $_REQUEST[$field_uid] < $cfg['min_uid']) {
-    array_push($errors, 'Invalid UID; UID must be at least ' . $cfg['min_uid'] . '.');
+  if (($cfg['max_uid'] != -1 && $_REQUEST[$field_uid] > $cfg['max_uid']) or ($cfg['min_uid'] != -1 && $_REQUEST[$field_uid] < $cfg['min_uid'])) {
+    array_push($errors, 'Invalid UID; '.$uidMessage );
   }
   /* gid validation */
   if (empty($_REQUEST[$field_ugid]) || !$ac->is_valid_id($_REQUEST[$field_ugid])) {
@@ -146,14 +144,19 @@ if (isset($errormsg)) {
   /* Default values */
   $userid   = "";
   if (empty($cfg['default_uid'])) {
-    $uid    = $ac->get_last_uid() + 1;
+    $uid    = $ac->get_last_uid();
+    if ($uid == 0 && $cfg['min_uid'] != -1) {
+      $uid = $cfg['min_uid'];
+    } else {
+      $uid = $uid + 1;
+    }
   } else {
     $uid    = $cfg['default_uid'];
   }
   if (empty($infomsg)) {
     $ugid   = "";
     $ad_gid = array();
-    $shell  = "/bin/false";
+    $shell  = $cfg['default_shell'];
   } else {
     $ugid    = $_REQUEST[$field_ugid];
     $ad_gid = $_REQUEST[$field_ad_gid];
@@ -195,7 +198,7 @@ include ("includes/header.php");
               <label for="<?php echo $field_uid; ?>" class="col-sm-4 control-label">UID</label>
               <div class="controls col-sm-8">
                 <input type="number" class="form-control" id="<?php echo $field_uid; ?>" name="<?php echo $field_uid; ?>" value="<?php echo $uid; ?>" min="1" placeholder="Enter a UID" required />
-                <p class="help-block"><small>Positive integer.</small></p>
+                <p class="help-block"><small><?php echo $uidMessage; ?></small></p>
               </div>
             </div>
             <!-- Main group -->

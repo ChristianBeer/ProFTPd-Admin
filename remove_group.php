@@ -51,36 +51,16 @@ if (!$ac->is_valid_id($gid)) {
 if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "reallyremove") {
   /* data validation passed */
   if ($ac->delete_group_by_gid($gid)) {
-    $infomsg = 'Group "'.$groupname.'" removed successfully.';
+    header('Location: groups.php?info=removeGroup&groupname='.$groupname);
   } else {
-    $errormsg = 'Group "'.$groupname.'" removal failed; see log files for more information.';
+    header('Location: groups.php?error=removeGroup&groupname='.$groupname);
   }
+  exit();
 }
 
 include ("includes/header.php");
-?>
-<?php include ("includes/messages.php"); ?>
+include ("includes/messages.php"); ?>
 
-<?php if (!empty($_REQUEST["action"]) && $_REQUEST["action"] == "reallyremove") { ?>
-<!-- action: reallyremove -->
-<div class="col-xs-12 col-sm-8 col-md-6 center">
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <div class="row">
-        <div class="col-sm-12">
-          <!-- Actions -->
-          <div class="form-group">
-            <div class="col-sm-12">
-              <a class="btn btn-primary pull-right" href="groups.php" role="button">View groups &raquo;</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<?php } else { ?>
 <!-- action: remove -->
 <div class="col-xs-12 col-sm-8 col-md-6 center">
   <div class="panel panel-default">
@@ -101,7 +81,7 @@ include ("includes/header.php");
             <div class="form-group">
               <div class="col-sm-12">
                 <input type="hidden" name="<?php echo $field_gid; ?>" value="<?php echo $gid; ?>" />
-                <a class="btn btn-default" role="group" href="edit_group.php?action=show&<?php echo $field_gid; ?>=<?php echo $gid; ?>">Cancel</a>
+                <a class="btn btn-default" role="group" href="edit_group.php?action=show&<?php echo $field_gid; ?>=<?php echo $gid; ?>">View group</a>
                 <button type="submit" class="btn btn-danger pull-right" role="group" name="action" value="reallyremove" <?php if (isset($errormsg)) { echo 'disabled="disabled"'; } ?>>Remove group</button>
               </div>
             </div>
@@ -111,6 +91,5 @@ include ("includes/header.php");
     </div>
   </div>
 </div>
-<?php } ?>
 
 <?php include ("includes/footer.php"); ?>
