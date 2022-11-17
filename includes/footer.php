@@ -21,7 +21,9 @@
         showClear: true,
         format:'YYYY-MM-DD HH:mm:00',
 	minDate: 'now',
-    <?php if (!empty($user[$field_expiration]) && $user[$field_expiration] != '0000-00-00 00:00:00' ) { ?>
+    <?php
+      $field_expiration     = $cfg['field_expiration'];
+      if (!empty($user[$field_expiration]) && $user[$field_expiration] != '0000-00-00 00:00:00' ) { ?>
         defaultDate: moment('<?php echo $user[$field_expiration]; ?>',"YYYY-MM-DD HH:mm:00"),
     <?php } ?>
 
