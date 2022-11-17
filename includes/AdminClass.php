@@ -99,7 +99,7 @@ class AdminClass {
             foreach ($result as $group) {
                 $names = explode(",", $group->$field_members);
                 reset($names);
-                foreach ($name as $key => $names) {
+                foreach ($names as $key => $name) {
                     $data[$name][$group->$field_gid] = $group->$field_groupname;
                 }
             }
