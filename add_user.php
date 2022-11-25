@@ -176,7 +176,7 @@ if (isset($errormsg)) {
     $shell  = $_REQUEST[$field_shell];
   }
 
-  $expiration = "";
+  $expiration = date("Y-m-d H:i:s", strtotime("+1 month", $time));
   $sshpubkey  = "";
   $passwd     = $ac->generate_random_string((int) $cfg['min_passwd_length']);
   $homedir    = $cfg['default_homedir'];
