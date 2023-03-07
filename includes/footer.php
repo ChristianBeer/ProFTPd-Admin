@@ -12,6 +12,25 @@
     <script src="bootstrap/js/moment.min.js"></script>
     <script src="bootstrap/js/bootstrap-sortable.js"></script>
     <script src="bootstrap/js/bootstrap-multiselect.js"></script>
+    <script src="bootstrap/js/bootstrap-datetimepicker.js"></script>
+
+    <script type="text/javascript">
+      $(function () {
+        $('#expiration').datetimepicker({
+        useCurrent : false,
+        showClear: true,
+        format:'YYYY-MM-DD HH:mm:00',
+	minDate: 'now',
+    <?php
+      $field_expiration     = $cfg['field_expiration'];
+      if (!empty($user[$field_expiration]) && $user[$field_expiration] != '0000-00-00 00:00:00' ) { ?>
+        defaultDate: moment('<?php echo $user[$field_expiration]; ?>',"YYYY-MM-DD HH:mm:00"),
+    <?php } ?>
+
+        });
+      });
+    </script>
+
     <script>
       $(function () {
         $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
@@ -24,5 +43,6 @@
         });
       } );
     </script>
+
   </body>
 </html>

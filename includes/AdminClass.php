@@ -61,7 +61,7 @@ class AdminClass {
      * initialize the database connection via ezSQL_mysql
      * @param Array $cfg configuration array retrieved from config.php to store in the object
      */
-    function AdminClass($cfg) {
+      function __construct(array $cfg){
         $this->config = $cfg;
         // if db_type is not set, default to mysqli
         if (!isset($cfg['db_type']) || $cfg['db_type'] == "mysqli") {
@@ -99,7 +99,7 @@ class AdminClass {
             foreach ($result as $group) {
                 $names = explode(",", $group->$field_members);
                 reset($names);
-                while (list($key, $name) = each($names)) {
+                foreach ($names as $key => $name) {
                     $data[$name][$group->$field_gid] = $group->$field_groupname;
                 }
             }
@@ -280,20 +280,22 @@ class AdminClass {
      * @return Boolean true on success, false on failure
      */
     function add_user($userdata) {
-        $field_userid   = $this->config['field_userid'];
-        $field_uid      = $this->config['field_uid'];
-        $field_ugid     = $this->config['field_ugid'];
-        $field_passwd   = $this->config['field_passwd'];
-        $field_homedir  = $this->config['field_homedir'];
-        $field_shell    = $this->config['field_shell'];
-        $field_title    = $this->config['field_title'];
-        $field_name     = $this->config['field_name'];
-        $field_company  = $this->config['field_company'];
-        $field_email    = $this->config['field_email'];
-        $field_comment  = $this->config['field_comment'];
-        $field_disabled = $this->config['field_disabled'];
+        $field_userid        = $this->config['field_userid'];
+        $field_uid           = $this->config['field_uid'];
+        $field_ugid          = $this->config['field_ugid'];
+        $field_passwd        = $this->config['field_passwd'];
+        $field_homedir       = $this->config['field_homedir'];
+        $field_shell         = $this->config['field_shell'];
+        $field_sshpubkey     = $this->config['field_sshpubkey'];
+        $field_title         = $this->config['field_title'];
+        $field_name          = $this->config['field_name'];
+        $field_company       = $this->config['field_company'];
+        $field_email         = $this->config['field_email'];
+        $field_comment       = $this->config['field_comment'];
+        $field_disabled      = $this->config['field_disabled'];
         $field_last_modified = $this->config['field_last_modified'];
-        $passwd_encryption = $this->config['passwd_encryption'];
+        $field_expiration    = $this->config['field_expiration'];
+        $passwd_encryption   = $this->config['passwd_encryption'];
         $passwd = "";
         if ($passwd_encryption == 'pbkdf2') {
           $passwd = hash_pbkdf2("sha1", $userdata[$field_passwd], $userdata[$field_userid], 5000, 40);
@@ -307,7 +309,7 @@ class AdminClass {
         } else {
           $passwd = $passwd_encryption.'("'.$userdata[$field_passwd].'")';
         }
-        $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s","%s","%s")';
+        $format = 'INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) VALUES ("%s","%s","%s",%s,"%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")';
         $query = sprintf($format, $this->config['table_users'],
                                   $field_userid,
                                   $field_uid,
@@ -315,6 +317,7 @@ class AdminClass {
                                   $field_passwd,
                                   $field_homedir,
                                   $field_shell,
+                                  $field_sshpubkey,
                                   $field_title,
                                   $field_name,
                                   $field_company,
@@ -322,19 +325,24 @@ class AdminClass {
                                   $field_comment,
                                   $field_disabled,
                                   $field_last_modified,
+                                  $field_expiration,
                                   $userdata[$field_userid],
                                   $userdata[$field_uid],
                                   $userdata[$field_ugid],
                                   $passwd,
                                   $userdata[$field_homedir],
                                   $userdata[$field_shell],
+                                  addslashes($userdata[$field_sshpubkey]),
                                   $userdata[$field_title],
                                   $userdata[$field_name],
                                   $userdata[$field_company],
                                   $userdata[$field_email],
                                   $userdata[$field_comment],
                                   $userdata[$field_disabled],
-                                  date('Y-m-d H:i:s'));
+                                  date('Y-m-d H:i:s'),
+                                  //$userdata[$expiration]
+				  date("Y-m-d H:i:s", strtotime("+1 month", $time))
+				);
         $result = $this->dbConn->query($query);
         return $result;
     }
@@ -562,21 +570,23 @@ class AdminClass {
      * @return Boolean true on success, false on failure
      */
     function update_user($userdata) {
-        $field_id       = $this->config['field_id'];
-        $field_userid   = $this->config['field_userid'];
-        $field_uid      = $this->config['field_uid'];
-        $field_ugid     = $this->config['field_ugid'];
-        $field_passwd   = $this->config['field_passwd'];
-        $field_homedir  = $this->config['field_homedir'];
-        $field_shell    = $this->config['field_shell'];
-        $field_title    = $this->config['field_title'];
-        $field_name     = $this->config['field_name'];
-        $field_company  = $this->config['field_company'];
-        $field_email    = $this->config['field_email'];
-        $field_comment  = $this->config['field_comment'];
-        $field_disabled = $this->config['field_disabled'];
+        $field_id            = $this->config['field_id'];
+        $field_userid        = $this->config['field_userid'];
+        $field_uid           = $this->config['field_uid'];
+        $field_ugid          = $this->config['field_ugid'];
+        $field_passwd        = $this->config['field_passwd'];
+        $field_homedir       = $this->config['field_homedir'];
+        $field_shell         = $this->config['field_shell'];
+        $field_sshpubkey     = $this->config['field_sshpubkey'];
+        $field_title         = $this->config['field_title'];
+        $field_name          = $this->config['field_name'];
+        $field_company       = $this->config['field_company'];
+        $field_email         = $this->config['field_email'];
+        $field_comment       = $this->config['field_comment'];
+        $field_disabled      = $this->config['field_disabled'];
         $field_last_modified = $this->config['field_last_modified'];
-        $passwd_encryption = $this->config['passwd_encryption'];
+        $field_expiration    = $this->config['field_expiration'];
+        $passwd_encryption   = $this->config['passwd_encryption'];
 
         $passwd_query = '';
         if (strlen($userdata[$field_passwd]) > 0) {
@@ -598,22 +608,24 @@ class AdminClass {
           $passwd_query = sprintf($passwd_format, $field_passwd, $passwd);
         }
 
-        $format = 'UPDATE %s SET %s %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s" WHERE %s="%s"';
+        $format = 'UPDATE %s SET %s %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s", %s="%s" WHERE %s="%s"';
         $query = sprintf($format, $this->config['table_users'],
                                   $passwd_query,
-                                  $field_userid,   $userdata[$field_userid],
-                                  $field_uid,      $userdata[$field_uid],
-                                  $field_ugid,     $userdata[$field_ugid],
-                                  $field_homedir,  $userdata[$field_homedir],
-                                  $field_shell,    $userdata[$field_shell],
-                                  $field_title,    $userdata[$field_title],
-                                  $field_name,     $userdata[$field_name],
-                                  $field_company,  $userdata[$field_company],
-                                  $field_email,    $userdata[$field_email],
-                                  $field_comment,  $userdata[$field_comment],
-                                  $field_disabled, $userdata[$field_disabled],
+                                  $field_userid,        $userdata[$field_userid],
+                                  $field_uid,           $userdata[$field_uid],
+                                  $field_ugid,          $userdata[$field_ugid],
+                                  $field_homedir,       $userdata[$field_homedir],
+                                  $field_shell,         $userdata[$field_shell],
+                                  $field_sshpubkey,     addslashes($userdata[$field_sshpubkey]),
+                                  $field_title,         $userdata[$field_title],
+                                  $field_name,          $userdata[$field_name],
+                                  $field_company,       $userdata[$field_company],
+                                  $field_email,         $userdata[$field_email],
+                                  $field_comment,       $userdata[$field_comment],
+                                  $field_disabled,      $userdata[$field_disabled],
                                   $field_last_modified, date('Y-m-d H:i:s'),
-                                  $field_id,       $userdata[$field_id]);
+                                  $field_expiration,    $userdata[$field_expiration],
+                                  $field_id,            $userdata[$field_id]);
         $result = $this->dbConn->query($query);
         return $result;
     }
@@ -636,7 +648,7 @@ class AdminClass {
      * @return String of random characters of the specified length
      */
     function generate_random_string($length = 6) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ._-,';
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
