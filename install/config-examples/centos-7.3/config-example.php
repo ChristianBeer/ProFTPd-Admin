@@ -1,4 +1,4 @@
-#<?php
+<?php
 /**
  * This file is part of ProFTPd Admin
  *
@@ -11,14 +11,13 @@
  * @copyright Michael Keck <https://github.com/mkkeck>
  */
 
-$placeholder_sshpubkey = "---- BEGIN SSH2 PUBLIC KEY ---- \n Comment: ''foobar'' \n AAAAB3NzaC1..... \n .... \n .... \n .... \n .... \n qU9YwfGHe6ZRXTpV/5XvSX \n ---- END SSH2 PUBLIC KEY ----";
-
 $cfg = array();
+
 
 /**
  * Login data
  *
- * Important: Please change this values on
+ * Important: Please change this values in
  *            live systems!
  */
 $cfg['login'] = array(
@@ -44,7 +43,6 @@ $cfg['field_id'] = "id";
 $cfg['field_uid'] = "uid";
 $cfg['field_ugid'] = "gid";
 $cfg['field_passwd'] = "passwd";
-$cfg['field_expiration'] = "expiration";
 $cfg['field_homedir'] = "homedir";
 $cfg['field_shell'] = "shell";
 $cfg['field_sshpubkey'] = "sshpubkey";
@@ -68,26 +66,21 @@ $cfg['field_gid'] = "gid";
 $cfg['field_members'] = "members";
 
 $cfg['default_uid'] = "1000"; //if empty next incremental will be default
-$cfg['default_homedir'] = "/srv/ftp";
+$cfg['default_homedir'] = "/var/www/ftp/";
 // Use either SHA1 or MD5 or any other supported by your MySQL-Server and ProFTPd
 // "pbkdf2" is supported if you are using ProFTPd 1.3.5.
 // "crypt" uses the unix crypt() function.
-// "OpenSSL:sha1" other digest-names also possible; see: http://www.proftpd.org/docs/directives/configuration_full.html#SQLAUTHTYPES
-$cfg['passwd_encryption'] = "crypt";
-$cfg['min_passwd_length'] = "8";
-$cfg['max_userid_length'] = "64";
-$cfg['max_groupname_length'] = "32";
-// the expressions used to validate user and groupnames are used in two places
-// on the website (HTML5) and on the server (PHP)
-// the HTML5 validation doesn't understand the i modifier so you need to specify lowercase and uppercase characters
-// for some reason the PHP validation still needs the i modifier so just leave it in
-$cfg['userid_regex']    = "/^([a-zA-Z][a-zA-Z0-9_\-]{0,".($cfg['max_userid_length']-1)."})$/i"; //every username must comply with this regex
-$cfg['groupname_regex'] = "/^([a-zA-Z][a-zA-Z0-9_\-]{0,".($cfg['max_groupname_length']-1)."})$/i"; //every username must comply with this regex
+$cfg['passwd_encryption'] = "SHA1";
+$cfg['min_passwd_length'] = "6";
+$cfg['max_userid_length'] = "20";
+$cfg['max_groupname_length'] = "20";
+$cfg['userid_regex']    = "/^([a-z][a-z0-9_\-\.\@]{0,20})$/i"; //every username must comply with this regex
+$cfg['groupname_regex'] = "/^([a-z][a-z0-9_\-\.]{0,20})$/i"; //every username must comply with this regex
 // Set any of these to -1 to remove the constraint
 $cfg['min_uid'] = 1000;
-$cfg['max_uid'] = 65534;
+$cfg['max_uid'] = 4000;
 $cfg['min_gid'] = 1000;
-$cfg['max_gid'] = 65534;
+$cfg['max_gid'] = 4000;
 // Uncomment this to read crypt() settings from login.defs.
 // $cfg['read_login_defs'] = true;
 
@@ -98,12 +91,11 @@ $cfg['userid_filter_separator'] = ""; // try "-" or "_" as separators
 // use this block for a mysql backend
 $cfg['db_type'] = "mysqli"; // if unset, 'db_type' defaults to mysqli
 $cfg['db_host'] = "localhost";
-$cfg['db_name'] = "database";
-$cfg['db_user'] = "user";
-$cfg['db_pass'] = "password";
+$cfg['db_name'] = "proftpd_db";
+$cfg['db_user'] = "proftpd_db_user";
+$cfg['db_pass'] = "proftpd_db_password";
 
 // use this block for an sqlite3 backend
-//$cfg['db_type'] = "sqlite3";
-//$cfg['db_path'] = "configs/";
-//$cfg['db_name'] = "auth.sqlite3";
-
+// $cfg['db_type'] = "sqlite3";
+// $cfg['db_path'] = "configs/";
+// $cfg['db_name'] = "auth.sqlite3";

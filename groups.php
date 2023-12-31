@@ -11,12 +11,13 @@
  *
  */
 
-include_once ("configs/config.php");
-include_once ("includes/AdminClass.php");
 global $cfg;
 
-$ac = new AdminClass($cfg);
+include_once ("configs/config.php");
+include_once ("includes/Session.php");
+include_once ("includes/AdminClass.php");
 
+$ac = new AdminClass($cfg);
 $groups = $ac->get_groups();
 
 include ("includes/header.php");
@@ -65,8 +66,8 @@ include ("includes/header.php");
                 <th data-defaultsort="disabled"></th>
               </thead>
               <tbody>
-                <?php while (list($g_gid, $g_group) = each($groups)) {
-                  $n_main = $ac->get_user_count_by_gid($g_gid); 
+                <?php foreach ($groups as $g_gid => $g_group) {
+                  $n_main = $ac->get_user_count_by_gid($g_gid);
                   $n_add = $ac->get_user_add_count_by_gid($g_gid); ?>
                   <tr>
                     <td class="pull-middle"><?php echo $g_gid; ?></td>

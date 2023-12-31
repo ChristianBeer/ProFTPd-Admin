@@ -6,7 +6,40 @@
  * @copyright Lex Brugman <lex_brugman@users.sourceforge.net>
  * @copyright Christian Beer <djangofett@gmx.net>
  * @copyright Ricardo Padilha <ricardo@droboports.com>
+ * @copyright Michael Keck <https://github.com/mkkeck>
  */
+
+
+2020-01-22
+----------
+Changes: Alexander Preußner
+* Added field "Expiry Date" for automatic Expire Accounts
+
+2019-03-19
+----------
+Changes: Tom Larédo
+* Added field "SSH public key" for SFTP management
+
+2017-03-16
+----------
+Changes: Michael Keck <https://github.com/mkkeck>
+* Login form
+* Added session class for login form
+* Display different navigations user is logged in / logged out
+* Added security for Apache Webserver:
+  - `configs/`  not accessible via browser
+  - `includes/` not accessible via browser
+* Moved `tables*.sql` to `install/tables*.sql`
+* Added `install/config-examples` for Linux Distributions
+* Added `install/config-examples/debian` as example and info how to
+  setup on Debian Jessie
+* Added config param `force_ssl` and check if secured connection is
+  used if `$cfg['force_ssl'] = true'`
+* Fixed typos in follow files:
+  - `README.md`
+  - `includes/Session.php`
+  - `configs/config_sample.php`
+  - `install/config-example/debian/config-example.php`
 
 Release: 2.2
 Changes:

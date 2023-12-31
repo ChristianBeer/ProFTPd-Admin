@@ -19,11 +19,29 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li <?php if (strpos($_SERVER['REQUEST_URI'], 'index.php') !== FALSE) { ?>class="active"<?php } ?>><a href="index.php">Home</a></li>
-            <li <?php if (strpos($_SERVER['REQUEST_URI'], 'groups.php') !== FALSE) { ?>class="active"<?php } ?>><a href="groups.php">Groups</a></li>
-            <li <?php if (strpos($_SERVER['REQUEST_URI'], 'users.php') !== FALSE) { ?>class="active"<?php } ?>><a href="users.php">Users</a></li>
-            <li <?php if (strpos($_SERVER['REQUEST_URI'], 'add_group.php') !== FALSE) { ?>class="active"<?php } ?>><a href="add_group.php">Add group</a></li>
-            <li <?php if (strpos($_SERVER['REQUEST_URI'], 'add_user.php') !== FALSE) { ?>class="active"<?php } ?>><a href="add_user.php">Add user</a></li>
+<?php
+  $uri = $_SERVER['REQUEST_URI'];
+  $nav = ''
+    //. '<li' . ( (strpos($uri, 'index.php') !== false) ? ' class="active"': '' ) . '><a href="index.php">Home</a></li>'
+    . '<li' . ( (strpos($uri, 'groups.php') !== false) ? ' class="active"': '' ) . '><a href="groups.php">Groups</a></li>'
+    . '<li' . ( (strpos($uri, 'users.php') !== false) ? ' class="active"': '' ) . '><a href="users.php">Users</a></li>'
+    . '<li' . ( (strpos($uri, 'add_group.php') !== false) ? ' class="active"': '' ) . '><a href="add_group.php">Add Group</a></li>'
+    . '<li' . ( (strpos($uri, 'add_user.php') !== false) ? ' class="active"': '' ) . '><a href="add_user.php">Add User</a></li>';
+  if (isset($session_valid) && $session_valid === true) {
+    $nav .= '<li><a href="index.php?logout">Logout</a></li>';
+  }
+  if (
+    (
+      (!isset($session_usage) || $session_usage !== true) &&
+      (!isset($session_valid) || $session_valid !== true)
+    ) || (
+      isset($session_usage) && $session_usage === true &&
+      isset($session_valid) && $session_valid === true
+    )
+  ) {
+    echo $nav;
+  }
+?>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div>

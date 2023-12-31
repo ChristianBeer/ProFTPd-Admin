@@ -8,7 +8,7 @@
 function unix_crypt($password) {
   global $cfg;
   $chars = './0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  $encrypt_method = is_array($cfg) && array_key_exists('encrypt_method', $cfg) ? $cfg['encrypt_method'] : "MD5";
+  $encrypt_method = is_array($cfg) && array_key_exists('encrypt_method', $cfg) ? $cfg['encrypt_method'] : "SHA512";
   $salt = "";
 
   if ($cfg['read_login_defs']) {

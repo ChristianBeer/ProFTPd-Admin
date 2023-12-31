@@ -11,9 +11,11 @@
  *
  */
 
-include_once ("configs/config.php");
-include_once ("includes/AdminClass.php");
 global $cfg;
+
+include_once ("configs/config.php");
+include_once ("includes/Session.php");
+include_once ("includes/AdminClass.php");
 
 $ac = new AdminClass($cfg);
 
@@ -39,7 +41,7 @@ if (!$ac->is_valid_id($id)) {
 
 if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "reallyremove") {
   $groups = $ac->get_groups();
-  while (list($g_gid, $g_group) = each($groups)) {
+  foreach ($groups as $g_gid => $g_group) {
     if (!$ac->remove_user_from_group($userid, $g_gid)) {
       $errormsg = 'Cannot remove user "'.$userid.'" from group "'.$g_group.'"; see log files for more information.';
       break;

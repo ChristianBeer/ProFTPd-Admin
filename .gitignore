@@ -3,6 +3,7 @@
 /nbproject/
 /doctemp/
 /docs/
+/configs/auth.sqlite3
 /configs/config.php
 /configs/config_live.php
 /configs/config_old.php

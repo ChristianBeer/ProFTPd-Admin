@@ -11,30 +11,33 @@
  *
  */
 
-include_once ("configs/config.php");
-include_once ("includes/AdminClass.php");
 global $cfg;
+
+include_once ("configs/config.php");
+include_once ("includes/Session.php");
+include_once ("includes/AdminClass.php");
 
 $ac = new AdminClass($cfg);
 
-$field_userid   = $cfg['field_userid'];
-$field_id       = $cfg['field_id'];
-$field_uid      = $cfg['field_uid'];
-$field_ugid     = $cfg['field_ugid'];
-$field_ad_gid   = 'ad_gid';
-$field_passwd   = $cfg['field_passwd'];
-$field_homedir  = $cfg['field_homedir'];
-$field_shell    = $cfg['field_shell'];
-$field_title    = $cfg['field_title'];
-$field_name     = $cfg['field_name'];
-$field_company  = $cfg['field_company'];
-$field_email    = $cfg['field_email'];
-$field_comment  = $cfg['field_comment'];
-$field_disabled = $cfg['field_disabled'];
-
+$field_userid         = $cfg['field_userid'];
+$field_id             = $cfg['field_id'];
+$field_uid            = $cfg['field_uid'];
+$field_ugid           = $cfg['field_ugid'];
+$field_ad_gid         = 'ad_gid';
+$field_passwd         = $cfg['field_passwd'];
+$field_homedir        = $cfg['field_homedir'];
+$field_shell          = $cfg['field_shell'];
+$field_sshpubkey      = $cfg['field_sshpubkey'];
+$field_title          = $cfg['field_title'];
+$field_name           = $cfg['field_name'];
+$field_company        = $cfg['field_company'];
+$field_email          = $cfg['field_email'];
+$field_comment        = $cfg['field_comment'];
+$field_disabled       = $cfg['field_disabled'];
 $field_login_count    = $cfg['field_login_count'];
 $field_last_login     = $cfg['field_last_login'];
 $field_last_modified  = $cfg['field_last_modified'];
+$field_expiration     = $cfg['field_expiration'];
 $field_bytes_in_used  = $cfg['field_bytes_in_used'];
 $field_bytes_out_used = $cfg['field_bytes_out_used'];
 $field_files_in_used  = $cfg['field_files_in_used'];
@@ -102,6 +105,12 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
   if (strlen($_REQUEST[$field_shell]) <= 1) {
     array_push($errors, 'Invalid shell; shell cannot be empty.');
   }
+
+//  /* SSH public key validation */
+//  if (strpos($_REQUEST[$field_sshpubkey]) != 0) {
+//    array_push($errors, 'Invalid ssh public key; SSH public key must start with "ssh-".');
+//  }
+
   /* user name uniqueness validation */
   if ($userid != $_REQUEST[$field_userid] && $ac->check_username($_REQUEST[$field_userid])) {
     array_push($errors, 'User name already exists; name must be unique.');
@@ -113,7 +122,7 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
   /* data validation passed */
   if (count($errors) == 0) {
     /* remove all groups */
-    while (list($g_gid, $g_group) = each($groups)) {
+    foreach ($groups as $g_gid => $g_group) {
       if (!$ac->remove_user_from_group($userid, $g_gid)) {
         array_push($errors, 'Cannot remove user "'.$userid.'" from group "'.$g_group.'"; see log files for more information.');
         break;
@@ -123,19 +132,21 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
   if (count($errors) == 0) {
     /* update user */
     $disabled = isset($_REQUEST[$field_disabled]) ? '1':'0';
-    $userdata = array($field_id       => $_REQUEST[$field_id],
-                      $field_userid   => $_REQUEST[$field_userid],
-                      $field_uid      => $_REQUEST[$field_uid],
-                      $field_ugid     => $_REQUEST[$field_ugid],
-                      $field_passwd   => $_REQUEST[$field_passwd],
-                      $field_homedir  => $_REQUEST[$field_homedir],
-                      $field_shell    => $_REQUEST[$field_shell],
-                      $field_title    => $_REQUEST[$field_title],
-                      $field_name     => $_REQUEST[$field_name],
-                      $field_email    => $_REQUEST[$field_email],
-                      $field_company  => $_REQUEST[$field_company],
-                      $field_comment  => $_REQUEST[$field_comment],
-                      $field_disabled => $disabled);
+    $userdata = array($field_id         => $_REQUEST[$field_id],
+                      $field_userid     => $_REQUEST[$field_userid],
+                      $field_uid        => $_REQUEST[$field_uid],
+                      $field_ugid       => $_REQUEST[$field_ugid],
+                      $field_passwd     => $_REQUEST[$field_passwd],
+                      $field_homedir    => $_REQUEST[$field_homedir],
+                      $field_shell      => $_REQUEST[$field_shell],
+                      $field_sshpubkey  => $_REQUEST[$field_sshpubkey],
+                      $field_title      => $_REQUEST[$field_title],
+                      $field_name       => $_REQUEST[$field_name],
+                      $field_email      => $_REQUEST[$field_email],
+                      $field_company    => $_REQUEST[$field_company],
+                      $field_comment    => $_REQUEST[$field_comment],
+                      $field_expiration => $_REQUEST[$field_expiration],
+                      $field_disabled   => $disabled);
     if (!$ac->update_user($userdata)) {
       $errormsg = 'User "'.$_REQUEST[$field_userid].'" update failed; check log files.';
     } else {
@@ -148,9 +159,9 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
   if (empty($errormsg)) {
     /* add all groups */
     if (isset($_REQUEST[$field_ad_gid])) {
-      while (list($g_key, $g_gid) = each($_REQUEST[$field_ad_gid])) {
+      foreach ($_REQUEST[$field_ad_gid] as $g_key => $g_gid) {
         if (!$ac->is_valid_id($g_gid)) {
-            $warnmsg = 'Adding additional group failed; at least one of the additional groups had an invalid GID.';
+          $warnmsg = 'Adding additional group failed; at least one of the additional groups had an invalid GID.';
           continue;
         }
         // XXX: fix error handling here
@@ -166,32 +177,36 @@ if (empty($errormsg) && !empty($_REQUEST["action"]) && $_REQUEST["action"] == "u
 /* Form values */
 if (empty($errormsg)) {
   /* Default values */
-  $uid      = $user[$field_uid];
-  $ugid     = $user[$field_ugid];
-  $passwd   = '';
-  $homedir  = $user[$field_homedir];
-  $shell    = $user[$field_shell];
-  $title    = $user[$field_title];
-  $name     = $user[$field_name];
-  $email    = $user[$field_email];
-  $company  = $user[$field_company];
-  $comment  = $user[$field_comment];
-  $disabled = $user[$field_disabled];
+  $uid        = $user[$field_uid];
+  $ugid       = $user[$field_ugid];
+  $passwd     = '';
+  $expiration = $user[$field_expiration];
+  $homedir    = $user[$field_homedir];
+  $shell      = $user[$field_shell];
+  $sshpubkey  = $user[$field_sshpubkey];
+  $title      = $user[$field_title];
+  $name       = $user[$field_name];
+  $email      = $user[$field_email];
+  $company    = $user[$field_company];
+  $comment    = $user[$field_comment];
+  $disabled   = $user[$field_disabled];
 } else {
   /* This is a failed attempt */
-  $userid   = $_REQUEST[$field_userid];
-  $uid      = $_REQUEST[$field_uid];
-  $ugid     = $_REQUEST[$field_ugid];
-  $ad_gid   = $_REQUEST[$field_ad_gid];
-  $passwd   = $_REQUEST[$field_passwd];
-  $homedir  = $_REQUEST[$field_homedir];
-  $shell    = $_REQUEST[$field_shell];
-  $title    = $_REQUEST[$field_title];
-  $name     = $_REQUEST[$field_name];
-  $email    = $_REQUEST[$field_email];
-  $company  = $_REQUEST[$field_company];
-  $comment  = $_REQUEST[$field_comment];
-  $disabled = isset($_REQUEST[$field_disabled]) ? '1' : '0';
+  $userid     = $_REQUEST[$field_userid];
+  $uid        = $_REQUEST[$field_uid];
+  $ugid       = $_REQUEST[$field_ugid];
+  $ad_gid     = $_REQUEST[$field_ad_gid];
+  $passwd     = $_REQUEST[$field_passwd];
+  $expiration = $_REQUEST[$field_expiration];
+  $homedir    = $_REQUEST[$field_homedir];
+  $shell      = $_REQUEST[$field_shell];
+  $sshpubkey  = $_REQUEST[$field_sshpubkey];
+  $title      = $_REQUEST[$field_title];
+  $name       = $_REQUEST[$field_name];
+  $email      = $_REQUEST[$field_email];
+  $company    = $_REQUEST[$field_company];
+  $comment    = $_REQUEST[$field_comment];
+  $disabled   = isset($_REQUEST[$field_disabled]) ? '1' : '0';
 }
 
 include ("includes/header.php");
@@ -231,6 +246,15 @@ include ("includes/header.php");
               <input type="text" class="form-control" id="<?php echo $field_last_modified; ?>" name="<?php echo $field_last_modified; ?>" value="<?php echo $user[$field_last_modified]; ?>" readonly />
             </div>
           </div>
+
+          <!-- expiration (readonly) -->
+          <div class="form-group">
+            <label for="<?php echo $field_expiration; ?>" class="col-sm-4 control-label">Expiry Date</label>
+            <div class="controls col-sm-8">
+              <input type="text" class="form-control" id="<?php echo $field_expiration; ?>-ro" name="<?php echo $field_expiration; ?>-ro" value="<?php echo $user[$field_expiration]; ?>" readonly />
+            </div>
+          </div>
+
           <!-- Bytes in (readonly) -->
           <div class="form-group">
             <label for="<?php echo $field_bytes_in_used; ?>" class="col-sm-4 control-label">Bytes uploaded</label>
@@ -296,7 +320,7 @@ include ("includes/header.php");
             <label for="<?php echo $field_ugid; ?>" class="col-sm-4 control-label">Main group</label>
             <div class="controls col-sm-8">
               <select class="form-control multiselect" id="<?php echo $field_ugid; ?>" name="<?php echo $field_ugid; ?>" required>
-              <?php reset ($groups); while (list($g_gid, $g_group) = each($groups)) { ?>
+              <?php reset ($groups); foreach ($groups as $g_gid => $g_group) { ?>
                 <option value="<?php echo $g_gid; ?>" <?php if ($ugid == $g_gid) { echo 'selected="selected"'; } ?>><?php echo $g_group; ?></option>
               <?php } ?>
               </select>
@@ -307,7 +331,7 @@ include ("includes/header.php");
             <label for="<?php echo $field_ad_gid; ?>" class="col-sm-4 control-label">Additional groups</label>
             <div class="controls col-sm-8">
               <select class="form-control multiselect" id="<?php echo $field_ad_gid; ?>" name="<?php echo $field_ad_gid; ?>[]" multiple="multiple">
-              <?php reset ($groups); while (list($g_gid, $g_group) = each($groups)) { ?>
+              <?php reset ($groups); foreach($groups as $g_gid => $g_group) { ?>
                 <option value="<?php echo $g_gid; ?>" <?php if (array_key_exists($g_gid, $ad_gid)) { echo 'selected="selected"'; } ?>><?php echo $g_group; ?></option>
               <?php } ?>
               </select>
@@ -319,6 +343,13 @@ include ("includes/header.php");
             <div class="controls col-sm-8">
               <input type="text" class="form-control" id="<?php echo $field_passwd; ?>" name="<?php echo $field_passwd; ?>" value="<?php echo $passwd; ?>" placeholder="Change password" />
               <p class="help-block"><small>Minimum length <?php echo $cfg['min_passwd_length']; ?> characters.</small></p>
+            </div>
+          </div>
+          <!-- expiration -->
+          <div class="form-group">
+            <label for="<?php echo $field_expiration; ?>" class="col-sm-4 control-label">Expiry Date</label>
+            <div class="controls col-sm-8" >
+              <input type="text" class="form-control" id='<?php echo $field_expiration; ?>' name="<?php echo $field_expiration; ?>" value="<?php echo $expiration; ?>" maxlength="19" />
             </div>
           </div>
           <!-- Home directory -->
@@ -333,6 +364,14 @@ include ("includes/header.php");
             <label for="<?php echo $field_shell; ?>" class="col-sm-4 control-label">Shell</label>
             <div class="controls col-sm-8">
               <input type="text" class="form-control" id="<?php echo $field_shell; ?>" name="<?php echo $field_shell; ?>" value="<?php echo $shell; ?>" placeholder="Enter the user's shell" />
+            </div>
+          </div>
+          <!-- Shell public key -->
+          <div class="form-group">
+            <label for="<?php echo $field_sshpubkey; ?>" class="col-sm-4 control-label">SSH public key</label>
+            <div class="controls col-sm-8">
+              <textarea class="form-control" id="<?php echo $field_sshpubkey; ?>" name="<?php echo $field_sshpubkey; ?>" rows="9" placeholder="<?php echo $placeholder_sshpubkey; ?>"><?php echo $sshpubkey; ?></textarea>
+              <p class="help-block"><small> RFC4716 format </small></p>
             </div>
           </div>
           <!-- Title -->

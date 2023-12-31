@@ -11,26 +11,29 @@
  *
  */
 
-include_once ("configs/config.php");
-include_once ("includes/AdminClass.php");
 global $cfg;
+
+include_once ("configs/config.php");
+include_once ("includes/Session.php");
+include_once ("includes/AdminClass.php");
 
 $ac = new AdminClass($cfg);
 
-$field_userid   = $cfg['field_userid'];
-$field_id       = $cfg['field_id'];
-$field_uid      = $cfg['field_uid'];
-$field_ugid     = $cfg['field_ugid'];
-$field_homedir  = $cfg['field_homedir'];
-$field_shell    = $cfg['field_shell'];
-$field_title    = $cfg['field_title'];
-$field_name     = $cfg['field_name'];
-$field_company  = $cfg['field_company'];
-$field_email    = $cfg['field_email'];
-$field_disabled = $cfg['field_disabled'];
-
+$field_userid         = $cfg['field_userid'];
+$field_id             = $cfg['field_id'];
+$field_uid            = $cfg['field_uid'];
+$field_ugid           = $cfg['field_ugid'];
+$field_homedir        = $cfg['field_homedir'];
+$field_shell          = $cfg['field_shell'];
+$field_sshpubkey      = $cfg['field_sshpubkey'];
+$field_title          = $cfg['field_title'];
+$field_name           = $cfg['field_name'];
+$field_company        = $cfg['field_company'];
+$field_email          = $cfg['field_email'];
+$field_disabled       = $cfg['field_disabled'];
 $field_login_count    = $cfg['field_login_count'];
 $field_last_login     = $cfg['field_last_login'];
+$field_expiration     = $cfg['field_expiration'];
 $field_bytes_in_used  = $cfg['field_bytes_in_used'];
 $field_bytes_out_used = $cfg['field_bytes_out_used'];
 $field_files_in_used  = $cfg['field_files_in_used'];
@@ -61,7 +64,7 @@ if ($cfg['userid_filter_separator'] != "") {
 
 /* filter users */
 if (!empty($all_users)) {
-  foreach ($all_users as $user) { 
+  foreach ($all_users as $user) {
     if ($ufilter != "") {
       if ($ufilter == "None" && strpos($user[$field_userid], $cfg['userid_filter_separator'])) {
         // filter is None and user has a prefix
@@ -102,14 +105,14 @@ include ("includes/header.php");
   </div>
 </div>
 <?php } else { ?>
-<div class="col-sm-12">
+<div class="col-sm-16">
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">Users</h3>
     </div>
     <div class="panel-body">
       <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-16">
           <?php if (count($userfilter) > 0) { ?>
           <!-- Filter toolbar -->
           <div class="form-group">
@@ -136,7 +139,8 @@ include ("includes/header.php");
                 <th><span class="glyphicon glyphicon-user" aria-hidden="true" title="User name"></th>
                 <th><span class="glyphicon glyphicon-tag" aria-hidden="true" title="Main group"></th>
                 <th class="hidden-xs hidden-sm" data-defaultsort="disabled"><span class="glyphicon glyphicon-tags" aria-hidden="true" title="Additional groups"></th>
-                <th class="hidden-xs hidden-sm hidden-md"><span class="glyphicon glyphicon-time" aria-hidden="true" title="Last login"></th>
+                <th class="hidden-xs hidden-sm hidden-md" style="width: 150px;">Last login <span class="glyphicon glyphicon-time" aria-hidden="true" title="Last login"></th>
+                <th class="hidden-xs hidden-sm hidden-md" style="width: 150px;">Expiry Date <span class="glyphicon glyphicon-time" aria-hidden="true" title="Expiry Date"></th>
                 <th class="hidden-xs hidden-sm"><span class="glyphicon glyphicon-list-alt" aria-hidden="true" title="Login count"></th>
                 <th class="hidden-xs"><span class="glyphicon glyphicon-signal" aria-hidden="true" title="Uploaded MBs"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true" title="Uploaded MBs"></th>
                 <th class="hidden-xs"><span class="glyphicon glyphicon-signal" aria-hidden="true" title="Downloaded MBs"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true" title="Downloaded MBs"></th>
@@ -168,6 +172,7 @@ include ("includes/header.php");
                       <?php } ?>
                     </td>
                     <td class="pull-middle hidden-xs hidden-sm hidden-md"><?php echo $user[$field_last_login]; ?></td>
+                    <td class="pull-middle hidden-xs hidden-sm hidden-md"><?php echo $user[$field_expiration]; ?></td>
                     <td class="pull-middle hidden-xs hidden-sm"><?php echo $user[$field_login_count]; ?></td>
                     <td class="pull-middle hidden-xs"><?php echo sprintf("%2.1f", $user[$field_bytes_in_used] / 1048576); ?></td>
                     <td class="pull-middle hidden-xs"><?php echo sprintf("%2.1f", $user[$field_bytes_out_used] / 1048576); ?></td>
