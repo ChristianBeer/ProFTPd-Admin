@@ -37,7 +37,7 @@ CREATE TABLE `users` (
   `bytes_xfer_avail` int(10) unsigned NOT NULL default '0',
   `files_in_used` bigint(20) unsigned NOT NULL default '0',
   `files_out_used` bigint(20) unsigned NOT NULL default '0',
-  `files_xfer_avail` int(10) unsigned NOT NULL default '0'
+  `files_xfer_avail` int(10) unsigned NOT NULL default '0',
   `login_count` int(11) unsigned NOT NULL default '0',
   `last_login` datetime NOT NULL default '0000-00-00 00:00:00',
   `last_modified` datetime NOT NULL default '0000-00-00 00:00:00',
